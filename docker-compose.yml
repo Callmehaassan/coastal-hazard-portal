@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: coastal-hazard-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: coastal_hazard
+    ports:
+      - "5433:5432"
+    volumes:
+      - coastal_hazard_pgdata:/var/lib/postgresql/data
+
+volumes:
+  coastal_hazard_pgdata:
