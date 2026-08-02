@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Glassmorphism Base */
+.glass {
+  @apply bg-glass-light/80 backdrop-blur-xl border border-white/10 rounded-2xl shadow-glass;
+}
+
+.glass-sm {
+  @apply bg-glass-light/70 backdrop-blur-lg border border-white/10 rounded-xl shadow-glass;
+}
+
+/* Accent Colors */
+.accent-gradient {
+  @apply bg-gradient-to-r from-cyan-500 via-blue-500 to-teal-500;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(6, 182, 212, 0.6);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(6, 182, 212, 0.8);
+}
+
+/* Leaflet Map Overrides */
+.leaflet-container {
+  @apply rounded-2xl;
+}
+
+.leaflet-control {
+  @apply glass !important;
+}
+
+/* Button Animations */
+button {
+  @apply transition-all duration-300 ease-out;
+}
+
+button:hover {
+  @apply transform scale-105;
+}
+
+/* Loading Animation */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 30px rgba(6, 182, 212, 0.8);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

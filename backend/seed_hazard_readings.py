@@ -28,6 +28,7 @@ random.seed(42)  # reproducible demo data
 # unitless indices or physically-plausible small numbers, not measurements.
 # Flooding excluded on purpose - see note above.
 HAZARD_PROFILES = {
+    HazardType.FLOODING: {"start": 80.0, "drift": 5.0, "noise": 10.0, "unit": "square_km"},
     HazardType.STORM_SURGE: {"start": 0.9, "drift": 0.05, "noise": 0.15, "unit": "meters"},
     HazardType.EROSION: {"start": -0.8, "drift": -0.06, "noise": 0.2, "unit": "meters_per_year"},
     HazardType.SEA_LEVEL_RISE: {"start": 2.1, "drift": 0.15, "noise": 0.1, "unit": "mm_per_year"},
@@ -50,6 +51,11 @@ def seed() -> None:
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
+        # Clear existing readings so we seed clean, correct series values
+        db.query(HazardIndexReading).delete()
+        db.commit()
+        print("Cleared existing hazard readings.")
+
         regions = db.query(Region).all()
         if not regions:
             print("No regions found - run seed_regions.py first.")

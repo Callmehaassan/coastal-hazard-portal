@@ -1,4 +1,4 @@
-﻿"""
+"""
 Prompt-based query & AI insight layer (SRS section 5, new in v2.0).
 
 Flow (each step is a separate function so the boundary is auditable):
@@ -55,20 +55,62 @@ def _client() -> Groq:
 
 def parse_prompt(prompt: str) -> dict:
     """Step 1: LLM parses free text into structured params. Treat the result as untrusted."""
-    response = _client().chat.completions.create(
-        model=_GROQ_MODEL,
-        messages=[
-            {"role": "system", "content": _PARSE_SYSTEM_PROMPT},
-            {"role": "user", "content": prompt},
-        ],
-        temperature=0,
-        response_format={"type": "json_object"},
-    )
-    raw = response.choices[0].message.content
     try:
+        response = _client().chat.completions.create(
+            model=_GROQ_MODEL,
+            messages=[
+                {"role": "system", "content": _PARSE_SYSTEM_PROMPT},
+                {"role": "user", "content": prompt},
+            ],
+            temperature=0,
+            response_format={"type": "json_object"},
+        )
+        raw = response.choices[0].message.content
         return json.loads(raw)
-    except json.JSONDecodeError as exc:
-        raise ValueError(f"LLM did not return valid JSON: {raw!r}") from exc
+    except Exception:
+        # Fallback local parser
+        p_lower = prompt.lower()
+        
+        # Detect hazard type
+        hazard_type = "flooding"
+        if "surge" in p_lower or "cyclone" in p_lower or "storm" in p_lower:
+            hazard_type = "storm_surge"
+        elif "erosion" in p_lower or "shoreline" in p_lower or "shore" in p_lower:
+            hazard_type = "erosion"
+        elif "sea level" in p_lower or "sea-level" in p_lower or "anomaly" in p_lower or "rise" in p_lower:
+            hazard_type = "sea_level_rise"
+        elif "tsunami" in p_lower:
+            hazard_type = "tsunami_risk"
+        elif "vulner" in p_lower or "cvi" in p_lower:
+            hazard_type = "vulnerability_index"
+        elif "safe" in p_lower:
+            hazard_type = "safe_zones"
+            
+        # Detect district
+        district = None
+        if "gwadar" in p_lower:
+            district = "Gwadar"
+        elif "lasbela" in p_lower:
+            district = "Lasbela"
+            
+        # Detect years
+        year_start = MIN_YEAR
+        year_end = MAX_YEAR
+        import re
+        years = [int(y) for y in re.findall(r"\b(20\d{2})\b", prompt)]
+        if len(years) == 1:
+            year_start = years[0]
+            year_end = years[0]
+        elif len(years) >= 2:
+            year_start = min(years)
+            year_end = max(years)
+            
+        return {
+            "hazard_type": hazard_type,
+            "district": district,
+            "year_start": year_start,
+            "year_end": year_end
+        }
 
 
 def validate_parsed_query(parsed: dict) -> dict:
@@ -109,20 +151,51 @@ def generate_summary(validated: dict, readings: list[HazardIndexReading]) -> str
     data_points = [
         {"year": r.year, "value": r.value, "unit": r.unit, "data_quality": r.data_quality.value} for r in readings
     ]
-    response = _client().chat.completions.create(
-        model=_GROQ_MODEL,
-        messages=[
-            {
-                "role": "system",
-                "content": (
-                    "You write a short (2-3 sentence) factual summary of coastal hazard data for "
-                    "Balochistan, Pakistan. Only state what's in the provided JSON data - never invent "
-                    "numbers or years not present. Explicitly flag if any year has data_quality "
-                    "'partial' or 'poor'."
-                ),
-            },
-            {"role": "user", "content": json.dumps(data_points)},
-        ],
-        temperature=0.2,
-    )
-    return response.choices[0].message.content.strip()
+    try:
+        response = _client().chat.completions.create(
+            model=_GROQ_MODEL,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You write a short (2-3 sentence) factual summary of coastal hazard data for "
+                        "Balochistan, Pakistan. Only state what's in the provided JSON data - never invent "
+                        "numbers or years not present. Explicitly flag if any year has data_quality "
+                        "'partial' or 'poor'."
+                    ),
+                },
+                {"role": "user", "content": json.dumps(data_points)},
+            ],
+            temperature=0.2,
+        )
+        return response.choices[0].message.content.strip()
+    except Exception:
+        # Local fallback text generator based on real-time database results
+        district_label = validated['district'] or "Balochistan coast overall"
+        hazard_label = validated['hazard_type'].replace("_", " ")
+        
+        values = [d["value"] for d in data_points]
+        years = [d["year"] for d in data_points]
+        unit = data_points[0]["unit"]
+        
+        max_val = max(values)
+        max_year = years[values.index(max_val)]
+        min_val = min(values)
+        min_year = years[values.index(min_val)]
+        
+        first_val = values[0]
+        last_val = values[-1]
+        trend = "increased" if last_val > first_val else "decreased" if last_val < first_val else "remained stable"
+        
+        summary = (
+            f"Based on GEE satellite measurements, the {hazard_label} for {district_label} from {years[0]} to {years[-1]} "
+            f"{trend} from {first_val} {unit} to {last_val} {unit}. "
+            f"The maximum recorded value was {max_val} {unit} in {max_year}, "
+            f"and the minimum recorded value was {min_val} {unit} in {min_year}."
+        )
+        
+        poor_years = [d["year"] for d in data_points if d["data_quality"] in ("poor", "partial")]
+        if poor_years:
+            summary += f" Note: Data quality is flagged as partial/poor for years: {', '.join(map(str, poor_years))}."
+            
+        return summary

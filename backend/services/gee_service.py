@@ -109,19 +109,21 @@ def compute_flood_extent(aoi: "ee.Geometry", year: int) -> dict:
     baseline_water = baseline_collection.median().clip(aoi).lt(WATER_VH_THRESHOLD_DB)
     flood_mask = monsoon_water.And(baseline_water.Not())
 
-    stats = flood_mask.reduceRegion(
-        reducer=ee.Reducer.mean(),
+    # Calculate flooded area in square kilometers (km2)
+    area_image = flood_mask.multiply(ee.Image.pixelArea()).divide(1_000_000)
+    stats = area_image.reduceRegion(
+        reducer=ee.Reducer.sum(),
         geometry=aoi,
         scale=30,
         maxPixels=1_000_000_000,
         bestEffort=True,
     )
 
-    flood_fraction = stats.get("VH").getInfo()
-    if flood_fraction is None:
+    flood_area = stats.get("VH").getInfo()
+    if flood_area is None:
         return {
             "value": None,
-            "unit": "index_0_1",
+            "unit": "square_km",
             "data_quality": "poor",
             "source_scene_date": None,
         }
@@ -137,8 +139,8 @@ def compute_flood_extent(aoi: "ee.Geometry", year: int) -> dict:
     quality = "good" if monsoon_count >= 3 and baseline_count >= 3 else "partial"
 
     return {
-        "value": round(float(flood_fraction), 4),
-        "unit": "index_0_1",
+        "value": round(float(flood_area), 4),
+        "unit": "square_km",
         "data_quality": quality,
         "source_scene_date": latest_scene_date,
     }
@@ -200,18 +202,20 @@ def compute_flood_extent_sentinel2_backup(aoi: "ee.Geometry", year: int) -> dict
     baseline_water = baseline_ndwi.gt(NDWI_WATER_THRESHOLD)
     flood_mask = monsoon_water.And(baseline_water.Not())
 
-    stats = flood_mask.reduceRegion(
-        reducer=ee.Reducer.mean(),
+    # Calculate flooded area in square kilometers (km2)
+    area_image = flood_mask.multiply(ee.Image.pixelArea()).divide(1_000_000)
+    stats = area_image.reduceRegion(
+        reducer=ee.Reducer.sum(),
         geometry=aoi,
         scale=10,
         maxPixels=1_000_000_000,
         bestEffort=True,
     )
-    flood_fraction = stats.get("NDWI").getInfo()
-    if flood_fraction is None:
+    flood_area = stats.get("NDWI").getInfo()
+    if flood_area is None:
         return {
             "value": None,
-            "unit": "index_0_1",
+            "unit": "square_km",
             "data_quality": "poor",
             "source_scene_date": None,
         }
@@ -219,8 +223,8 @@ def compute_flood_extent_sentinel2_backup(aoi: "ee.Geometry", year: int) -> dict
     quality = "partial"
 
     return {
-        "value": round(float(flood_fraction), 4),
-        "unit": "index_0_1",
+        "value": round(float(flood_area), 4),
+        "unit": "square_km",
         "data_quality": quality,
         "source_scene_date": None,
     }
@@ -233,7 +237,7 @@ def compute_storm_surge_estimate(aoi: "ee.Geometry", year: int, district: str) -
     if event is None or district not in event["affected_districts"]:
         return {
             "value": 0.0,
-            "unit": "index_0_1",
+            "unit": "square_km",
             "data_quality": "good",
             "source_scene_date": None,
         }
@@ -261,7 +265,7 @@ def compute_storm_surge_estimate(aoi: "ee.Geometry", year: int, district: str) -
     if before_count == 0 or after_count == 0:
         return {
             "value": None,
-            "unit": "index_0_1",
+            "unit": "square_km",
             "data_quality": "poor",
             "source_scene_date": None,
         }
@@ -270,18 +274,20 @@ def compute_storm_surge_estimate(aoi: "ee.Geometry", year: int, district: str) -
     after_water = after_collection.median().clip(aoi).lt(WATER_VH_THRESHOLD_DB)
     surge_mask = after_water.And(before_water.Not())
 
-    stats = surge_mask.reduceRegion(
-        reducer=ee.Reducer.mean(),
+    # Calculate surge area in square kilometers (km2)
+    area_image = surge_mask.multiply(ee.Image.pixelArea()).divide(1_000_000)
+    stats = area_image.reduceRegion(
+        reducer=ee.Reducer.sum(),
         geometry=aoi,
         scale=30,
         maxPixels=1_000_000_000,
         bestEffort=True,
     )
-    surge_fraction = stats.get("VH").getInfo()
-    if surge_fraction is None:
+    surge_area = stats.get("VH").getInfo()
+    if surge_area is None:
         return {
             "value": None,
-            "unit": "index_0_1",
+            "unit": "square_km",
             "data_quality": "poor",
             "source_scene_date": None,
         }
@@ -297,8 +303,8 @@ def compute_storm_surge_estimate(aoi: "ee.Geometry", year: int, district: str) -
     quality = "good" if before_count >= 2 and after_count >= 2 else "partial"
 
     return {
-        "value": round(float(surge_fraction), 4),
-        "unit": "index_0_1",
+        "value": round(float(surge_area), 4),
+        "unit": "square_km",
         "data_quality": quality,
         "source_scene_date": latest_scene_date,
     }
