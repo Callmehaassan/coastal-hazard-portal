@@ -30,6 +30,9 @@ interface DashboardMapProps {
   onSelectRegionId: (id: number) => void;
   activeBasemap: "satellite" | "osm";
   visibleLayers: string[];
+  selectedAnalysis: string;
+  selectedYear: number;
+  hazardData: HazardReading[];
 }
 
 const MAKRAN_CENTER: [number, number] = [25.3, 64.5];
@@ -40,6 +43,9 @@ export default function DashboardMap({
   onSelectRegionId,
   activeBasemap,
   visibleLayers,
+  selectedAnalysis,
+  selectedYear,
+  hazardData,
 }: DashboardMapProps) {
   // Tile layer selections
   const osmUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
@@ -53,37 +59,61 @@ export default function DashboardMap({
   const showHazardLayer = visibleLayers.includes("Hazard Layer");
   const showSafeZones = visibleLayers.includes("Safe Zones");
 
+  const getRegionHazardInfo = (regionId: number) => {
+    const reading = hazardData.find(
+      (item) => item.region_id === regionId && item.year === selectedYear
+    );
+    const value = reading ? reading.value : 0;
+    const unit = reading ? reading.unit : "";
+
+    let riskLevel: "High" | "Medium" | "Low" = "Low";
+    let color = "#22c55e"; // Green
+    let fillColor = "#22c55e";
+
+    if (showHazardLayer) {
+      if (selectedAnalysis === 'flooding') {
+        if (value > 1500) { riskLevel = "High"; color = "#ef4444"; fillColor = "#ef4444"; }
+        else if (value > 500) { riskLevel = "Medium"; color = "#eab308"; fillColor = "#eab308"; }
+      } else if (selectedAnalysis === 'storm-surge') {
+        if (value > 1.2) { riskLevel = "High"; color = "#ef4444"; fillColor = "#ef4444"; }
+        else if (value > 0.6) { riskLevel = "Medium"; color = "#eab308"; fillColor = "#eab308"; }
+      } else if (selectedAnalysis === 'coastal-erosion') {
+        const absVal = Math.abs(value);
+        if (absVal > 1.5) { riskLevel = "High"; color = "#ef4444"; fillColor = "#ef4444"; }
+        else if (absVal > 0.5) { riskLevel = "Medium"; color = "#eab308"; fillColor = "#eab308"; }
+      } else if (selectedAnalysis === 'sea-level-rise') {
+        if (value > 6.0) { riskLevel = "High"; color = "#ef4444"; fillColor = "#ef4444"; }
+        else if (value > 3.0) { riskLevel = "Medium"; color = "#eab308"; fillColor = "#eab308"; }
+      } else if (selectedAnalysis === 'vulnerability-index') {
+        if (value >= 7.5) { riskLevel = "High"; color = "#ef4444"; fillColor = "#ef4444"; }
+        else if (value >= 5.0) { riskLevel = "Medium"; color = "#eab308"; fillColor = "#eab308"; }
+      } else if (selectedAnalysis === 'tsunami-risk') {
+        if (value >= 7.0) { riskLevel = "High"; color = "#ef4444"; fillColor = "#ef4444"; }
+        else if (value >= 4.0) { riskLevel = "Medium"; color = "#eab308"; fillColor = "#eab308"; }
+      } else if (selectedAnalysis === 'safe-zones') {
+        if (value < 30) { riskLevel = "High"; color = "#ef4444"; fillColor = "#ef4444"; }
+        else if (value < 42) { riskLevel = "Medium"; color = "#eab308"; fillColor = "#eab308"; }
+      }
+    } else if (showSafeZones) {
+      color = "#22c55e";
+      fillColor = "#22c55e";
+    }
+
+    return { value, unit, riskLevel, color, fillColor };
+  };
+
   // Style helper for region polygons
   const getRegionStyle = (region: Region) => {
     const isSelected = region.id === selectedRegionId;
+    const info = getRegionHazardInfo(region.id);
     
-    // Choose colors based on active layers
-    let color = "#2fb8c6"; // Neon Accent Blue
-    let fillColor = "#2fb8c6";
-    let fillOpacity = 0.15;
-
-    if (showHazardLayer) {
-      // Simulate high risk coloring
-      if (region.district === "Thatta" || region.district === "Karachi") {
-        color = "#ef4444"; // Red for high flood risk
-        fillColor = "#f87171";
-        fillOpacity = 0.35;
-      } else if (region.district === "Gwadar") {
-        color = "#f59e0b"; // Orange for moderate risk
-        fillColor = "#fbbf24";
-        fillOpacity = 0.25;
-      }
-    } else if (showSafeZones) {
-      if (region.district === "Lasbela" || region.district === "Sujawal") {
-        color = "#10b981"; // Green for safe zones
-        fillColor = "#34d399";
-        fillOpacity = 0.3;
-      }
-    }
+    let color = info.color;
+    let fillColor = info.fillColor;
+    let fillOpacity = 0.25;
 
     if (isSelected) {
       color = "#ffffff";
-      fillOpacity = (fillOpacity || 0.1) + 0.2;
+      fillOpacity = 0.55;
     }
 
     return {
@@ -114,9 +144,17 @@ export default function DashboardMap({
         {regions.map((region) => {
           if (!region.geometry) return null;
           
+          const info = getRegionHazardInfo(region.id);
+          const hazardLabel = selectedAnalysis.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+          const formattedVal = selectedAnalysis === 'coastal-erosion' ? `${Math.abs(info.value).toFixed(2)} m/yr` 
+                             : selectedAnalysis === 'sea-level-rise' ? `${info.value.toFixed(2)} mm/yr`
+                             : selectedAnalysis === 'storm-surge' ? `${info.value.toFixed(2)} m`
+                             : selectedAnalysis === 'flooding' ? `${info.value.toFixed(1)} km²`
+                             : `${info.value.toFixed(2)}`;
+
           return (
             <LeafletGeoJSON
-              key={`${region.id}-${visibleLayers.join(",")}`}
+              key={`${region.id}-${visibleLayers.join(",")}-${selectedAnalysis}-${selectedYear}`}
               data={region.geometry as any}
               style={getRegionStyle(region)}
               eventHandlers={{
@@ -142,14 +180,18 @@ export default function DashboardMap({
                       </tr>
                       <tr>
                         <td className="pr-4 text-slate-500 font-medium">Risk Status:</td>
-                        <td className="font-bold text-red-600">
-                          {region.district === "Thatta" || region.district === "Karachi" ? "High Risk" : "Moderate"}
+                        <td className={`font-bold ${info.riskLevel === 'High' ? 'text-red-600' : info.riskLevel === 'Medium' ? 'text-amber-500' : 'text-green-600'}`}>
+                          {info.riskLevel} Risk Level
                         </td>
+                      </tr>
+                      <tr>
+                        <td className="pr-4 text-slate-500 font-medium">{hazardLabel}:</td>
+                        <td className="font-bold text-cyan-700">{formattedVal}</td>
                       </tr>
                     </tbody>
                   </table>
                   <Link
-                    href={`/dashboard/details/${region.district.toLowerCase()}`}
+                    href={`/dashboard/details/${region.district.toLowerCase()}?hazard=${selectedAnalysis}`}
                     className="mt-2 text-xs text-center w-full font-bold text-cyan-600 hover:text-cyan-800 flex items-center justify-center gap-1 block"
                   >
                     View Details &rarr;

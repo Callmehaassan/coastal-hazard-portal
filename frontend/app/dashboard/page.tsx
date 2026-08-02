@@ -1261,27 +1261,19 @@ export default function DashboardPage() {
 
               {/* Overlaid Legend box (Bottom-left) */}
               <div className="absolute bottom-8 left-8 z-10 bg-[#070e1b]/95 border border-white/10 p-3 rounded-xl backdrop-blur-md text-[10px] w-[180px] pointer-events-auto">
-                <span className="font-bold text-white block mb-2">Flood Inundation Depth (m)</span>
-                <div className="space-y-1 text-slate-300">
+                <span className="font-bold text-white block mb-2">{currentConfig.label} Risk Level</span>
+                <div className="space-y-1.5 text-slate-300">
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-cyan-500 rounded" />
-                    <span>0 - 0.3</span>
+                    <div className="w-3 h-3 bg-[#22c55e] rounded" />
+                    <span>Low Risk</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-blue-500 rounded" />
-                    <span>0.3 - 0.7</span>
+                    <div className="w-3 h-3 bg-[#eab308] rounded" />
+                    <span>Medium Risk</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-yellow-500 rounded" />
-                    <span>0.7 - 1.5</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-orange-500 rounded" />
-                    <span>1.5 - 2.5</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-red-500 rounded" />
-                    <span>&gt; 2.5</span>
+                    <div className="w-3 h-3 bg-[#ef4444] rounded" />
+                    <span>High Risk</span>
                   </div>
                 </div>
               </div>
@@ -1304,6 +1296,9 @@ export default function DashboardPage() {
                   onSelectRegionId={handleMapRegionSelect}
                   activeBasemap={activeBasemap}
                   visibleLayers={visibleLayers}
+                  selectedAnalysis={selectedAnalysis}
+                  selectedYear={selectedYear}
+                  hazardData={hazardData}
                 />
               </div>
 
