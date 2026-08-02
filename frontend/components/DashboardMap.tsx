@@ -103,6 +103,20 @@ const HAZARD_HOTSPOTS: Record<string, Record<string, Hotspot[]>> = {
       { name: "Hingol River Mouth Sensor", coordinates: [25.37, 65.47], riskOffsets: { "sea-level-rise": 1.0 } }
     ]
   },
+  "vulnerability-index": {
+    Gwadar: [
+      { name: "Jiwani Coastal Zone", coordinates: [25.04, 61.77], riskOffsets: { "vulnerability-index": 1.1 } },
+      { name: "Gwadar City Area", coordinates: [25.12, 62.32], riskOffsets: { "vulnerability-index": 0.9 } },
+      { name: "Pasni Settlement", coordinates: [25.26, 63.47], riskOffsets: { "vulnerability-index": 1.2 } },
+      { name: "Ormara Town Area", coordinates: [25.21, 64.63], riskOffsets: { "vulnerability-index": 1.1 } }
+    ],
+    Lasbela: [
+      { name: "Gadani Town Coast", coordinates: [24.97, 66.73], riskOffsets: { "vulnerability-index": 1.3 } },
+      { name: "Sonmiani Lagoon Flats", coordinates: [25.42, 66.58], riskOffsets: { "vulnerability-index": 1.2 } },
+      { name: "Kund Malir Coast", coordinates: [25.39, 65.46], riskOffsets: { "vulnerability-index": 1.0 } },
+      { name: "Uthal Town Area", coordinates: [25.80, 66.62], riskOffsets: { "vulnerability-index": 1.1 } }
+    ]
+  },
   "safe-zones": {
     Gwadar: [
       { name: "Jiwani Plateau Shelter", coordinates: [25.07, 61.74], riskOffsets: { "safe-zones": 1.3 } },
@@ -233,7 +247,7 @@ export default function DashboardMap({
           const baseValue = getRegionBaseValue(region.id);
           
           // Fetch dynamic hotspots for the selected analysis or fallback to vulnerability index
-          const hazardGroup = HAZARD_HOTSPOTS[selectedAnalysis] || HAZARD_HOTSPOTS["vulnerability-index"];
+          const hazardGroup = HAZARD_HOTSPOTS[selectedAnalysis] || HAZARD_HOTSPOTS["vulnerability-index"] || {};
           const hotspots = hazardGroup[region.district] || [];
 
           return (
