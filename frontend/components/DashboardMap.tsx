@@ -31,19 +31,92 @@ interface Hotspot {
   riskOffsets: Record<string, number>;
 }
 
-const DISTRICT_HOTSPOTS: Record<string, Hotspot[]> = {
-  Gwadar: [
-    { name: "Jiwani Coastline", coordinates: [25.05, 61.77], riskOffsets: { flooding: 1.1, "storm-surge": 1.2, "coastal-erosion": 1.3, "sea-level-rise": 1.0, "tsunami-risk": 1.2, "vulnerability-index": 1.1, "safe-zones": 0.8 } },
-    { name: "Gwadar Bay", coordinates: [25.12, 62.32], riskOffsets: { flooding: 0.8, "storm-surge": 0.7, "coastal-erosion": 0.6, "sea-level-rise": 1.0, "tsunami-risk": 0.8, "vulnerability-index": 0.9, "safe-zones": 1.3 } },
-    { name: "Pasni Port & Harbor", coordinates: [25.26, 63.47], riskOffsets: { flooding: 1.2, "storm-surge": 1.3, "coastal-erosion": 1.1, "sea-level-rise": 1.0, "tsunami-risk": 1.5, "vulnerability-index": 1.2, "safe-zones": 0.7 } },
-    { name: "Ormara Coastline", coordinates: [25.21, 64.63], riskOffsets: { flooding: 1.0, "storm-surge": 1.0, "coastal-erosion": 1.4, "sea-level-rise": 1.0, "tsunami-risk": 1.0, "vulnerability-index": 1.1, "safe-zones": 0.9 } }
-  ],
-  Lasbela: [
-    { name: "Kund Malir Beach", coordinates: [25.39, 65.46], riskOffsets: { flooding: 0.9, "storm-surge": 1.0, "coastal-erosion": 1.2, "sea-level-rise": 1.0, "tsunami-risk": 0.9, "vulnerability-index": 1.0, "safe-zones": 1.1 } },
-    { name: "Sonmiani Lagoon", coordinates: [25.42, 66.58], riskOffsets: { flooding: 1.3, "storm-surge": 1.1, "coastal-erosion": 0.8, "sea-level-rise": 1.0, "tsunami-risk": 1.1, "vulnerability-index": 1.2, "safe-zones": 0.8 } },
-    { name: "Gadani Ship Breaking Yard", coordinates: [24.97, 66.73], riskOffsets: { flooding: 0.7, "storm-surge": 0.9, "coastal-erosion": 1.5, "sea-level-rise": 1.0, "tsunami-risk": 0.8, "vulnerability-index": 1.3, "safe-zones": 0.6 } },
-    { name: "Uthal Estuary", coordinates: [25.80, 66.62], riskOffsets: { flooding: 1.4, "storm-surge": 1.2, "coastal-erosion": 0.5, "sea-level-rise": 1.0, "tsunami-risk": 1.0, "vulnerability-index": 1.1, "safe-zones": 0.9 } }
-  ]
+// Geographically correct risk locations representing hot-spots/features per hazard type
+const HAZARD_HOTSPOTS: Record<string, Record<string, Hotspot[]>> = {
+  "flooding": {
+    Gwadar: [
+      { name: "Jiwani Estuary", coordinates: [25.06, 61.82], riskOffsets: { flooding: 1.1 } },
+      { name: "Akra Kaur Reservoir Basin", coordinates: [25.32, 62.29], riskOffsets: { flooding: 1.3 } },
+      { name: "Shadi Kaur Basin (Pasni)", coordinates: [25.36, 63.45], riskOffsets: { flooding: 1.4 } },
+      { name: "Basol River Valley (Ormara)", coordinates: [25.40, 64.60], riskOffsets: { flooding: 1.2 } }
+    ],
+    Lasbela: [
+      { name: "Hingol River Delta", coordinates: [25.43, 65.48], riskOffsets: { flooding: 1.4 } },
+      { name: "Windar River Basin", coordinates: [25.39, 66.70], riskOffsets: { flooding: 1.3 } },
+      { name: "Siranda Lake Basin", coordinates: [25.52, 66.72], riskOffsets: { flooding: 1.2 } },
+      { name: "Porali River Plain (Uthal)", coordinates: [25.82, 66.60], riskOffsets: { flooding: 1.5 } }
+    ]
+  },
+  "storm-surge": {
+    Gwadar: [
+      { name: "Jiwani Fishery Harbor", coordinates: [25.04, 61.76], riskOffsets: { "storm-surge": 1.2 } },
+      { name: "Gwadar East Bay Harbor", coordinates: [25.13, 62.33], riskOffsets: { "storm-surge": 1.3 } },
+      { name: "Pasni Jetty & Port", coordinates: [25.25, 63.48], riskOffsets: { "storm-surge": 1.4 } },
+      { name: "Ormara East Bay Jetty", coordinates: [25.20, 64.64], riskOffsets: { "storm-surge": 1.1 } }
+    ],
+    Lasbela: [
+      { name: "Sonmiani Port Harbor", coordinates: [25.41, 66.59], riskOffsets: { "storm-surge": 1.3 } },
+      { name: "Damb Fishing Jetty", coordinates: [25.45, 66.57], riskOffsets: { "storm-surge": 1.2 } },
+      { name: "Gadani Shipyard Breakwater", coordinates: [24.96, 66.72], riskOffsets: { "storm-surge": 1.4 } },
+      { name: "Kund Malir Bay Area", coordinates: [25.38, 65.45], riskOffsets: { "storm-surge": 1.1 } }
+    ]
+  },
+  "coastal-erosion": {
+    Gwadar: [
+      { name: "Jiwani Sand Beach", coordinates: [25.04, 61.78], riskOffsets: { "coastal-erosion": 1.3 } },
+      { name: "Gwadar West Bay Spit (Paddi Zirr)", coordinates: [25.10, 62.28], riskOffsets: { "coastal-erosion": 1.4 } },
+      { name: "Gwadar Tombolo Neck Spit", coordinates: [25.14, 62.31], riskOffsets: { "coastal-erosion": 1.5 } },
+      { name: "Ormara Sandy Spit", coordinates: [25.19, 64.60], riskOffsets: { "coastal-erosion": 1.2 } }
+    ],
+    Lasbela: [
+      { name: "Gadani Beach Resort Coast", coordinates: [24.98, 66.73], riskOffsets: { "coastal-erosion": 1.5 } },
+      { name: "Sonmiani Barrier Sand Spit", coordinates: [25.39, 66.55], riskOffsets: { "coastal-erosion": 1.4 } },
+      { name: "Kund Malir Active Beach", coordinates: [25.39, 65.46], riskOffsets: { "coastal-erosion": 1.3 } },
+      { name: "Miani Hor Mangrove Spit", coordinates: [25.48, 66.45], riskOffsets: { "coastal-erosion": 0.8 } }
+    ]
+  },
+  "tsunami-risk": {
+    Gwadar: [
+      { name: "Jiwani Low-lying Coast", coordinates: [25.05, 61.76], riskOffsets: { "tsunami-risk": 1.2 } },
+      { name: "Gwadar Tombolo Lowland", coordinates: [25.14, 62.32], riskOffsets: { "tsunami-risk": 1.4 } },
+      { name: "Pasni Town (1945 Epicenter proximity)", coordinates: [25.26, 63.48], riskOffsets: { "tsunami-risk": 1.6 } },
+      { name: "Ormara City Lowland", coordinates: [25.21, 64.62], riskOffsets: { "tsunami-risk": 1.2 } }
+    ],
+    Lasbela: [
+      { name: "Sonmiani Lagoon Coastal Flats", coordinates: [25.42, 66.58], riskOffsets: { "tsunami-risk": 1.2 } },
+      { name: "Gadani Coastal Settlements", coordinates: [24.97, 66.72], riskOffsets: { "tsunami-risk": 1.1 } },
+      { name: "Kund Malir Coastline", coordinates: [25.39, 65.46], riskOffsets: { "tsunami-risk": 1.0 } },
+      { name: "Sujawal Tidal Flats", coordinates: [25.25, 66.75], riskOffsets: { "tsunami-risk": 1.3 } }
+    ]
+  },
+  "sea-level-rise": {
+    Gwadar: [
+      { name: "Jiwani Tide Station", coordinates: [24.95, 61.75], riskOffsets: { "sea-level-rise": 1.0 } },
+      { name: "Gwadar Deep Sea Sensor", coordinates: [25.05, 62.35], riskOffsets: { "sea-level-rise": 1.0 } },
+      { name: "Pasni Offshore Gauge", coordinates: [25.15, 63.45], riskOffsets: { "sea-level-rise": 1.0 } },
+      { name: "Ormara Marine Gauge", coordinates: [25.10, 64.60], riskOffsets: { "sea-level-rise": 1.0 } }
+    ],
+    Lasbela: [
+      { name: "Gadani Deep Offshore", coordinates: [24.90, 66.65], riskOffsets: { "sea-level-rise": 1.0 } },
+      { name: "Sonmiani Harbor Sensor", coordinates: [25.35, 66.50], riskOffsets: { "sea-level-rise": 1.0 } },
+      { name: "Kund Malir Deepsea Node", coordinates: [25.25, 65.40], riskOffsets: { "sea-level-rise": 1.0 } },
+      { name: "Hingol River Mouth Sensor", coordinates: [25.37, 65.47], riskOffsets: { "sea-level-rise": 1.0 } }
+    ]
+  },
+  "safe-zones": {
+    Gwadar: [
+      { name: "Jiwani Plateau Shelter", coordinates: [25.07, 61.74], riskOffsets: { "safe-zones": 1.3 } },
+      { name: "Koh-e-Batil High Ground (Gwadar)", coordinates: [25.10, 62.30], riskOffsets: { "safe-zones": 1.5 } },
+      { name: "Pasni Inland Hills", coordinates: [25.30, 63.45], riskOffsets: { "safe-zones": 1.2 } },
+      { name: "Ormara Hammerhead Plateau", coordinates: [25.17, 64.62], riskOffsets: { "safe-zones": 1.4 } }
+    ],
+    Lasbela: [
+      { name: "Uthal Evacuation Center", coordinates: [25.82, 66.64], riskOffsets: { "safe-zones": 1.5 } },
+      { name: "Gadani Hinterland Hills", coordinates: [24.99, 66.75], riskOffsets: { "safe-zones": 1.2 } },
+      { name: "Hingol National Park High Ground", coordinates: [25.45, 65.50], riskOffsets: { "safe-zones": 1.3 } },
+      { name: "Windar Town Evacuation Point", coordinates: [25.40, 66.72], riskOffsets: { "safe-zones": 1.4 } }
+    ]
+  }
 };
 
 interface DashboardMapProps {
@@ -158,7 +231,10 @@ export default function DashboardMap({
             region.district.toLowerCase() === selectedDistrict.toLowerCase();
 
           const baseValue = getRegionBaseValue(region.id);
-          const hotspots = DISTRICT_HOTSPOTS[region.district] || [];
+          
+          // Fetch dynamic hotspots for the selected analysis or fallback to vulnerability index
+          const hazardGroup = HAZARD_HOTSPOTS[selectedAnalysis] || HAZARD_HOTSPOTS["vulnerability-index"];
+          const hotspots = hazardGroup[region.district] || [];
 
           return (
             <Fragment key={`${region.id}-${visibleLayers.join(",")}-${selectedAnalysis}-${selectedYear}`}>
