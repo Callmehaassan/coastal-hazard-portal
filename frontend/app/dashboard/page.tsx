@@ -1299,6 +1299,7 @@ export default function DashboardPage() {
                   selectedAnalysis={selectedAnalysis}
                   selectedYear={selectedYear}
                   hazardData={hazardData}
+                  selectedDistrict={selectedDistrict}
                 />
               </div>
 
