@@ -12,18 +12,19 @@ from models.hazard_reading import HazardIndexReading
 from models.region import Region
 
 
-def export_readings_csv(db: Session, region_id: int, year_start: int, year_end: int) -> io.StringIO:
-    rows = (
-        db.query(HazardIndexReading, Region.name)
-        .join(Region, Region.id == HazardIndexReading.region_id)
-        .filter(
-            HazardIndexReading.region_id == region_id,
-            HazardIndexReading.year >= year_start,
-            HazardIndexReading.year <= year_end,
-        )
-        .order_by(HazardIndexReading.year)
-        .all()
+def export_readings_csv(db: Session, region_id: int | None, hazard_type: str | None, year_start: int, year_end: int) -> io.StringIO:
+    query = db.query(HazardIndexReading, Region.name).join(Region, Region.id == HazardIndexReading.region_id)
+    
+    if region_id is not None and region_id > 0:
+        query = query.filter(HazardIndexReading.region_id == region_id)
+    if hazard_type:
+        query = query.filter(HazardIndexReading.hazard_type == hazard_type)
+        
+    query = query.filter(
+        HazardIndexReading.year >= year_start,
+        HazardIndexReading.year <= year_end,
     )
+    rows = query.order_by(Region.name, HazardIndexReading.hazard_type, HazardIndexReading.year).all()
 
     buffer = io.StringIO()
     writer = csv.writer(buffer)
@@ -44,23 +45,24 @@ def export_readings_csv(db: Session, region_id: int, year_start: int, year_end: 
     return buffer
 
 
-def export_readings_pdf(db: Session, region_id: int, year_start: int, year_end: int) -> io.BytesIO:
+def export_readings_pdf(db: Session, region_id: int | None, hazard_type: str | None, year_start: int, year_end: int) -> io.BytesIO:
     """Minimal PDF export - table of readings. Styling deferred to the frontend-design pass."""
     from reportlab.lib import colors
     from reportlab.lib.pagesizes import A4
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 
-    rows = (
-        db.query(HazardIndexReading, Region.name)
-        .join(Region, Region.id == HazardIndexReading.region_id)
-        .filter(
-            HazardIndexReading.region_id == region_id,
-            HazardIndexReading.year >= year_start,
-            HazardIndexReading.year <= year_end,
-        )
-        .order_by(HazardIndexReading.year)
-        .all()
+    query = db.query(HazardIndexReading, Region.name).join(Region, Region.id == HazardIndexReading.region_id)
+    
+    if region_id is not None and region_id > 0:
+        query = query.filter(HazardIndexReading.region_id == region_id)
+    if hazard_type:
+        query = query.filter(HazardIndexReading.hazard_type == hazard_type)
+        
+    query = query.filter(
+        HazardIndexReading.year >= year_start,
+        HazardIndexReading.year <= year_end,
     )
+    rows = query.order_by(Region.name, HazardIndexReading.hazard_type, HazardIndexReading.year).all()
 
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=A4)

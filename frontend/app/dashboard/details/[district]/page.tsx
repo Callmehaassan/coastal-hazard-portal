@@ -137,45 +137,67 @@ const getSimulatedData = (districtName: string) => {
       { year: 2024, flooding: 2200, surge: 180, erosion: 16, seaLevel: 8.4 },
       { year: 2025, flooding: 2700, surge: 210, erosion: 23, seaLevel: 8.6 },
     ],
-  };
-};
-export default function DistrictDetailsPage({ params }: { params: { district: string } }) {
+  }export default function DistrictDetailsPage({ params }: { params: { district: string } }) {
   const searchParams = useSearchParams();
   const rawHazard = searchParams?.get("hazard") || "flooding";
   
-  const activeHazard = rawHazard === 'coastal-erosion' ? 'erosion' : rawHazard === 'storm-surge' ? 'surge' : rawHazard === 'sea-level-rise' || rawHazard === 'vulnerability-index' ? 'seaLevel' : 'flooding';
+  const activeHazard = rawHazard;
 
   const getHazardConfig = (hazard: string) => {
     switch (hazard) {
-      case "surge":
+      case "storm-surge":
         return {
-          title: "Historical Storm Surge Height (m)",
+          title: "Historical Storm Surge Inundated Area (km²)",
           color: "#f59e0b",
-          dataKey: "surge",
-          unit: "m",
+          dataKey: "storm-surge",
+          unit: "km²",
           gradId: "surgeGradDetails",
         };
-      case "erosion":
+      case "coastal-erosion":
         return {
           title: "Historical Shoreline Erosion Rate (m/yr)",
-          color: "#10b981",
-          dataKey: "erosion",
+          color: "#ef4444",
+          dataKey: "coastal-erosion",
           unit: "m/yr",
           gradId: "erosionGradDetails",
         };
-      case "seaLevel":
+      case "sea-level-rise":
         return {
           title: "Historical Sea Level Anomaly (mm/yr)",
-          color: "#38bdf8",
-          dataKey: "seaLevel",
+          color: "#06b6d4",
+          dataKey: "sea-level-rise",
           unit: "mm/yr",
           gradId: "seaLevelGradDetails",
+        };
+      case "vulnerability-index":
+        return {
+          title: "Historical Vulnerability Index (CVI)",
+          color: "#10b981",
+          dataKey: "vulnerability-index",
+          unit: "index",
+          gradId: "cviGradDetails",
+        };
+      case "tsunami-risk":
+        return {
+          title: "Historical Tsunami Run-up Risk Index",
+          color: "#8b5cf6",
+          dataKey: "tsunami-risk",
+          unit: "index",
+          gradId: "tsunamiGradDetails",
+        };
+      case "safe-zones":
+        return {
+          title: "Historical Safe Zones Evacuation Capacity (km²)",
+          color: "#3b82f6",
+          dataKey: "safe-zones",
+          unit: "km²",
+          gradId: "safeZonesGradDetails",
         };
       case "flooding":
       default:
         return {
           title: "Historical Inundated Area Timeline (km²)",
-          color: "#06b6d4",
+          color: "#22d3ee",
           dataKey: "flooding",
           unit: "km²",
           gradId: "floodGradDetails",
@@ -226,19 +248,28 @@ export default function DistrictDetailsPage({ params }: { params: { district: st
           getHazards("erosion", districtFilter),
           getHazards("sea-level", districtFilter),
           getHazards("vulnerability-index", districtFilter),
-        ]).then(([floodRes, surgeRes, erosionRes, slRes, cviRes]) => {
+          getHazards("tsunami-risk", districtFilter),
+          getHazards("safe-zones", districtFilter),
+        ]).then(([floodRes, surgeRes, erosionRes, slRes, cviRes, tsunamiRes, safeZonesRes]) => {
           const years = Array.from({ length: 10 }, (_, i) => 2016 + i);
           const compiled = years.map((year) => {
             const floodVal = floodRes.find((item) => item.year === year)?.value ?? 0;
             const surgeVal = surgeRes.find((item) => item.year === year)?.value ?? 0;
             const erosionVal = erosionRes.find((item) => item.year === year)?.value ?? 0;
             const slVal = slRes.find((item) => item.year === year)?.value ?? 0;
+            const cviVal = cviRes.find((item) => item.year === year)?.value ?? 0;
+            const tsunamiVal = tsunamiRes.find((item) => item.year === year)?.value ?? 0;
+            const safeZonesVal = safeZonesRes.find((item) => item.year === year)?.value ?? 0;
+            
             return {
               year,
               flooding: Number(floodVal.toFixed(1)),
-              surge: Number(surgeVal.toFixed(2)),
-              erosion: Math.abs(Number(erosionVal.toFixed(2))),
-              seaLevel: Number(slVal.toFixed(2)),
+              "storm-surge": Number(surgeVal.toFixed(2)),
+              "coastal-erosion": Math.abs(Number(erosionVal.toFixed(2))),
+              "sea-level-rise": Number(slVal.toFixed(2)),
+              "vulnerability-index": Number(cviVal.toFixed(2)),
+              "tsunami-risk": Number(tsunamiVal.toFixed(2)),
+              "safe-zones": Number(safeZonesVal.toFixed(1)),
             };
           });
           setHistoryData(compiled);
@@ -248,9 +279,9 @@ export default function DistrictDetailsPage({ params }: { params: { district: st
 
           if (isAll) {
             setMetaData({
-              population: "450,000",
-              area: "9,200 km²",
-              coastline: "120 km",
+              population: "837,792", // Gwadar + Lasbela combined
+              area: "27,790 km²",   // Gwadar + Lasbela combined
+              coastline: "430 km",  // Gwadar + Lasbela combined
               riskLevel,
             });
           } else if (match) {
@@ -267,16 +298,18 @@ export default function DistrictDetailsPage({ params }: { params: { district: st
   }, [districtName]);
 
   const handleExport = async (format: "csv" | "pdf") => {
-    const regionId = matchedRegion?.id ?? 1;
+    const isAll = districtName.toLowerCase() === "all";
+    const regionId = isAll ? null : (matchedRegion?.id ?? null);
     setExportLoading((prev) => ({ ...prev, [format]: true }));
     try {
-      const blob = await exportReport(regionId, format, 2016, 2025);
+      const blob = await exportReport(regionId, format, 2016, 2025, activeHazard);
       const url = URL.createObjectURL(blob);
       setDownloadUrl((prev) => ({ ...prev, [format]: url }));
 
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${districtName.toLowerCase()}_report_2016_2025.${format}`;
+      const downloadName = `${districtName.toLowerCase()}_${activeHazard}_report_2016_2025.${format}`;
+      a.download = downloadName;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -445,10 +478,10 @@ export default function DistrictDetailsPage({ params }: { params: { district: st
 
           {/* Dynamic Comparison Timeline */}
           {(() => {
-            const showInundationSurge = activeHazard === 'erosion' || activeHazard === 'seaLevel';
-            const compTitle = showInundationSurge 
-              ? "Coastal Flooding (km²) vs Storm Surge Height (m)"
-              : "Shoreline Erosion Rate (m/yr) vs Sea Level Anomaly (mm/yr)";
+            const isWetHazard = ['flooding', 'storm-surge', 'tsunami-risk', 'safe-zones'].includes(activeHazard);
+            const compTitle = isWetHazard
+              ? "Long-Term Trends: Shoreline Erosion (m/yr) vs Sea Level (mm/yr)"
+              : "Extreme Event Trends: Flooding (km²) vs Storm Surge (km²)";
             
             return (
               <section className="glass p-5 flex flex-col border-white/10 bg-[#0f172a]/30 hover:bg-[#0f172a]/45 transition shadow-glass-inner min-h-[300px]">
@@ -463,15 +496,15 @@ export default function DistrictDetailsPage({ params }: { params: { district: st
                       <XAxis dataKey="year" stroke="rgba(255,255,255,0.3)" interval={0} />
                       <YAxis stroke="rgba(255,255,255,0.3)" />
                       <Tooltip contentStyle={{ backgroundColor: "#070e1b", borderColor: "rgba(255,255,255,0.1)", borderRadius: "8px" }} />
-                      {showInundationSurge ? (
+                      {isWetHazard ? (
                         <>
-                          <Bar dataKey="flooding" fill="#06b6d4" name="Flooding (km²)" fillOpacity={0.75} radius={[2, 2, 0, 0]} />
-                          <Bar dataKey="surge" fill="#f59e0b" name="Storm Surge Height (m)" fillOpacity={0.75} radius={[2, 2, 0, 0]} />
+                          <Bar dataKey="coastal-erosion" fill="#ef4444" name="Erosion Rate (m/yr)" fillOpacity={0.75} radius={[2, 2, 0, 0]} />
+                          <Bar dataKey="sea-level-rise" fill="#06b6d4" name="Sea Level (mm/yr)" fillOpacity={0.75} radius={[2, 2, 0, 0]} />
                         </>
                       ) : (
                         <>
-                          <Bar dataKey="erosion" fill="#10b981" name="Erosion Rate (m/yr)" fillOpacity={0.75} radius={[2, 2, 0, 0]} />
-                          <Bar dataKey="seaLevel" fill="#38bdf8" name="Sea Level (mm/yr)" fillOpacity={0.75} radius={[2, 2, 0, 0]} />
+                          <Bar dataKey="flooding" fill="#06b6d4" name="Flooding (km²)" fillOpacity={0.75} radius={[2, 2, 0, 0]} />
+                          <Bar dataKey="storm-surge" fill="#f59e0b" name="Storm Surge Area (km²)" fillOpacity={0.75} radius={[2, 2, 0, 0]} />
                         </>
                       )}
                     </BarChart>
@@ -522,10 +555,10 @@ export default function DistrictDetailsPage({ params }: { params: { district: st
                   CSV Generated: &nbsp;
                   <a
                     href={downloadUrl.csv}
-                    download={`${districtName.toLowerCase()}_report_2016_2025.csv`}
+                    download={`${districtName.toLowerCase()}_${activeHazard}_report_2016_2025.csv`}
                     className="text-cyan-400 underline hover:text-cyan-300 font-medium"
                   >
-                    {districtName.toLowerCase()}_report_2016_2025.csv
+                    {`${districtName.toLowerCase()}_${activeHazard}_report_2016_2025.csv`}
                   </a>
                 </p>
               )}
@@ -535,10 +568,10 @@ export default function DistrictDetailsPage({ params }: { params: { district: st
                   PDF Report Generated: &nbsp;
                   <a
                     href={downloadUrl.pdf}
-                    download={`${districtName.toLowerCase()}_report_2016_2025.pdf`}
+                    download={`${districtName.toLowerCase()}_${activeHazard}_report_2016_2025.pdf`}
                     className="text-cyan-400 underline hover:text-cyan-300 font-medium"
                   >
-                    {districtName.toLowerCase()}_report_2016_2025.pdf
+                    {`${districtName.toLowerCase()}_${activeHazard}_report_2016_2025.pdf`}
                   </a>
                 </p>
               )}
