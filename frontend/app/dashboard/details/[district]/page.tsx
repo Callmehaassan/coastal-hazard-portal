@@ -136,6 +136,7 @@ const getSimulatedData = (districtName: string) => {
       { year: 2023, flooding: 1800, surge: 150, erosion: 11, seaLevel: 8.2 },
       { year: 2024, flooding: 2200, surge: 180, erosion: 16, seaLevel: 8.4 },
       { year: 2025, flooding: 2700, surge: 210, erosion: 23, seaLevel: 8.6 },
+    ],
   };
 };
 
