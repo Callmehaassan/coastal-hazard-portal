@@ -1311,28 +1311,8 @@ export default function DashboardPage() {
                 const displayName = (isAllDistricts || !currentRegion) ? 'All Coastal Districts' : currentRegion.district;
                 
                 // Get display values
-                let displayVal = '0';
-                if (isAllDistricts) {
-                  if (currentConfig.unit === 'km²') {
-                    if (selectedAnalysis === 'flooding') {
-                      displayVal = getDynamicMetric('flooding').valueStr;
-                    } else if (selectedAnalysis === 'storm-surge') {
-                      // Storm surge area is calculated dynamically from GEE metrics
-                      const val = getDynamicMetric('flooding').valueStr;
-                      displayVal = val;
-                    } else {
-                      displayVal = getDynamicMetric('erosion').valueStr;
-                    }
-                  } else if (selectedAnalysis === 'storm-surge') {
-                    displayVal = 'Moderate to High';
-                  } else if (selectedAnalysis === 'coastal-erosion') {
-                    displayVal = getDynamicMetric('erosion').valueStr;
-                  } else {
-                    displayVal = getDynamicMetric('seaLevel').valueStr;
-                  }
-                } else {
-                  displayVal = currentRegion ? `${getLatestValue()} ${currentConfig.unit}` : '0';
-                }
+                const latestVal = getLatestValue();
+                const displayVal = `${latestVal.toFixed(currentConfig.unit === 'km²' ? 1 : 2)} ${currentConfig.unit}`;
 
                 return (
                   <div className="absolute bottom-8 right-32 z-10 bg-[#070e1b]/95 border border-white/10 p-3 rounded-xl backdrop-blur-md text-xs w-[210px] pointer-events-auto shadow-2xl animate-in fade-in zoom-in-95 duration-200">
