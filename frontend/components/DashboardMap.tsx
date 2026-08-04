@@ -320,7 +320,7 @@ export default function DashboardMap({
                           </tbody>
                         </table>
                         <Link
-                          href={`/dashboard/details/${region.district.toLowerCase()}?hazard=${selectedAnalysis}`}
+                          href={`/dashboard/details/${region.district.toLowerCase()}?hazard=${selectedAnalysis}&hotspot=${encodeURIComponent(spot.name)}`}
                           className="mt-2 text-xs text-center w-full font-bold text-cyan-600 hover:text-cyan-800 flex items-center justify-center gap-1 block"
                         >
                           View Details &rarr;

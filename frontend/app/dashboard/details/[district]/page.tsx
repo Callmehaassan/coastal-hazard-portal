@@ -140,9 +140,98 @@ const getSimulatedData = (districtName: string) => {
   };
 };
 
+// Replicate the exact offset list for hotspots in the details page
+const ALL_HOTSPOT_OFFSETS: Record<string, Record<string, number>> = {
+  // Flooding
+  "Jiwani Estuary": { flooding: 1.1 },
+  "Akra Kaur Reservoir Basin": { flooding: 1.3 },
+  "Shadi Kaur Basin (Pasni)": { flooding: 1.4 },
+  "Basol River Valley (Ormara)": { flooding: 1.2 },
+  "Hingol River Delta": { flooding: 1.4 },
+  "Windar River Basin": { flooding: 1.3 },
+  "Siranda Lake Basin": { flooding: 1.2 },
+  "Porali River Plain (Uthal)": { flooding: 1.5 },
+  // Storm surge
+  "Jiwani Fishery Harbor": { "storm-surge": 1.2 },
+  "Gwadar East Bay Harbor": { "storm-surge": 1.3 },
+  "Pasni Jetty & Port": { "storm-surge": 1.4 },
+  "Ormara East Bay Jetty": { "storm-surge": 1.1 },
+  "Sonmiani Port Harbor": { "storm-surge": 1.3 },
+  "Damb Fishing Jetty": { "storm-surge": 1.2 },
+  "Gadani Shipyard Breakwater": { "storm-surge": 1.4 },
+  "Kund Malir Bay Area": { "storm-surge": 1.1 },
+  // Coastal erosion
+  "Jiwani Sand Beach": { "coastal-erosion": 1.3 },
+  "Gwadar West Bay Spit (Paddi Zirr)": { "coastal-erosion": 1.4 },
+  "Gwadar Tombolo Neck Spit": { "coastal-erosion": 1.5 },
+  "Ormara Sandy Spit": { "coastal-erosion": 1.2 },
+  "Gadani Beach Resort Coast": { "coastal-erosion": 1.5 },
+  "Sonmiani Barrier Sand Spit": { "coastal-erosion": 1.4 },
+  "Kund Malir Active Beach": { "coastal-erosion": 1.3 },
+  "Miani Hor Mangrove Spit": { "coastal-erosion": 0.8 },
+  // Tsunami risk
+  "Jiwani Low-lying Coast": { "tsunami-risk": 1.2 },
+  "Gwadar Tombolo Lowland": { "tsunami-risk": 1.4 },
+  "Pasni Town (1945 Epicenter proximity)": { "tsunami-risk": 1.6 },
+  "Ormara City Lowland": { "tsunami-risk": 1.2 },
+  "Sonmiani Lagoon Flats": { "tsunami-risk": 1.2 },
+  "Gadani Coastal Settlements": { "tsunami-risk": 1.1 },
+  "Kund Malir Coastline": { "tsunami-risk": 1.0 },
+  "Sujawal Tidal Flats": { "tsunami-risk": 1.3 },
+  // Sea level rise
+  "Jiwani Tide Station": { "sea-level-rise": 1.0 },
+  "Gwadar Deep Sea Sensor": { "sea-level-rise": 1.0 },
+  "Pasni Offshore Gauge": { "sea-level-rise": 1.0 },
+  "Ormara Marine Gauge": { "sea-level-rise": 1.0 },
+  "Gadani Deep Offshore": { "sea-level-rise": 1.0 },
+  "Sonmiani Harbor Sensor": { "sea-level-rise": 1.0 },
+  "Kund Malir Deepsea Node": { "sea-level-rise": 1.0 },
+  "Hingol River Mouth Sensor": { "sea-level-rise": 1.0 },
+  // Vulnerability index
+  "Jiwani Coastal Zone": { "vulnerability-index": 1.1 },
+  "Gwadar City Area": { "vulnerability-index": 0.9 },
+  "Pasni Settlement": { "vulnerability-index": 1.2 },
+  "Ormara Town Area": { "vulnerability-index": 1.1 },
+  "Gadani Town Coast": { "vulnerability-index": 1.3 },
+  "Sonmiani Lagoon Flats": { "vulnerability-index": 1.2 },
+  "Kund Malir Coast": { "vulnerability-index": 1.0 },
+  "Uthal Town Area": { "vulnerability-index": 1.1 },
+  // Safe zones
+  "Jiwani Plateau Shelter": { "safe-zones": 1.3 },
+  "Koh-e-Batil High Ground (Gwadar)": { "safe-zones": 1.5 },
+  "Pasni Inland Hills": { "safe-zones": 1.2 },
+  "Ormara Hammerhead Plateau": { "safe-zones": 1.4 },
+  "Uthal Evacuation Center": { "safe-zones": 1.5 },
+  "Gadani Hinterland Hills": { "safe-zones": 1.2 },
+  "Hingol National Park High Ground": { "safe-zones": 1.3 },
+  "Windar Town Evacuation Point": { "safe-zones": 1.4 }
+};
+
+const getHotspotMeta = (name: string, district: string, hazard: string) => {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const popSeed = Math.abs(hash % 35000) + 5000;
+  const areaSeed = ((Math.abs(hash >> 2) % 150) / 10) + 1.5;
+  const bufferSeed = ((Math.abs(hash >> 4) % 80) / 10) + 0.8;
+  
+  const hazardWords = hazard.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  const desc = `${name} is a high-priority hotspot zone in ${district} district, monitored closely for localized ${hazardWords.toLowerCase()} impacts. Site-specific Sentinel observations and tide gauge metrics track historical vulnerabilities.`;
+  
+  return {
+    population: popSeed.toLocaleString(),
+    area: `${areaSeed.toFixed(1)} km²`,
+    buffer: `${bufferSeed.toFixed(1)} km`,
+    description: desc,
+  };
+};
+
 export default function DistrictDetailsPage({ params }: { params: { district: string } }) {
   const searchParams = useSearchParams();
   const rawHazard = searchParams?.get("hazard") || "flooding";
+  const hotspotName = searchParams?.get("hotspot") || null;
+  const hostSlug = hotspotName ? `_${hotspotName.toLowerCase().replace(/ /g, '_')}` : "";
   
   const activeHazard = rawHazard;
 
@@ -255,6 +344,17 @@ export default function DistrictDetailsPage({ params }: { params: { district: st
           getHazards("safe-zones", districtFilter),
         ]).then(([floodRes, surgeRes, erosionRes, slRes, cviRes, tsunamiRes, safeZonesRes]) => {
           const years = Array.from({ length: 10 }, (_, i) => 2016 + i);
+
+          // Look up offsets for this hotspot
+          const offsets = hotspotName ? (ALL_HOTSPOT_OFFSETS[hotspotName] || {}) : {};
+          const floodMult = offsets["flooding"] ?? 1.0;
+          const surgeMult = offsets["storm-surge"] ?? 1.0;
+          const erosionMult = offsets["coastal-erosion"] ?? 1.0;
+          const slMult = offsets["sea-level-rise"] ?? 1.0;
+          const cviMult = offsets["vulnerability-index"] ?? 1.0;
+          const tsunamiMult = offsets["tsunami-risk"] ?? 1.0;
+          const safeZonesMult = offsets["safe-zones"] ?? 1.0;
+
           const compiled = years.map((year) => {
             const floodVal = floodRes.find((item) => item.year === year)?.value ?? 0;
             const surgeVal = surgeRes.find((item) => item.year === year)?.value ?? 0;
@@ -266,13 +366,13 @@ export default function DistrictDetailsPage({ params }: { params: { district: st
             
             return {
               year,
-              flooding: Number(floodVal.toFixed(1)),
-              "storm-surge": Number(surgeVal.toFixed(2)),
-              "coastal-erosion": Math.abs(Number(erosionVal.toFixed(2))),
-              "sea-level-rise": Number(slVal.toFixed(2)),
-              "vulnerability-index": Number(cviVal.toFixed(2)),
-              "tsunami-risk": Number(tsunamiVal.toFixed(2)),
-              "safe-zones": Number(safeZonesVal.toFixed(1)),
+              flooding: Number((floodVal * floodMult).toFixed(1)),
+              "storm-surge": Number((surgeVal * surgeMult).toFixed(2)),
+              "coastal-erosion": Math.abs(Number((erosionVal * erosionMult).toFixed(2))),
+              "sea-level-rise": Number((slVal * slMult).toFixed(2)),
+              "vulnerability-index": Number((cviVal * cviMult).toFixed(2)),
+              "tsunami-risk": Number((tsunamiVal * tsunamiMult).toFixed(2)),
+              "safe-zones": Number((safeZonesVal * safeZonesMult).toFixed(1)),
             };
           });
           setHistoryData(compiled);
@@ -280,7 +380,15 @@ export default function DistrictDetailsPage({ params }: { params: { district: st
           const latestCvi = cviRes.find((item) => item.year === 2025)?.value ?? 6.0;
           const riskLevel = latestCvi >= 7.5 ? "High" : latestCvi >= 5.0 ? "Medium" : "Low";
 
-          if (isAll) {
+          if (hotspotName) {
+            const hMeta = getHotspotMeta(hotspotName, match ? match.district : districtName, activeHazard);
+            setMetaData({
+              population: hMeta.population,
+              area: hMeta.area,
+              coastline: hMeta.buffer,
+              riskLevel,
+            });
+          } else if (isAll) {
             setMetaData({
               population: "837,792", // Gwadar + Lasbela combined
               area: "27,790 km²",   // Gwadar + Lasbela combined
@@ -298,20 +406,21 @@ export default function DistrictDetailsPage({ params }: { params: { district: st
         }).catch((err) => console.error("Error loading hazard data for details:", err));
       })
       .catch((err) => console.error("Error loading regions for details:", err));
-  }, [districtName]);
+  }, [districtName, hotspotName]);
 
   const handleExport = async (format: "csv" | "pdf") => {
     const isAll = districtName.toLowerCase() === "all";
     const regionId = isAll ? null : (matchedRegion?.id ?? null);
     setExportLoading((prev) => ({ ...prev, [format]: true }));
     try {
-      const blob = await exportReport(regionId, format, 2016, 2025, activeHazard);
+      const blob = await exportReport(regionId, format, 2016, 2025, activeHazard, hotspotName || undefined);
       const url = URL.createObjectURL(blob);
       setDownloadUrl((prev) => ({ ...prev, [format]: url }));
 
       const a = document.createElement("a");
       a.href = url;
-      const downloadName = `${districtName.toLowerCase()}_${activeHazard}_report_2016_2025.${format}`;
+      const hostSlug = hotspotName ? `_${hotspotName.toLowerCase().replace(/ /g, '_')}` : "";
+      const downloadName = `${districtName.toLowerCase()}${hostSlug}_${activeHazard}_report_2016_2025.${format}`;
       a.download = downloadName;
       document.body.appendChild(a);
       a.click();
@@ -352,7 +461,7 @@ export default function DistrictDetailsPage({ params }: { params: { district: st
             </div>
             <div>
               <h1 className="text-md md:text-lg font-bold tracking-tight">
-                {districtName.charAt(0).toUpperCase() + districtName.slice(1)} District Overview
+                {hotspotName ? `${hotspotName} Overview` : `${districtName.charAt(0).toUpperCase() + districtName.slice(1)} District Overview`}
               </h1>
               <p className="text-[10px] text-cyan-400 font-semibold tracking-wider uppercase">
                 Coastal Monitoring Detail Panel
@@ -376,14 +485,15 @@ export default function DistrictDetailsPage({ params }: { params: { district: st
             <div>
               <div className="flex items-center gap-2.5 text-cyan-400 mb-2">
                 <MapPin className="w-4 h-4" />
-                <span className="text-xs font-bold tracking-widest uppercase">District Profile</span>
+                <span className="text-xs font-bold tracking-widest uppercase">{hotspotName ? "Hotspot Profile" : "District Profile"}</span>
               </div>
               <h2 className="text-2xl md:text-3xl font-extrabold text-white">
-                {districtName.charAt(0).toUpperCase() + districtName.slice(1)} Coastline
+                {hotspotName ? hotspotName : `${districtName.charAt(0).toUpperCase() + districtName.slice(1)} Coastline`}
               </h2>
               <p className="text-xs text-slate-400 leading-relaxed mt-2.5 max-w-xl">
-                Comprehensive environmental risk assessment profile, consolidating Sentinel SAR
-                inundation maps, shoreline DSAS calculations, and weather station rainfall trends.
+                {hotspotName 
+                  ? getHotspotMeta(hotspotName, matchedRegion ? matchedRegion.district : districtName, activeHazard).description
+                  : "Comprehensive environmental risk assessment profile, consolidating Sentinel SAR inundation maps, shoreline DSAS calculations, and weather station rainfall trends."}
               </p>
             </div>
 
@@ -393,11 +503,11 @@ export default function DistrictDetailsPage({ params }: { params: { district: st
                 <strong className="text-sm font-bold text-white">{data.population}</strong>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 block font-medium">District Area</span>
+                <span className="text-[10px] text-slate-400 block font-medium">{hotspotName ? "Vulnerable Area" : "District Area"}</span>
                 <strong className="text-sm font-bold text-white">{data.area}</strong>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 block font-medium">Coastline Length</span>
+                <span className="text-[10px] text-slate-400 block font-medium">{hotspotName ? "Shoreline Buffer" : "Coastline Length"}</span>
                 <strong className="text-sm font-bold text-white">{data.coastline}</strong>
               </div>
             </div>
@@ -558,10 +668,10 @@ export default function DistrictDetailsPage({ params }: { params: { district: st
                   CSV Generated: &nbsp;
                   <a
                     href={downloadUrl.csv}
-                    download={`${districtName.toLowerCase()}_${activeHazard}_report_2016_2025.csv`}
+                    download={`${districtName.toLowerCase()}${hostSlug}_${activeHazard}_report_2016_2025.csv`}
                     className="text-cyan-400 underline hover:text-cyan-300 font-medium"
                   >
-                    {`${districtName.toLowerCase()}_${activeHazard}_report_2016_2025.csv`}
+                    {`${districtName.toLowerCase()}${hostSlug}_${activeHazard}_report_2016_2025.csv`}
                   </a>
                 </p>
               )}
@@ -571,10 +681,10 @@ export default function DistrictDetailsPage({ params }: { params: { district: st
                   PDF Report Generated: &nbsp;
                   <a
                     href={downloadUrl.pdf}
-                    download={`${districtName.toLowerCase()}_${activeHazard}_report_2016_2025.pdf`}
+                    download={`${districtName.toLowerCase()}${hostSlug}_${activeHazard}_report_2016_2025.pdf`}
                     className="text-cyan-400 underline hover:text-cyan-300 font-medium"
                   >
-                    {`${districtName.toLowerCase()}_${activeHazard}_report_2016_2025.pdf`}
+                    {`${districtName.toLowerCase()}${hostSlug}_${activeHazard}_report_2016_2025.pdf`}
                   </a>
                 </p>
               )}

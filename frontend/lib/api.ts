@@ -29,7 +29,8 @@ export async function exportReport(
   format: string,
   yearStart: number,
   yearEnd: number,
-  hazardType?: string
+  hazardType?: string,
+  hotspot?: string
 ): Promise<Blob> {
   // Use the frontend proxy route for all formats
   const response = await fetch('/api/reports/export', {
@@ -43,6 +44,7 @@ export async function exportReport(
       year_start: yearStart,
       year_end: yearEnd,
       hazard_type: hazardType,
+      hotspot,
     }),
   });
   
