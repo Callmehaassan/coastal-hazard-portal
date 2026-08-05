@@ -358,14 +358,15 @@ def _run_vulnerability_index(db, regions: list[Region], year_start: int, year_en
             cvi = min(10.0, max(1.0, round(cvi, 2)))
             
             reading_data = HazardReadingCreate(
+                region_id=region.id,
                 hazard_type=HazardType.VULNERABILITY_INDEX,
                 year=year,
                 value=cvi,
                 unit="index_0_10",
-                data_quality="verified",
+                data_quality="good",
                 source_scene_date=f"{year}-12-31"
             )
-            ingest_hazard_reading(db, region.id, reading_data)
+            ingest_hazard_reading(db, reading_data)
             created += 1
     return created
 
@@ -387,14 +388,15 @@ def _run_safe_zones(db, regions: list[Region], year_start: int, year_end: int) -
             capacity = round(capacity, 1)
             
             reading_data = HazardReadingCreate(
+                region_id=region.id,
                 hazard_type=HazardType.SAFE_ZONES,
                 year=year,
                 value=capacity,
                 unit="km²",
-                data_quality="verified",
+                data_quality="good",
                 source_scene_date=f"{year}-12-31"
             )
-            ingest_hazard_reading(db, region.id, reading_data)
+            ingest_hazard_reading(db, reading_data)
             created += 1
     return created
 
@@ -414,7 +416,10 @@ def run_pipeline_job(hazard_types: list[str] | None = None, year: int | None = N
             logger.warning("No regions in the database - run seed_regions.py first.")
             return
 
-        gee_service.init_gee()
+        try:
+            gee_service.init_gee()
+        except Exception as e:
+            logger.warning("Earth Engine initialization failed at start, proceeding in offline simulation fallback mode: %s", e)
 
         total_created = 0
         if "flooding" in requested:

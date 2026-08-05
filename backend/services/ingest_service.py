@@ -11,9 +11,25 @@ from services.alert_service import evaluate_alerts_for_reading
 
 
 def ingest_hazard_reading(db: Session, reading: HazardReadingCreate) -> HazardIndexReading:
-    """Insert one hazard_index_readings row and evaluate any alerts it might trigger."""
-    db_reading = HazardIndexReading(**reading.model_dump())
-    db.add(db_reading)
+    """Insert or update one hazard_index_readings row and evaluate any alerts it might trigger."""
+    db_reading = (
+        db.query(HazardIndexReading)
+        .filter(
+            HazardIndexReading.region_id == reading.region_id,
+            HazardIndexReading.hazard_type == reading.hazard_type,
+            HazardIndexReading.year == reading.year,
+        )
+        .first()
+    )
+    if db_reading:
+        db_reading.value = reading.value
+        db_reading.unit = reading.unit
+        db_reading.data_quality = reading.data_quality
+        db_reading.source_scene_date = reading.source_scene_date
+    else:
+        db_reading = HazardIndexReading(**reading.model_dump())
+        db.add(db_reading)
+
     db.commit()
     db.refresh(db_reading)
 

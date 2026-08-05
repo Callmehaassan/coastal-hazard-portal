@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     gee_service_account_email: str | None = None
     gee_service_account_key_path: str | None = None
     gee_project_id: str | None = None
+    force_offline: bool = False
 
     # LLM
     groq_api_key: str | None = None
