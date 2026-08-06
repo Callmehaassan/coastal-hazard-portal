@@ -464,30 +464,102 @@ export default function AnalysisPage() {
               selectedDistrict={selectedDistrict}
               isAnalysisActive={isAnalysisActive}
               selectedHazards={selectedHazards}
+              cviWeights={cviWeights}
             />
 
             {/* Custom Interactive Legend inside the Map area */}
-            {isAnalysisActive && (
-              <div className="absolute bottom-6 left-6 z-10 bg-[#070e1b]/95 border border-white/10 p-4 rounded-xl backdrop-blur-md text-[10px] text-slate-300 w-[150px] pointer-events-auto shadow-2xl flex flex-col gap-2 animate-in fade-in duration-300">
-                <span className="font-bold text-white border-b border-white/15 pb-1.5 mb-1 text-[11px]">Overlay Legend</span>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded bg-[#ef4444] opacity-80" />
-                  <span>Erosion Zone</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded bg-[#22c55e] opacity-80" />
-                  <span>Accretion Zone</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded bg-[#06b6d4] opacity-80" />
-                  <span>Flood Extent</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded bg-[#f59e0b] opacity-80" />
-                  <span>Storm Surge</span>
-                </div>
-              </div>
-            )}
+            {isAnalysisActive && (() => {
+              const isMulti = selectedHazards.length > 1;
+              if (isMulti) {
+                return (
+                  <div className="absolute bottom-6 left-6 z-10 bg-[#070e1b]/95 border border-white/10 p-4 rounded-xl backdrop-blur-md text-[10px] text-slate-300 w-[160px] pointer-events-auto shadow-2xl flex flex-col gap-2 animate-in fade-in duration-300">
+                    <span className="font-bold text-white border-b border-white/15 pb-1.5 mb-1 text-[11px] uppercase tracking-wider flex items-center gap-1">📊 CVI Risk Palette</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-[#006400] opacity-90" />
+                      <span>Low Risk</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-[#7fff00] opacity-90" />
+                      <span>Low-Mod Risk</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-[#ffff00] opacity-90" />
+                      <span>Moderate Risk</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-[#ffa500] opacity-90" />
+                      <span>High Risk</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-[#ff0000] opacity-90" />
+                      <span>Very High Risk</span>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (selectedHazards.includes("flooding")) {
+                return (
+                  <div className="absolute bottom-6 left-6 z-10 bg-[#070e1b]/95 border border-white/10 p-4 rounded-xl backdrop-blur-md text-[10px] text-slate-300 w-[160px] pointer-events-auto shadow-2xl flex flex-col gap-2 animate-in fade-in duration-300">
+                    <span className="font-bold text-white border-b border-white/15 pb-1.5 mb-1 text-[11px] uppercase tracking-wider">💧 Flood Inundation</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-[#e0f2fe] opacity-90" />
+                      <span>Low Inundation</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-[#0284c7] opacity-90" />
+                      <span>Moderate</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-[#1e3a8a] opacity-90" />
+                      <span>Severe Inundation</span>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (selectedHazards.includes("storm-surge")) {
+                return (
+                  <div className="absolute bottom-6 left-6 z-10 bg-[#070e1b]/95 border border-white/10 p-4 rounded-xl backdrop-blur-md text-[10px] text-slate-300 w-[160px] pointer-events-auto shadow-2xl flex flex-col gap-2 animate-in fade-in duration-300">
+                    <span className="font-bold text-white border-b border-white/15 pb-1.5 mb-1 text-[11px] uppercase tracking-wider">🌊 Surge Height</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-[#fef3c7] opacity-90" />
+                      <span>Low Surge</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-[#f97316] opacity-90" />
+                      <span>Moderate Surge</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-[#dc2626] opacity-90" />
+                      <span>Severe Surge</span>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (selectedHazards.includes("erosion")) {
+                return (
+                  <div className="absolute bottom-6 left-6 z-10 bg-[#070e1b]/95 border border-white/10 p-4 rounded-xl backdrop-blur-md text-[10px] text-slate-300 w-[160px] pointer-events-auto shadow-2xl flex flex-col gap-2 animate-in fade-in duration-300">
+                    <span className="font-bold text-white border-b border-white/15 pb-1.5 mb-1 text-[11px] uppercase tracking-wider">📈 Coastline Change</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-[#16a34a] opacity-90" />
+                      <span>Accretion (Green)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-[#fef08a] opacity-90" />
+                      <span>Stable Coast</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-[#dc2626] opacity-90" />
+                      <span>Erosion (Red)</span>
+                    </div>
+                  </div>
+                );
+              }
+
+              return null;
+            })()}
           </div>
         </main>
 
