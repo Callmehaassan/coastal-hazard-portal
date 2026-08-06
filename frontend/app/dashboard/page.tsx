@@ -1041,13 +1041,13 @@ export default function DashboardPage() {
               </div>
 
               {/* Other Navigation Links */}
-              <button
-                onClick={() => setActiveModal('analysis')}
+              <Link
+                href="/dashboard/analysis"
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-400 hover:text-white hover:bg-white/5"
               >
                 <Sliders className="w-4 h-4" />
                 <span>GEE Live Analysis</span>
-              </button>
+              </Link>
 
               <button
                 onClick={() => setActiveModal('alerts')}
@@ -1979,168 +1979,6 @@ export default function DashboardPage() {
               </div>
             )}
 
-            {activeModal === 'analysis' && (
-              <div className="w-full max-w-4xl">
-                <h3 className="text-base font-bold text-white flex items-center gap-2 border-b border-white/10 pb-3 mb-4">
-                  <Sliders className="w-5 h-5 text-cyan-400" />
-                  <span>Google Earth Engine (GEE) Multi-Criteria Live Analysis</span>
-                </h3>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Left Column: Weights Config */}
-                  <div className="space-y-4 pr-0 md:pr-4 md:border-r border-white/10">
-                    <div className="bg-cyan-500/5 border border-cyan-500/10 rounded-xl p-3.5 text-xs text-cyan-300">
-                      <p className="font-bold flex items-center gap-1.5 mb-1">
-                        <Info className="w-3.5 h-3.5" />
-                        Interactive CVI Weights
-                      </p>
-                      <p className="text-[10px] text-slate-400 leading-relaxed">
-                        Adjust the relative influence (0.0 to 1.0) of each environmental factor. Weights will be automatically normalized to sum to 1.0 on execution.
-                      </p>
-                    </div>
-
-                    <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
-                      {[
-                        { key: 'elevation', label: 'Elevation Sensitivity', color: 'text-emerald-400' },
-                        { key: 'slope', label: 'Coastal Slope Gradient', color: 'text-teal-400' },
-                        { key: 'erosion', label: 'Shoreline Erosion (DSAS)', color: 'text-red-400' },
-                        { key: 'slr', label: 'Sea Level Rise (SSHA)', color: 'text-sky-400' },
-                        { key: 'tsunami', label: 'Tsunami Run-up Risk', color: 'text-violet-400' },
-                        { key: 'stormSurge', label: 'Storm Surge Inundation', color: 'text-amber-500' },
-                        { key: 'proximity', label: 'Coastal Proximity Buffer', color: 'text-pink-400' },
-                        { key: 'exposure', label: 'Population Exposure', color: 'text-indigo-400' },
-                      ].map((item) => {
-                        const val = cviWeights[item.key as keyof typeof cviWeights];
-                        return (
-                          <div key={item.key} className="space-y-1">
-                            <div className="flex justify-between text-[11px] font-medium">
-                              <span className="text-slate-300">{item.label}</span>
-                              <span className={`font-bold ${item.color}`}>{val.toFixed(2)}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <input
-                                type="range"
-                                min="0"
-                                max="1"
-                                step="0.01"
-                                value={val}
-                                onChange={(e) => {
-                                  setCviWeights(prev => ({
-                                    ...prev,
-                                    [item.key]: Number(e.target.value)
-                                  }));
-                                }}
-                                className="flex-1 accent-cyan-500 bg-white/5 h-1.5 rounded-lg appearance-none cursor-pointer"
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Right Column: Run and Logs */}
-                  <div className="flex flex-col justify-between space-y-4">
-                    <div className="space-y-3 flex-1 flex flex-col justify-between">
-                      <div className="space-y-2">
-                        <label className="text-[10px] text-slate-400 font-bold uppercase block tracking-wider">Live Pipeline Output Logs</label>
-                        <div className="bg-[#070e1b] border border-white/10 rounded-xl p-3 h-[240px] overflow-y-auto font-mono text-[9px] text-slate-400 space-y-1.5 leading-relaxed">
-                          {analysisLogs.length === 0 ? (
-                            <span className="text-slate-600 italic">No analysis run yet. Configure weights and click run.</span>
-                          ) : (
-                            analysisLogs.map((log, idx) => {
-                              const isSuccess = log.includes('[SUCCESS]');
-                              const isError = log.includes('[ERROR]');
-                              let color = 'text-slate-400';
-                              if (isSuccess) color = 'text-green-400 font-bold';
-                              else if (isError) color = 'text-red-400 font-bold';
-                              return <p key={idx} className={color}>{log}</p>;
-                            })
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Weight validation indicator */}
-                      {(() => {
-                        const sum = Object.values(cviWeights).reduce((a, b) => a + b, 0);
-                        const isValid = Math.abs(sum - 1.0) < 0.001;
-                        return (
-                          <div className="flex justify-between items-center text-[10px] px-3.5 py-2 rounded-xl bg-white/5 border border-white/5">
-                            <span className="text-slate-400">Total Input Weights:</span>
-                            <strong className={isValid ? 'text-green-400' : 'text-amber-400'}>
-                              {sum.toFixed(3)} {isValid ? '(Valid 1.0)' : '(Auto-renormalizing to 1.0)'}
-                            </strong>
-                          </div>
-                        );
-                      })()}
-                    </div>
-
-                    {/* Actions */}
-                    <div className="space-y-2 pt-2 border-t border-white/10">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={runGeeAnalysis}
-                          disabled={analysisStatus === 'running'}
-                          className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-cyan-500/10 active:scale-95 transition"
-                        >
-                          {analysisStatus === 'running' ? (
-                            <>
-                              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                              <span>Executing GEE Analysis...</span>
-                            </>
-                          ) : (
-                            <>
-                              <RefreshCw className="w-3.5 h-3.5" />
-                              <span>RUN LIVE ANALYSIS</span>
-                            </>
-                          )}
-                        </button>
-
-                        <button
-                          onClick={() => {
-                            setCviWeights({
-                              elevation: 0.15,
-                              slope: 0.1,
-                              erosion: 0.15,
-                              slr: 0.15,
-                              tsunami: 0.15,
-                              stormSurge: 0.15,
-                              proximity: 0.1,
-                              exposure: 0.05
-                            });
-                            setIsAnalysisActive(false);
-                            setAnalysisStatus('idle');
-                            setAnalysisLogs([]);
-                            loadTopMetricsData(); // Restore original CVI scores from database
-                          }}
-                          disabled={analysisStatus === 'running'}
-                          className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-slate-300 transition"
-                        >
-                          RESET
-                        </button>
-                      </div>
-
-                      <button
-                        onClick={() => {
-                          const logText = analysisLogs.join('\n') || "GEE weight configurations:\n" + Object.entries(cviWeights).map(([k, v]) => `${k}: ${v}`).join('\n');
-                          const blob = new Blob([logText], { type: 'text/plain' });
-                          const url = URL.createObjectURL(blob);
-                          const a = document.createElement('a');
-                          a.href = url;
-                          a.download = `gee_cvi_analysis_report.txt`;
-                          a.click();
-                        }}
-                        disabled={analysisLogs.length === 0}
-                        className="w-full py-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/15 disabled:opacity-40 text-cyan-400 border border-cyan-500/20 text-xs font-bold transition flex items-center justify-center gap-1"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                        <span>DOWNLOAD ANALYSIS REPORT</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {activeModal === 'methodology' && (
               <div>
