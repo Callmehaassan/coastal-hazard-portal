@@ -215,7 +215,7 @@ export default function DashboardPage() {
     useState<AnalysisType>('storm-surge');
 
   const [activeBasemap, setActiveBasemap] = useState<'satellite' | 'osm'>(
-    'satellite'
+    'osm'
   );
   const [visibleLayers, setVisibleLayers] = useState<string[]>([
     'Coastline',
@@ -1334,6 +1334,32 @@ export default function DashboardPage() {
                       </label>
                     );
                   })}
+                </div>
+
+                <div className="pt-2.5 mt-2.5 border-t border-white/15">
+                  <span className="font-bold text-white block mb-2">Basemap</span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setActiveBasemap('osm')}
+                      className={`flex-1 py-1 rounded text-center transition font-bold text-[10px] ${
+                        activeBasemap === 'osm'
+                          ? 'bg-cyan-500 text-white font-semibold'
+                          : 'bg-white/5 text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      Map
+                    </button>
+                    <button
+                      onClick={() => setActiveBasemap('satellite')}
+                      className={`flex-1 py-1 rounded text-center transition font-bold text-[10px] ${
+                        activeBasemap === 'satellite'
+                          ? 'bg-cyan-500 text-white font-semibold'
+                          : 'bg-white/5 text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      Satellite
+                    </button>
+                  </div>
                 </div>
               </div>
 
