@@ -468,33 +468,62 @@ export default function DashboardMap({
     return "#006400";
   };
 
+function isPointInPolygon(point: [number, number], polygonCoords: any[][][]) {
+  const [lat, lng] = point;
+  let inside = false;
+
+  for (let i = 0; i < polygonCoords.length; i++) {
+    const ring = polygonCoords[i];
+    for (let j = 0, k = ring.length - 1; j < ring.length; k = j++) {
+      const xj = ring[j][1];
+      const yj = ring[j][0];
+      const xk = ring[k][1];
+      const yk = ring[k][0];
+
+      const intersect = ((yj > lng) !== (yk > lng))
+          && (lat < (xk - xj) * (lng - yj) / (yk - yj) + xj);
+      if (intersect) inside = !inside;
+    }
+  }
+  return inside;
+}
+
+function isPointInRegion(point: [number, number], geometry: any) {
+  if (!geometry) return false;
+  if (geometry.type === "Polygon") {
+    return isPointInPolygon(point, geometry.coordinates);
+  } else if (geometry.type === "MultiPolygon") {
+    return geometry.coordinates.some((polyCoords: any) => isPointInPolygon(point, polyCoords));
+  }
+  return false;
+}
+
   const generateGridForBounds = (minLat: number, maxLat: number, minLng: number, maxLng: number, district: string) => {
     const cells = [];
-    const stepLat = 0.05; // Tight 0.05 step for high-fidelity raster look!
-    const stepLng = 0.05;
+    const stepLat = 0.022; // High-density grid cells for continuous raster look
+    const stepLng = 0.022;
+
+    // Find region boundary geometry for this district
+    const region = regions.find(r => r.district.toLowerCase() === district.toLowerCase());
+    const geometry = region?.geometry;
+
+    if (!geometry) return [];
 
     for (let lat = minLat; lat <= maxLat; lat += stepLat) {
       for (let lng = minLng; lng <= maxLng; lng += stepLng) {
-        // Keep cells close to the ocean boundaries or lagoon systems to look authentic
-        let isNearCoast = false;
-        if (district === "gwadar") {
-          // Gwadar coastline is along 25.0 - 25.32
-          isNearCoast = lat >= 25.0 && lat <= 25.32 && lng >= 61.5 && lng <= 64.7;
-        } else {
-          // Lasbela coastline is along 24.8 - 25.75
-          isNearCoast = lat >= 24.8 && lat <= 25.75 && lng >= 65.3 && lng <= 67.0;
-        }
+        const cellCenter = [lat + stepLat / 2, lng + stepLng / 2] as [number, number];
+        
+        // Ray cast check: Only keep cells that are inside the actual district boundary!
+        if (!isPointInRegion(cellCenter, geometry)) continue;
 
-        if (!isNearCoast) continue;
-
-        // Generate a pseudo-random risk score using sine/cosine for continuity (looks like a smooth raster interpolation)
-        const valSeed = Math.sin(lat * 18.0) * Math.cos(lng * 18.0);
-        const norm = (valSeed + 1.0) / 2.0; // 0 to 1
+        // Generate Risk Score with smooth spatial gradients
+        const valSeed = Math.sin(lat * 15.0) * Math.cos(lng * 15.0) + Math.cos((lat + lng) * 10.0);
+        const norm = (valSeed + 2.0) / 4.0; // Normalized 0 to 1
 
         let riskScore = 1;
-        if (norm < 0.25) riskScore = 1;
-        else if (norm < 0.5) riskScore = 2;
-        else if (norm < 0.7) riskScore = 3;
+        if (norm < 0.28) riskScore = 1;
+        else if (norm < 0.48) riskScore = 2;
+        else if (norm < 0.68) riskScore = 3;
         else if (norm < 0.88) riskScore = 4;
         else riskScore = 5;
 
@@ -506,7 +535,7 @@ export default function DashboardMap({
         ] as [number, number][];
 
         cells.push({
-          id: `${district}-${lat.toFixed(3)}-${lng.toFixed(3)}`,
+          id: `${district}-${lat.toFixed(4)}-${lng.toFixed(4)}`,
           bounds,
           score: riskScore,
           district
@@ -521,13 +550,13 @@ export default function DashboardMap({
     const dist = selectedDistrict.toLowerCase();
 
     if (dist === "gwadar") {
-      return generateGridForBounds(25.0, 25.26, 61.5, 64.7, "gwadar");
+      return generateGridForBounds(25.0, 25.4, 61.5, 64.8, "gwadar");
     } else if (dist === "lasbela") {
-      return generateGridForBounds(24.85, 25.70, 65.3, 67.0, "lasbela");
+      return generateGridForBounds(24.8, 26.0, 65.3, 67.0, "lasbela");
     } else {
       return [
-        ...generateGridForBounds(25.0, 25.26, 61.5, 64.7, "gwadar"),
-        ...generateGridForBounds(24.85, 25.70, 65.3, 67.0, "lasbela")
+        ...generateGridForBounds(25.0, 25.4, 61.5, 64.8, "gwadar"),
+        ...generateGridForBounds(24.8, 26.0, 65.3, 67.0, "lasbela")
       ];
     }
   };
@@ -632,10 +661,9 @@ export default function DashboardMap({
             positions={cell.bounds}
             pathOptions={{
               fillColor: getRasterColor(cell.score),
-              fillOpacity: 0.5,
-              color: "#ffffff",
-              weight: 0.5,
-              opacity: 0.1
+              fillOpacity: 0.65,
+              color: "transparent",
+              weight: 0
             }}
           >
             <LeafletPopup>
