@@ -460,6 +460,7 @@ export default function AnalysisPage() {
               hazardData={[]}
               selectedDistrict={selectedDistrict}
               isAnalysisActive={isAnalysisActive}
+              selectedHazards={selectedHazards}
             />
 
             {/* Custom Interactive Legend inside the Map area */}

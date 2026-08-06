@@ -313,6 +313,7 @@ interface DashboardMapProps {
   hazardData: HazardReading[];
   selectedDistrict: string;
   isAnalysisActive?: boolean;
+  selectedHazards?: string[];
 }
 
 const MAKRAN_CENTER: [number, number] = [25.3, 64.5];
@@ -328,6 +329,7 @@ export default function DashboardMap({
   hazardData,
   selectedDistrict,
   isAnalysisActive = false,
+  selectedHazards = [],
 }: DashboardMapProps) {
   // Tile layer selections
   const osmUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
@@ -416,6 +418,16 @@ export default function DashboardMap({
     type: "FeatureCollection" as const,
     features: geeAnalysisGeoJSON.features.filter((feature) => {
       const type = feature.properties.type;
+      
+      // If dynamic hazards array is provided (from dedicated GEE analysis page)
+      if (selectedHazards && selectedHazards.length > 0) {
+        if (type === "erosion" || type === "accretion") {
+          return selectedHazards.includes("erosion");
+        }
+        return selectedHazards.includes(type);
+      }
+
+      // Fallback to single hazard mapping (from standard dashboard panel)
       if (selectedAnalysis === "coastal-erosion") {
         return type === "erosion" || type === "accretion";
       } else if (selectedAnalysis === "storm-surge") {
