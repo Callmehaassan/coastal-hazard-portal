@@ -411,10 +411,11 @@ export default function DashboardMap({
           const hotspots = hazardGroup[region.district] || [];
 
           return (
-            <Fragment key={`${region.id}-${visibleLayers.join(",")}-${selectedAnalysis}-${selectedYear}`}>
+            <Fragment key={`${region.id}-${selectedAnalysis}-${selectedYear}`}>
               {/* Region Border Polygon */}
               {showDistrictBoundary && (
                 <LeafletGeoJSON
+                  key={`${region.id}-boundary-${selectedRegionId}`}
                   data={region.geometry as any}
                   style={getRegionStyle(region)}
                   eventHandlers={{
