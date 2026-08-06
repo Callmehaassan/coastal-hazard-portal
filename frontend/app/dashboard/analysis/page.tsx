@@ -152,17 +152,17 @@ export default function AnalysisPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070e1b] text-slate-100 flex flex-col font-sans">
+    <div className="h-screen bg-[#070e1b] text-slate-100 flex flex-col font-sans overflow-hidden">
       
-      {/* HEADER SECTION */}
-      <header className="border-b border-white/10 px-6 py-4 flex justify-between items-center bg-[#070e1b]/80 backdrop-blur-md sticky top-0 z-40">
+      {/* HEADER SECTION (Height: 70px) */}
+      <header className="h-[70px] border-b border-white/10 px-6 py-4 flex justify-between items-center bg-[#070e1b]/80 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-3">
           <Link href="/dashboard" className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
               <Waves className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-sm md:text-base font-bold tracking-tight">COASTAL HAZARD PORTAL</h1>
+              <h1 className="text-sm md:text-base font-bold tracking-tight text-white">COASTAL HAZARD PORTAL</h1>
               <p className="text-[10px] text-cyan-400 font-semibold tracking-wider uppercase">
                 Balochistan Coastline
               </p>
@@ -211,11 +211,12 @@ export default function AnalysisPage() {
         </div>
       </header>
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6">
+      {/* BODY WORKSPACE CONTAINER */}
+      <div className="flex-1 flex relative overflow-hidden min-h-0">
         
-        {/* LEFT NAV BAR COLUMN (Reusing dashboard sidebar layout) */}
-        <aside className="lg:col-span-2 flex flex-col gap-6">
-          <div className="glass p-4 flex flex-col gap-1.5">
+        {/* COLUMN 1: LEFT NAV BAR (Width: 240px) */}
+        <aside className="w-[240px] shrink-0 border-r border-white/10 p-4 bg-[#070e1b]/50 backdrop-blur-md flex flex-col justify-between hidden md:flex">
+          <div className="space-y-4">
             <Link
               href="/dashboard"
               className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-400 hover:text-white hover:bg-white/5"
@@ -279,8 +280,8 @@ export default function AnalysisPage() {
           </div>
         </aside>
 
-        {/* MIDDLE COLUMN: CONTROLS & WEIGHTS INPUTS */}
-        <section className="lg:col-span-4 glass p-5 flex flex-col justify-between gap-5 min-h-[500px]">
+        {/* COLUMN 2: MIDDLE CONTROL PANEL (Width: 380px) */}
+        <section className="w-[380px] shrink-0 border-r border-white/10 p-5 bg-[#070e1b]/30 flex flex-col justify-between overflow-y-auto gap-4 scrollbar-thin">
           <div className="space-y-4">
             <h2 className="text-sm font-bold text-white flex items-center gap-2 border-b border-white/10 pb-3 mb-2">
               <Sliders className="w-4.5 h-4.5 text-cyan-400" />
@@ -298,14 +299,14 @@ export default function AnalysisPage() {
             </div>
 
             {/* Weights Sliders */}
-            <div className="space-y-3.5 max-h-[220px] overflow-y-auto pr-1">
+            <div className="space-y-3.5">
               {[
-                { key: 'elevation', label: 'Elevation Sensitivity', color: 'text-emerald-400', hazard: 'flooding' },
-                { key: 'slope', label: 'Coastal Slope Gradient', color: 'text-teal-400', hazard: 'flooding' },
-                { key: 'erosion', label: 'Shoreline Erosion (DSAS)', color: 'text-red-400', hazard: 'erosion' },
-                { key: 'slr', label: 'Sea Level Rise (SSHA)', color: 'text-sky-400', hazard: 'sea-level' },
-                { key: 'tsunami', label: 'Tsunami Run-up Risk', color: 'text-violet-400', hazard: 'tsunami' },
-                { key: 'stormSurge', label: 'Storm Surge Inundation', color: 'text-amber-500', hazard: 'storm-surge' }
+                { key: 'elevation', label: 'Elevation Sensitivity', color: 'text-emerald-400' },
+                { key: 'slope', label: 'Coastal Slope Gradient', color: 'text-teal-400' },
+                { key: 'erosion', label: 'Shoreline Erosion (DSAS)', color: 'text-red-400' },
+                { key: 'slr', label: 'Sea Level Rise (SSHA)', color: 'text-sky-400' },
+                { key: 'tsunami', label: 'Tsunami Run-up Risk', color: 'text-violet-400' },
+                { key: 'stormSurge', label: 'Storm Surge Inundation', color: 'text-amber-500' }
               ].map((item) => {
                 const val = cviWeights[item.key as keyof typeof cviWeights];
                 return (
@@ -358,7 +359,7 @@ export default function AnalysisPage() {
               <button
                 onClick={runGeeAnalysis}
                 disabled={analysisStatus === 'running'}
-                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg active:scale-95 transition"
+                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg active:scale-95 transition animate-pulse"
               >
                 {analysisStatus === 'running' ? (
                   <>
@@ -415,31 +416,32 @@ export default function AnalysisPage() {
           </div>
         </section>
 
-        {/* RIGHT COLUMN: FULL-SIZE INTERACTIVE LEAFLET MAP */}
-        <main className="lg:col-span-6 glass p-5 flex flex-col relative min-h-[480px]">
-          <div className="border-b border-white/10 pb-3 mb-4 flex justify-between items-center">
-            <div>
-              <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                <Globe className="w-4.5 h-4.5 text-cyan-400 animate-pulse" />
-                <span>GEE Live Mapping Canvas</span>
-              </h2>
+        {/* COLUMN 3: RIGHT MAP CANVAS (Takes remaining space) */}
+        <main className="flex-1 relative h-full flex flex-col bg-slate-950">
+          
+          {/* Floating Map Controls */}
+          <div className="absolute top-4 left-4 right-4 z-10 flex justify-between items-center pointer-events-none">
+            <div className="bg-[#070e1b]/95 border border-white/10 p-2 px-3.5 rounded-xl backdrop-blur-md pointer-events-auto flex items-center gap-2 shadow-2xl">
+              <Globe className="w-4 h-4 text-cyan-400 animate-pulse" />
+              <span className="text-xs font-bold text-white uppercase tracking-wider">GEE Live Mapping Canvas</span>
             </div>
-            <div className="flex gap-2">
+            
+            <div className="bg-[#070e1b]/95 border border-white/10 p-1.5 rounded-xl backdrop-blur-md pointer-events-auto flex gap-1 shadow-2xl">
               <button
                 onClick={() => setActiveBasemap('osm')}
-                className={`py-1 px-2.5 rounded-lg font-bold text-[10px] transition-all ${
+                className={`py-1 px-3 rounded-lg font-bold text-[10px] transition-all ${
                   activeBasemap === 'osm'
-                    ? 'bg-cyan-500 text-white shadow-lg'
+                    ? 'bg-cyan-500 text-white shadow-lg font-bold'
                     : 'bg-white/5 text-slate-400 hover:text-white'
                 }`}
               >
-                Street Map
+                Map
               </button>
               <button
                 onClick={() => setActiveBasemap('satellite')}
-                className={`py-1 px-2.5 rounded-lg font-bold text-[10px] transition-all ${
+                className={`py-1 px-3 rounded-lg font-bold text-[10px] transition-all ${
                   activeBasemap === 'satellite'
-                    ? 'bg-cyan-500 text-white shadow-lg'
+                    ? 'bg-cyan-500 text-white shadow-lg font-bold'
                     : 'bg-white/5 text-slate-400 hover:text-white'
                 }`}
               >
@@ -448,7 +450,8 @@ export default function AnalysisPage() {
             </div>
           </div>
 
-          <div className="flex-1 w-full relative z-0 min-h-[420px] rounded-xl overflow-hidden border border-white/5">
+          {/* Leaflet Map Container */}
+          <div className="w-full h-full relative z-0">
             <DashboardMap
               regions={regions}
               selectedRegionId={selectedRegionId}
@@ -465,28 +468,29 @@ export default function AnalysisPage() {
 
             {/* Custom Interactive Legend inside the Map area */}
             {isAnalysisActive && (
-              <div className="absolute bottom-4 left-4 z-10 bg-[#070e1b]/95 border border-white/10 p-3 rounded-xl backdrop-blur-md text-[10px] text-slate-300 w-[140px] pointer-events-auto shadow-2xl flex flex-col gap-1.5">
-                <span className="font-bold text-white border-b border-white/15 pb-1 mb-1">Overlay Legend</span>
+              <div className="absolute bottom-6 left-6 z-10 bg-[#070e1b]/95 border border-white/10 p-4 rounded-xl backdrop-blur-md text-[10px] text-slate-300 w-[150px] pointer-events-auto shadow-2xl flex flex-col gap-2 animate-in fade-in duration-300">
+                <span className="font-bold text-white border-b border-white/15 pb-1.5 mb-1 text-[11px]">Overlay Legend</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded bg-[#ef4444] opacity-80" />
+                  <div className="w-3 h-3 rounded bg-[#ef4444] opacity-80" />
                   <span>Erosion Zone</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded bg-[#22c55e] opacity-80" />
+                  <div className="w-3 h-3 rounded bg-[#22c55e] opacity-80" />
                   <span>Accretion Zone</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded bg-[#06b6d4] opacity-80" />
+                  <div className="w-3 h-3 rounded bg-[#06b6d4] opacity-80" />
                   <span>Flood Extent</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded bg-[#f59e0b] opacity-80" />
+                  <div className="w-3 h-3 rounded bg-[#f59e0b] opacity-80" />
                   <span>Storm Surge</span>
                 </div>
               </div>
             )}
           </div>
         </main>
+
       </div>
     </div>
   );
