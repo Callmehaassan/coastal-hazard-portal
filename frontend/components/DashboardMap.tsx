@@ -749,6 +749,20 @@ function isPointInRegion(point: [number, number], geometry: any) {
           />
         )}
 
+        {/* Shape-matched GEE Continuous Heatmap Layer */}
+        {isAnalysisActive && getRasterGrid().map((cell) => (
+          <LeafletPolygon
+            key={`raster-cell-${cell.id}-${selectedHazards.join('-')}-${selectedDistrict}`}
+            positions={cell.bounds}
+            pathOptions={{
+              fillColor: getRasterColor(cell.score),
+              fillOpacity: 0.45,
+              color: "transparent",
+              weight: 0
+            }}
+          />
+        ))}
+
         {/* Real Dynamic Heatmap Blurs (Concentric Circles) */}
         {isAnalysisActive && getHeatmapCircles().map((blur) => (
           <LeafletCircle
@@ -777,8 +791,16 @@ function isPointInRegion(point: [number, number], geometry: any) {
           >
             <LeafletTooltip
               permanent
-              direction="top"
-              offset={[0, -6]}
+              direction={
+                beacon.hazard === "flooding" ? "top"
+                : beacon.hazard === "erosion" ? "bottom"
+                : "right"
+              }
+              offset={
+                beacon.hazard === "flooding" ? [0, -8]
+                : beacon.hazard === "erosion" ? [0, 8]
+                : [10, 0]
+              }
               className="custom-glowing-tooltip"
             >
               <div className="px-2 py-1 text-[9px] font-sans font-bold bg-[#070e1b]/95 text-white border border-white/10 rounded-lg shadow-xl flex items-center gap-1.5 leading-none select-none">
