@@ -133,6 +133,93 @@ const HAZARD_HOTSPOTS: Record<string, Record<string, Hotspot[]>> = {
   }
 };
 
+const coastlineGeoJSON = {
+  type: "Feature" as const,
+  properties: { name: "Balochistan Coastline" },
+  geometry: {
+    type: "LineString" as const,
+    coordinates: [
+      [61.6, 25.02],
+      [61.76, 25.04],
+      [61.82, 25.06],
+      [62.33, 25.13],
+      [63.48, 25.26],
+      [64.62, 25.21],
+      [65.45, 25.38],
+      [66.59, 25.41],
+      [66.72, 24.96],
+      [67.0, 24.8]
+    ]
+  }
+};
+
+const roadsGeoJSON = {
+  type: "Feature" as const,
+  properties: { name: "Makran Coastal Highway (N-10)" },
+  geometry: {
+    type: "LineString" as const,
+    coordinates: [
+      [67.0, 24.9], // Karachi
+      [66.75, 25.0], // Gadani
+      [66.7, 25.4], // Sonmiani/Windar
+      [66.62, 25.8], // Uthal
+      [65.45, 25.4], // Kund Malir
+      [64.6, 25.25], // Ormara
+      [63.5, 25.3], // Pasni
+      [62.3, 25.15], // Gwadar
+      [61.8, 25.05]  // Jiwani
+    ]
+  }
+};
+
+const waterGeoJSON = {
+  type: "FeatureCollection" as const,
+  features: [
+    {
+      type: "Feature" as const,
+      properties: { name: "Miani Hor Lagoon" },
+      geometry: {
+        type: "Polygon" as const,
+        coordinates: [[
+          [66.35, 25.45],
+          [66.55, 25.42],
+          [66.52, 25.52],
+          [66.38, 25.50],
+          [66.35, 25.45]
+        ]]
+      }
+    },
+    {
+      type: "Feature" as const,
+      properties: { name: "Siranda Lake" },
+      geometry: {
+        type: "Polygon" as const,
+        coordinates: [[
+          [66.68, 25.50],
+          [66.74, 25.50],
+          [66.74, 25.55],
+          [66.68, 25.55],
+          [66.68, 25.50]
+        ]]
+      }
+    },
+    {
+      type: "Feature" as const,
+      properties: { name: "Akra Kaur Reservoir" },
+      geometry: {
+        type: "Polygon" as const,
+        coordinates: [[
+          [62.27, 25.30],
+          [62.31, 25.30],
+          [62.31, 25.34],
+          [62.27, 25.34],
+          [62.27, 25.30]
+        ]]
+      }
+    }
+  ]
+};
+
 interface DashboardMapProps {
   regions: Region[];
   selectedRegionId: number | null;
@@ -166,8 +253,12 @@ export default function DashboardMap({
   const satAttribution = "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community";
 
   // Check if layers are active
+  const showCoastline = visibleLayers.includes("Coastline");
   const showDistrictBoundary = visibleLayers.includes("District Boundary");
   const showHazardLayer = visibleLayers.includes("Hazard Layer");
+  const showPermanentWater = visibleLayers.includes("Permanent Water");
+  const showRainfall = visibleLayers.includes("Rainfall");
+  const showRoads = visibleLayers.includes("Roads");
   const showSafeZones = visibleLayers.includes("Safe Zones");
 
   const evaluateRiskLevel = (value: number) => {
@@ -237,6 +328,75 @@ export default function DashboardMap({
           <LeafletTileLayer attribution={osmAttribution} url={osmUrl} />
         )}
 
+        {showCoastline && (
+          <LeafletGeoJSON
+            data={coastlineGeoJSON}
+            style={{ color: "#22d3ee", weight: 3.0, opacity: 0.8 }}
+          />
+        )}
+
+        {showRoads && (
+          <LeafletGeoJSON
+            data={roadsGeoJSON}
+            style={{ color: "#f59e0b", weight: 2.0, opacity: 0.7, dashArray: "5, 5" }}
+          />
+        )}
+
+        {showPermanentWater && (
+          <LeafletGeoJSON
+            data={waterGeoJSON}
+            style={{ color: "#3b82f6", fillColor: "#3b82f6", fillOpacity: 0.4, weight: 1.5 }}
+          />
+        )}
+
+        {showRainfall && [
+          { name: "Jiwani Climate Station", coordinates: [25.05, 61.78] as [number, number], rain: "112 mm/yr" },
+          { name: "Gwadar Met Station", coordinates: [25.13, 62.33] as [number, number], rain: "125 mm/yr" },
+          { name: "Pasni Airport Climate Station", coordinates: [25.26, 63.48] as [number, number], rain: "138 mm/yr" },
+          { name: "Ormara Port Met Station", coordinates: [25.21, 64.62] as [number, number], rain: "142 mm/yr" },
+          { name: "Lasbela (Uthal) Met Station", coordinates: [25.80, 66.62] as [number, number], rain: "185 mm/yr" }
+        ].map((station, index) => (
+          <LeafletCircleMarker
+            key={`rain-station-${index}`}
+            center={station.coordinates}
+            radius={6}
+            fillColor="#38bdf8"
+            fillOpacity={0.8}
+            color="#ffffff"
+            weight={1.5}
+          >
+            <LeafletPopup>
+              <div className="text-slate-900 font-sans p-1 text-xs">
+                <h5 className="font-bold text-cyan-800 border-b pb-0.5 mb-1">{station.name}</h5>
+                <p className="text-slate-600">Annual Rainfall: <strong className="text-slate-900">{station.rain}</strong></p>
+              </div>
+            </LeafletPopup>
+          </LeafletCircleMarker>
+        ))}
+
+        {showSafeZones && [
+          ...HAZARD_HOTSPOTS["safe-zones"].Gwadar,
+          ...HAZARD_HOTSPOTS["safe-zones"].Lasbela
+        ].map((spot, index) => (
+          <LeafletCircleMarker
+            key={`safe-zone-marker-${index}`}
+            center={spot.coordinates}
+            radius={8}
+            fillColor="#22c55e"
+            fillOpacity={0.9}
+            color="#ffffff"
+            weight={2}
+          >
+            <LeafletPopup>
+              <div className="text-slate-900 font-sans p-1 text-xs">
+                <h5 className="font-bold text-green-700 border-b pb-0.5 mb-1">{spot.name}</h5>
+                <p className="text-slate-600">Designated Safe Zone / Shelter Area</p>
+                <p className="text-slate-500 mt-1">Capacity Factor: {spot.riskOffsets["safe-zones"]}x</p>
+              </div>
+            </LeafletPopup>
+          </LeafletCircleMarker>
+        ))}
+
         {regions.map((region) => {
           if (!region.geometry) return null;
           
@@ -253,15 +413,17 @@ export default function DashboardMap({
           return (
             <Fragment key={`${region.id}-${visibleLayers.join(",")}-${selectedAnalysis}-${selectedYear}`}>
               {/* Region Border Polygon */}
-              <LeafletGeoJSON
-                data={region.geometry as any}
-                style={getRegionStyle(region)}
-                eventHandlers={{
-                  click: () => {
-                    onSelectRegionId(region.id);
-                  },
-                }}
-              />
+              {showDistrictBoundary && (
+                <LeafletGeoJSON
+                  data={region.geometry as any}
+                  style={getRegionStyle(region)}
+                  eventHandlers={{
+                    click: () => {
+                      onSelectRegionId(region.id);
+                    },
+                  }}
+                />
+              )}
 
               {/* GLOF-style Risk Status Dots inside the district */}
               {showHazardLayer && showRegionDots && hotspots.map((spot, index) => {

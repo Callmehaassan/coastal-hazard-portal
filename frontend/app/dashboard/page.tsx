@@ -1291,6 +1291,52 @@ export default function DashboardPage() {
                 </div>
               </div>
 
+              {/* Overlaid Layers Panel */}
+              <div className="absolute top-24 right-8 z-10 bg-[#070e1b]/95 border border-white/10 p-4 rounded-xl backdrop-blur-md text-[11px] w-[180px] pointer-events-auto shadow-2xl">
+                <span className="font-bold text-white block mb-2 pb-1.5 border-b border-white/15">Layers</span>
+                <div className="space-y-2 text-slate-300">
+                  {[
+                    { key: 'Coastline', label: 'Coastline' },
+                    { key: 'District Boundary', label: 'District Boundary' },
+                    { key: 'Hazard Layer', label: 'Hazard Layer' },
+                    { key: 'Permanent Water', label: 'Permanent Water' },
+                    { key: 'Rainfall', label: 'Rainfall' },
+                    { key: 'Roads', label: 'Roads' },
+                    { key: 'Safe Zones', label: 'Safe Zones' }
+                  ].map((layer) => {
+                    const isChecked = visibleLayers.includes(layer.key);
+                    return (
+                      <label key={layer.key} className="flex items-center gap-2 cursor-pointer hover:text-white select-none">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => {
+                            if (isChecked) {
+                              setVisibleLayers(visibleLayers.filter((l) => l !== layer.key));
+                            } else {
+                              setVisibleLayers([...visibleLayers, layer.key]);
+                            }
+                          }}
+                          className="sr-only"
+                        />
+                        <div className={`w-3.5 h-3.5 rounded flex items-center justify-center border transition ${
+                          isChecked 
+                            ? 'bg-cyan-500 border-cyan-500 text-white' 
+                            : 'border-white/20 hover:border-white/40'
+                        }`}>
+                          {isChecked && (
+                            <svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 20 20">
+                              <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
+                            </svg>
+                          )}
+                        </div>
+                        <span>{layer.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Map rendering layer */}
               <div className="flex-1 w-full relative z-0 min-h-[420px]">
                 <DashboardMap
