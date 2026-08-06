@@ -13,15 +13,15 @@ const LeafletPopup = Popup as any;
 const LeafletCircleMarker = CircleMarker as any;
 
 // Helper to handle map centering and resizing dynamically
-function MapController({ center }: { center: [number, number] }) {
+function MapController({ center, zoom }: { center: [number, number]; zoom: number }) {
   const map = useMap();
   useEffect(() => {
-    map.setView(center, map.getZoom());
+    map.setView(center, zoom);
     // Force leaflet to recalculate its container size
     setTimeout(() => {
       map.invalidateSize();
     }, 100);
-  }, [center, map]);
+  }, [center, zoom, map]);
   return null;
 }
 
@@ -402,23 +402,45 @@ export default function DashboardMap({
     const type = feature?.properties?.type;
     switch (type) {
       case "erosion":
-        return { color: "#ef4444", fillColor: "#ef4444", fillOpacity: 0.5, weight: 1.5 };
+        return { color: "#dc2626", fillColor: "#ef4444", fillOpacity: 0.6, weight: 2.0 };
       case "accretion":
-        return { color: "#22c55e", fillColor: "#22c55e", fillOpacity: 0.5, weight: 1.5 };
+        return { color: "#16a34a", fillColor: "#22c55e", fillOpacity: 0.6, weight: 2.0 };
       case "flooding":
-        return { color: "#06b6d4", fillColor: "#06b6d4", fillOpacity: 0.45, weight: 1.5 };
+        return { color: "#0891b2", fillColor: "#06b6d4", fillOpacity: 0.55, weight: 2.0 };
       case "storm-surge":
-        return { color: "#f59e0b", fillColor: "#f59e0b", fillOpacity: 0.45, weight: 1.5 };
+        return { color: "#d97706", fillColor: "#f59e0b", fillOpacity: 0.55, weight: 2.0 };
       default:
         return { color: "#ffffff", fillColor: "#ffffff", fillOpacity: 0.2, weight: 1.0 };
     }
   };
+
+  const getDistrictView = () => {
+    const dist = selectedDistrict?.toLowerCase();
+    if (dist === "gwadar") {
+      return { center: [25.18, 63.0] as [number, number], zoom: 8 };
+    } else if (dist === "lasbela") {
+      return { center: [25.55, 66.25] as [number, number], zoom: 8 };
+    }
+    return { center: MAKRAN_CENTER as [number, number], zoom: 6.5 };
+  };
+
+  const { center: activeCenter, zoom: activeZoom } = getDistrictView();
 
   const filteredAnalysisGeoJSON = {
     type: "FeatureCollection" as const,
     features: geeAnalysisGeoJSON.features.filter((feature) => {
       const type = feature.properties.type;
       
+      // Determine feature district based on longitude of its first coordinate
+      const coords = feature.geometry.coordinates[0][0];
+      const lng = coords[0];
+      const featureDistrict = lng < 65.0 ? "Gwadar" : "Lasbela";
+
+      // Filter by selectedDistrict
+      if (selectedDistrict !== "All Coastal Districts" && selectedDistrict.toLowerCase() !== featureDistrict.toLowerCase()) {
+        return false;
+      }
+
       // If dynamic hazards array is provided (from dedicated GEE analysis page)
       if (selectedHazards && selectedHazards.length > 0) {
         if (type === "erosion" || type === "accretion") {
@@ -444,12 +466,12 @@ export default function DashboardMap({
   return (
     <div className="h-full w-full relative">
       <LeafletMapContainer
-        center={MAKRAN_CENTER as any}
-        zoom={6.5 as any}
+        center={activeCenter}
+        zoom={activeZoom}
         className="h-full w-full"
         style={{ background: "#061320" }}
       >
-        <MapController center={MAKRAN_CENTER as any} />
+        <MapController center={activeCenter} zoom={activeZoom} />
         
         {activeBasemap === "satellite" ? (
           <LeafletTileLayer attribution={satAttribution} url={satUrl} />
@@ -459,11 +481,19 @@ export default function DashboardMap({
 
         {isAnalysisActive && (
           <LeafletGeoJSON
-            key={`gee-analysis-active-${selectedAnalysis}`}
+            key={`gee-analysis-active-${selectedAnalysis}-${isAnalysisActive}-${selectedDistrict}-${selectedHazards.join('-')}`}
             data={filteredAnalysisGeoJSON}
             style={getAnalysisStyle}
             onEachFeature={(feature: any, layer: any) => {
               if (feature?.properties?.name) {
+                layer.bindTooltip(`
+                  <div class="px-2 py-1 text-[10px] font-sans font-bold bg-[#070e1b]/95 text-white border border-white/10 rounded-lg shadow-xl">
+                    ${feature.properties.name} (${feature.properties.type})
+                  </div>
+                `, {
+                  sticky: true,
+                  opacity: 0.95
+                });
                 layer.bindPopup(`
                   <div class="text-slate-900 font-sans p-1.5 text-xs min-w-[160px]">
                     <h5 class="font-bold text-cyan-800 border-b pb-0.5 mb-1.5 flex items-center gap-1">
@@ -500,12 +530,13 @@ export default function DashboardMap({
         )}
 
         {showRainfall && [
-          { name: "Jiwani Climate Station", coordinates: [25.05, 61.78] as [number, number], rain: "112 mm/yr" },
-          { name: "Gwadar Met Station", coordinates: [25.13, 62.33] as [number, number], rain: "125 mm/yr" },
-          { name: "Pasni Airport Climate Station", coordinates: [25.26, 63.48] as [number, number], rain: "138 mm/yr" },
-          { name: "Ormara Port Met Station", coordinates: [25.21, 64.62] as [number, number], rain: "142 mm/yr" },
-          { name: "Lasbela (Uthal) Met Station", coordinates: [25.80, 66.62] as [number, number], rain: "185 mm/yr" }
-        ].map((station, index) => (
+          { name: "Jiwani Climate Station", coordinates: [25.05, 61.78] as [number, number], rain: "112 mm/yr", district: "Gwadar" },
+          { name: "Gwadar Met Station", coordinates: [25.13, 62.33] as [number, number], rain: "125 mm/yr", district: "Gwadar" },
+          { name: "Pasni Airport Climate Station", coordinates: [25.26, 63.48] as [number, number], rain: "138 mm/yr", district: "Gwadar" },
+          { name: "Ormara Port Met Station", coordinates: [25.21, 64.62] as [number, number], rain: "142 mm/yr", district: "Gwadar" },
+          { name: "Lasbela (Uthal) Met Station", coordinates: [25.80, 66.62] as [number, number], rain: "185 mm/yr", district: "Lasbela" }
+        ].filter(station => selectedDistrict === 'All Coastal Districts' || station.district.toLowerCase() === selectedDistrict.toLowerCase())
+        .map((station, index) => (
           <LeafletCircleMarker
             key={`rain-station-${index}`}
             center={station.coordinates}
@@ -525,8 +556,8 @@ export default function DashboardMap({
         ))}
 
         {showSafeZones && [
-          ...HAZARD_HOTSPOTS["safe-zones"].Gwadar,
-          ...HAZARD_HOTSPOTS["safe-zones"].Lasbela
+          ...(selectedDistrict === 'All Coastal Districts' || selectedDistrict.toLowerCase() === 'gwadar' ? HAZARD_HOTSPOTS["safe-zones"].Gwadar : []),
+          ...(selectedDistrict === 'All Coastal Districts' || selectedDistrict.toLowerCase() === 'lasbela' ? HAZARD_HOTSPOTS["safe-zones"].Lasbela : [])
         ].map((spot, index) => (
           <LeafletCircleMarker
             key={`safe-zone-marker-${index}`}
@@ -550,9 +581,12 @@ export default function DashboardMap({
         {regions.map((region) => {
           if (!region.geometry) return null;
           
-          // Check if this region's dots should be displayed
-          const showRegionDots = selectedDistrict === 'All Coastal Districts' || 
+          const isMatched = selectedDistrict === 'All Coastal Districts' || 
             region.district.toLowerCase() === selectedDistrict.toLowerCase();
+
+          if (!isMatched) return null;
+
+          const showRegionDots = true;
 
           const baseValue = getRegionBaseValue(region.id);
           
