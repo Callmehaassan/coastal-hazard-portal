@@ -238,6 +238,7 @@ export default function DashboardPage() {
   >(null);
 
   // GEE Live Analysis States
+  const [isAnalysisActive, setIsAnalysisActive] = useState<boolean>(false);
   const [cviWeights, setCviWeights] = useState({
     elevation: 0.15,
     slope: 0.1,
@@ -252,6 +253,7 @@ export default function DashboardPage() {
   const [analysisLogs, setAnalysisLogs] = useState<string[]>([]);
 
   const runGeeAnalysis = () => {
+    setIsAnalysisActive(true);
     setAnalysisStatus('running');
     setAnalysisLogs([
       '[INFO] Connecting to Google Earth Engine API...',
@@ -1440,6 +1442,25 @@ export default function DashboardPage() {
                 </div>
               </div>
 
+              {/* Floating GEE Active Indicator */}
+              {isAnalysisActive && (
+                <div className="absolute top-24 left-8 z-10 bg-cyan-950/90 border border-cyan-500/30 px-3.5 py-2.5 rounded-xl backdrop-blur-md text-[10px] text-cyan-300 max-w-[240px] pointer-events-auto shadow-2xl flex items-center justify-between gap-3 animate-in slide-in-from-top-4 duration-300">
+                  <div className="space-y-0.5">
+                    <strong className="text-white block font-bold">🛰️ GEE Live Overlay Active</strong>
+                    <span className="text-[9px] text-slate-400">Custom multi-criteria CVI weights mapped.</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setIsAnalysisActive(false);
+                      loadTopMetricsData(); // restore standard database values
+                    }}
+                    className="p-1 px-1.5 rounded bg-cyan-500/15 hover:bg-cyan-500/30 text-white font-bold transition-all text-[8px]"
+                  >
+                    CLEAR
+                  </button>
+                </div>
+              )}
+
               {/* Map rendering layer */}
               <div className="flex-1 w-full relative z-0 min-h-[420px]">
                 <DashboardMap
@@ -1452,6 +1473,7 @@ export default function DashboardPage() {
                   selectedYear={selectedYear}
                   hazardData={hazardData}
                   selectedDistrict={selectedDistrict}
+                  isAnalysisActive={isAnalysisActive}
                 />
               </div>
 
@@ -2086,6 +2108,7 @@ export default function DashboardPage() {
                               proximity: 0.1,
                               exposure: 0.05
                             });
+                            setIsAnalysisActive(false);
                             setAnalysisStatus('idle');
                             setAnalysisLogs([]);
                             loadTopMetricsData(); // Restore original CVI scores from database

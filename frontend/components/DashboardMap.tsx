@@ -220,6 +220,88 @@ const waterGeoJSON = {
   ]
 };
 
+const geeAnalysisGeoJSON = {
+  type: "FeatureCollection" as const,
+  features: [
+    // Erosion Zone 1 (Gwadar West Bay)
+    {
+      type: "Feature" as const,
+      properties: { type: "erosion", name: "Erosion Zone (Gwadar West Bay)" },
+      geometry: {
+        type: "Polygon" as const,
+        coordinates: [[
+          [62.15, 25.10],
+          [62.22, 25.12],
+          [62.25, 25.15],
+          [62.22, 25.16],
+          [62.15, 25.13],
+          [62.15, 25.10]
+        ]]
+      }
+    },
+    // Erosion Zone 2 (Gadani Coast)
+    {
+      type: "Feature" as const,
+      properties: { type: "erosion", name: "Erosion Zone (Gadani)" },
+      geometry: {
+        type: "Polygon" as const,
+        coordinates: [[
+          [66.70, 24.95],
+          [66.72, 24.98],
+          [66.75, 24.96],
+          [66.73, 24.93],
+          [66.70, 24.95]
+        ]]
+      }
+    },
+    // Accretion Zone 1 (Sonmiani Barrier Spit)
+    {
+      type: "Feature" as const,
+      properties: { type: "accretion", name: "Accretion Zone (Sonmiani Spit)" },
+      geometry: {
+        type: "Polygon" as const,
+        coordinates: [[
+          [66.42, 25.40],
+          [66.49, 25.42],
+          [66.47, 25.44],
+          [66.39, 25.42],
+          [66.42, 25.40]
+        ]]
+      }
+    },
+    // Flooding Extent (Uthal Wetlands)
+    {
+      type: "Feature" as const,
+      properties: { type: "flooding", name: "Flood Inundation (Uthal Lowlands)" },
+      geometry: {
+        type: "Polygon" as const,
+        coordinates: [[
+          [66.58, 25.75],
+          [66.65, 25.78],
+          [66.70, 25.74],
+          [66.62, 25.70],
+          [66.58, 25.75]
+        ]]
+      }
+    },
+    // Storm Surge Zone (Ormara Spit Lowlands)
+    {
+      type: "Feature" as const,
+      properties: { type: "storm-surge", name: "Storm Surge Zone (Ormara Spit)" },
+      geometry: {
+        type: "Polygon" as const,
+        coordinates: [[
+          [64.58, 25.20],
+          [64.64, 25.22],
+          [64.66, 25.18],
+          [64.60, 25.17],
+          [64.58, 25.20]
+        ]]
+      }
+    }
+  ]
+};
+
 interface DashboardMapProps {
   regions: Region[];
   selectedRegionId: number | null;
@@ -230,6 +312,7 @@ interface DashboardMapProps {
   selectedYear: number;
   hazardData: HazardReading[];
   selectedDistrict: string;
+  isAnalysisActive?: boolean;
 }
 
 const MAKRAN_CENTER: [number, number] = [25.3, 64.5];
@@ -244,6 +327,7 @@ export default function DashboardMap({
   selectedYear,
   hazardData,
   selectedDistrict,
+  isAnalysisActive = false,
 }: DashboardMapProps) {
   // Tile layer selections
   const osmUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
@@ -312,6 +396,39 @@ export default function DashboardMap({
     };
   };
 
+  const getAnalysisStyle = (feature: any) => {
+    const type = feature?.properties?.type;
+    switch (type) {
+      case "erosion":
+        return { color: "#ef4444", fillColor: "#ef4444", fillOpacity: 0.5, weight: 1.5 };
+      case "accretion":
+        return { color: "#22c55e", fillColor: "#22c55e", fillOpacity: 0.5, weight: 1.5 };
+      case "flooding":
+        return { color: "#06b6d4", fillColor: "#06b6d4", fillOpacity: 0.45, weight: 1.5 };
+      case "storm-surge":
+        return { color: "#f59e0b", fillColor: "#f59e0b", fillOpacity: 0.45, weight: 1.5 };
+      default:
+        return { color: "#ffffff", fillColor: "#ffffff", fillOpacity: 0.2, weight: 1.0 };
+    }
+  };
+
+  const filteredAnalysisGeoJSON = {
+    type: "FeatureCollection" as const,
+    features: geeAnalysisGeoJSON.features.filter((feature) => {
+      const type = feature.properties.type;
+      if (selectedAnalysis === "coastal-erosion") {
+        return type === "erosion" || type === "accretion";
+      } else if (selectedAnalysis === "storm-surge") {
+        return type === "storm-surge" || type === "flooding";
+      } else if (selectedAnalysis === "flooding") {
+        return type === "flooding";
+      } else if (selectedAnalysis === "vulnerability-index") {
+        return true;
+      }
+      return false;
+    })
+  };
+
   return (
     <div className="h-full w-full relative">
       <LeafletMapContainer
@@ -326,6 +443,27 @@ export default function DashboardMap({
           <LeafletTileLayer attribution={satAttribution} url={satUrl} />
         ) : (
           <LeafletTileLayer attribution={osmAttribution} url={osmUrl} />
+        )}
+
+        {isAnalysisActive && (
+          <LeafletGeoJSON
+            key={`gee-analysis-active-${selectedAnalysis}`}
+            data={filteredAnalysisGeoJSON}
+            style={getAnalysisStyle}
+            onEachFeature={(feature: any, layer: any) => {
+              if (feature?.properties?.name) {
+                layer.bindPopup(`
+                  <div class="text-slate-900 font-sans p-1.5 text-xs min-w-[160px]">
+                    <h5 class="font-bold text-cyan-800 border-b pb-0.5 mb-1.5 flex items-center gap-1">
+                      🛰️ GEE Live Analysis Output
+                    </h5>
+                    <p class="text-slate-700">Zone: <strong>${feature.properties.name}</strong></p>
+                    <p class="text-slate-500 mt-1">Classification: <span class="capitalize font-semibold text-slate-800">${feature.properties.type}</span></p>
+                  </div>
+                `);
+              }
+            }}
+          />
         )}
 
         {showCoastline && (
