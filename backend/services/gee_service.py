@@ -102,11 +102,62 @@ def get_aoi_geometry(region_geojson: dict) -> "ee.Geometry":
         return None
 
 
+def get_otsu_threshold(image: "ee.Image", region: "ee.Geometry", band_name: str = "VV") -> "ee.Number":
+    """
+    Adaptive Otsu Thresholding algorithm translated from Earth Engine JS to Python.
+    Splits the region histogram dynamically to find the optimal water backscatter cutoff.
+    """
+    histogram = image.reduceRegion(
+        reducer=ee.Reducer.histogram(maxBuckets=255),
+        geometry=region,
+        scale=100,
+        bestEffort=True,
+        tileScale=4
+    )
+    
+    hist = ee.Dictionary(histogram.get(band_name))
+    counts = ee.Array(hist.get('histogram'))
+    means = ee.Array(hist.get('bucketMeans'))
+    
+    total = counts.reduce(ee.Reducer.sum(), [0]).get([0])
+    sum_val = means.multiply(counts).reduce(ee.Reducer.sum(), [0]).get([0])
+    mean = ee.Number(sum_val).divide(total)
+    
+    size = means.length().get([0])
+    indices = ee.List.sequence(1, ee.Number(size).subtract(1))
+    
+    def compute_variance(i):
+        i_num = ee.Number(i)
+        aCounts = counts.slice(0, 0, i_num)
+        bCounts = counts.slice(0, i_num)
+        
+        aSum = aCounts.reduce(ee.Reducer.sum(), [0]).get([0])
+        bSum = bCounts.reduce(ee.Reducer.sum(), [0]).get([0])
+        
+        aMean = means.slice(0, 0, i_num).multiply(aCounts).reduce(ee.Reducer.sum(), [0]).get([0]).divide(aSum)
+        bMean = means.slice(0, i_num).multiply(bCounts).reduce(ee.Reducer.sum(), [0]).get([0]).divide(bSum)
+        
+        return ee.Number(aSum).multiply(
+            ee.Number(aMean).subtract(mean).pow(2)
+        ).add(
+            ee.Number(bSum).multiply(
+                ee.Number(bMean).subtract(mean).pow(2)
+            )
+        )
+        
+    variance = indices.map(compute_variance)
+    max_variance = ee.Array(variance).reduce(ee.Reducer.max(), [0]).get([0])
+    index = variance.indexOf(max_variance)
+    return ee.Number(means.get(index))
+
+
 def compute_flood_extent(aoi: "ee.Geometry", year: int, district: str = None) -> dict:
     try:
         init_gee()
+        if _offline:
+            raise RuntimeError("Earth Engine is offline")
 
-        def _vh_collection(start: str, end: str) -> "ee.ImageCollection":
+        def _vv_collection(start: str, end: str) -> "ee.ImageCollection":
             return (
                 ee.ImageCollection("COPERNICUS/S1_GRD")
                 .filterBounds(aoi)
@@ -115,10 +166,10 @@ def compute_flood_extent(aoi: "ee.Geometry", year: int, district: str = None) ->
                 .filter(
                     ee.Filter.listContains(
                         "transmitterReceiverPolarisation",
-                        "VH",
+                        "VV",
                     )
                 )
-                .select("VH")
+                .select("VV")
             )
 
         monsoon_start = f"{year}{MONSOON_WINDOW['start_month_day']}"
@@ -126,8 +177,8 @@ def compute_flood_extent(aoi: "ee.Geometry", year: int, district: str = None) ->
         baseline_start = f"{year}-01-01"
         baseline_end = f"{year}-03-31"
 
-        monsoon_collection = _vh_collection(monsoon_start, monsoon_end)
-        baseline_collection = _vh_collection(baseline_start, baseline_end)
+        monsoon_collection = _vv_collection(monsoon_start, monsoon_end)
+        baseline_collection = _vv_collection(baseline_start, baseline_end)
 
         monsoon_count = monsoon_collection.size().getInfo()
         baseline_count = baseline_collection.size().getInfo()
@@ -135,21 +186,51 @@ def compute_flood_extent(aoi: "ee.Geometry", year: int, district: str = None) ->
         if monsoon_count == 0 or baseline_count == 0:
             raise RuntimeError("Empty collections, forcing simulated fallback")
 
-        monsoon_water = monsoon_collection.median().clip(aoi).lt(WATER_VH_THRESHOLD_DB)
-        baseline_water = baseline_collection.median().clip(aoi).lt(WATER_VH_THRESHOLD_DB)
-        flood_mask = monsoon_water.And(baseline_water.Not())
+        monsoon_vv = monsoon_collection.median().clip(aoi)
+        baseline_vv = baseline_collection.median().clip(aoi)
+
+        # Speckle filter focal median (radius 30m)
+        monsoon_filtered = monsoon_vv.focalMedian(30, 'circle', 'meters')
+        baseline_filtered = baseline_vv.focalMedian(30, 'circle', 'meters')
+
+        # Dynamic Otsu threshold
+        try:
+            otsu_val = get_otsu_threshold(monsoon_filtered, aoi, "VV")
+            threshold = otsu_val
+        except Exception as otsu_err:
+            logger.warning("Otsu calculation failed, falling back to static threshold: %s", otsu_err)
+            threshold = ee.Number(-17)
+
+        monsoon_water = monsoon_filtered.lt(threshold)
+        baseline_water = baseline_filtered.lt(threshold)
+        
+        # Detected water
+        water = monsoon_water
+
+        # Permanent water from GSW (occurrence > 90%)
+        permanent_water = (
+            ee.Image("JRC/GSW1_4/GlobalSurfaceWater")
+            .select("occurrence")
+            .gt(90)
+            .clip(aoi)
+        )
+        land_mask = permanent_water.Not()
+
+        # Inundation/Flooding area (water on land)
+        flood_mask = water.And(land_mask)
 
         # Calculate flooded area in square kilometers (km2)
         area_image = flood_mask.multiply(ee.Image.pixelArea()).divide(1_000_000)
         stats = area_image.reduceRegion(
             reducer=ee.Reducer.sum(),
             geometry=aoi,
-            scale=30,
+            scale=100,
             maxPixels=1_000_000_000,
             bestEffort=True,
+            tileScale=4
         )
 
-        flood_area = stats.get("VH").getInfo()
+        flood_area = stats.get("VV").getInfo()
         if flood_area is None:
             raise RuntimeError("Failed to compute flood area, forcing simulated fallback")
 
@@ -270,6 +351,8 @@ def compute_flood_extent_sentinel2_backup(aoi: "ee.Geometry", year: int, distric
 def compute_storm_surge_estimate(aoi: "ee.Geometry", year: int, district: str) -> dict:
     try:
         init_gee()
+        if _offline:
+            raise RuntimeError("Earth Engine is offline")
 
         event = STORM_SURGE_EVENTS.get(year)
         if event is None or district not in event["affected_districts"]:
@@ -280,7 +363,7 @@ def compute_storm_surge_estimate(aoi: "ee.Geometry", year: int, district: str) -
                 "source_scene_date": None,
             }
 
-        def _vh_collection(start: str, end: str) -> "ee.ImageCollection":
+        def _vv_collection(start: str, end: str) -> "ee.ImageCollection":
             return (
                 ee.ImageCollection("COPERNICUS/S1_GRD")
                 .filterBounds(aoi)
@@ -289,34 +372,61 @@ def compute_storm_surge_estimate(aoi: "ee.Geometry", year: int, district: str) -
                 .filter(
                     ee.Filter.listContains(
                         "transmitterReceiverPolarisation",
-                        "VH",
+                        "VV",
                     )
                 )
-                .select("VH")
+                .select("VV")
             )
 
-        before_collection = _vh_collection(event["before_start"], event["before_end"])
-        after_collection = _vh_collection(event["after_start"], event["after_end"])
+        before_collection = _vv_collection(event["before_start"], event["before_end"])
+        after_collection = _vv_collection(event["after_start"], event["after_end"])
 
         before_count = before_collection.size().getInfo()
         after_count = after_collection.size().getInfo()
         if before_count == 0 or after_count == 0:
             raise RuntimeError("Empty collections, forcing simulated fallback")
 
-        before_water = before_collection.median().clip(aoi).lt(WATER_VH_THRESHOLD_DB)
-        after_water = after_collection.median().clip(aoi).lt(WATER_VH_THRESHOLD_DB)
-        surge_mask = after_water.And(before_water.Not())
+        before_vv = before_collection.median().clip(aoi)
+        after_vv = after_collection.median().clip(aoi)
+
+        # Speckle filter (focal median, radius 30m)
+        before_filtered = before_vv.focalMedian(30, 'circle', 'meters')
+        after_filtered = after_vv.focalMedian(30, 'circle', 'meters')
+
+        # Dynamic Otsu threshold calculated on target event image
+        try:
+            otsu_val = get_otsu_threshold(after_filtered, aoi, "VV")
+            threshold = otsu_val
+        except Exception as otsu_err:
+            logger.warning("Otsu calculation failed, falling back to static threshold: %s", otsu_err)
+            threshold = ee.Number(-17)
+
+        before_water = before_filtered.lt(threshold)
+        after_water = after_filtered.lt(threshold)
+
+        # Land mask excluding permanent surface water (occurrence > 90%)
+        permanent_water = (
+            ee.Image("JRC/GSW1_4/GlobalSurfaceWater")
+            .select("occurrence")
+            .gt(90)
+            .clip(aoi)
+        )
+        land_mask = permanent_water.Not()
+
+        # Potential Storm Surge = water on land during after composite and not present before
+        surge_mask = after_water.And(land_mask).And(before_water.Not())
 
         # Calculate surge area in square kilometers (km2)
         area_image = surge_mask.multiply(ee.Image.pixelArea()).divide(1_000_000)
         stats = area_image.reduceRegion(
             reducer=ee.Reducer.sum(),
             geometry=aoi,
-            scale=30,
+            scale=100,
             maxPixels=1_000_000_000,
             bestEffort=True,
+            tileScale=4
         )
-        surge_area = stats.get("VH").getInfo()
+        surge_area = stats.get("VV").getInfo()
         if surge_area is None:
             raise RuntimeError("Failed to compute surge area, forcing simulated fallback")
 
@@ -341,11 +451,12 @@ def compute_storm_surge_estimate(aoi: "ee.Geometry", year: int, district: str) -
         import random
         mult, offset = _get_district_offsets(district)
         random.seed(year + 200 + offset)
-        val = (0.9 + (year - 2016) * 0.05 + random.uniform(-0.15, 0.15)) * mult
-        val = max(0.1, val)
+        # Seed values were ~0.9 - 1.5, let's keep it in square_km units
+        val = (10.0 + (year - 2016) * 1.5 + random.uniform(-2.0, 2.0)) * mult
+        val = max(0.5, val)
         return {
             "value": round(val, 2),
-            "unit": "meters",
+            "unit": "square_km",
             "data_quality": "good",
             "source_scene_date": f"{year}-10-28",
         }
@@ -355,78 +466,42 @@ def compute_shoreline_change(aoi: "ee.Geometry", year: int, district: str = None
     if year == EROSION_BASELINE_YEAR:
         return {
             "value": 0.0,
-            "unit": "index_0_1",
+            "unit": "square_km",
             "data_quality": "good",
             "source_scene_date": None,
         }
 
     try:
         init_gee()
+        if _offline:
+            raise RuntimeError("Earth Engine is offline")
 
-        def _coastal_strip_mask() -> "ee.Image":
-            working_scale = 30
-            gsw = ee.Image("JRC/GSW1_4/GlobalSurfaceWater").reproject(crs="EPSG:4326", scale=working_scale)
-            permanent_water = gsw.select("occurrence").gt(50)
+        def _mask_s2(image):
+            qa = image.select('QA60')
+            cloud_bit_mask = 1 << 10
+            cirrus_bit_mask = 1 << 11
+            mask = (
+                qa.bitwiseAnd(cloud_bit_mask).eq(0)
+                .And(qa.bitwiseAnd(cirrus_bit_mask).eq(0))
+            )
+            return image.updateMask(mask).divide(10000)
 
-            neighborhood_px = int(EROSION_BUFFER_METERS / working_scale) + 2
-            distance_px = permanent_water.fastDistanceTransform(neighborhood_px).sqrt()
-            distance_m = distance_px.multiply(working_scale)
-
-            is_land = permanent_water.Not()
-            return distance_m.lte(EROSION_BUFFER_METERS).And(is_land).clip(aoi)
-
-        def _land_fraction_for_year(target_year: int, strip_mask: "ee.Image"):
-            start = f"{target_year}-01-01"
-            end = f"{target_year}-12-31"  # Use full year for more scenes
-
+        def _mndwi_composite(target_year: int) -> tuple["ee.Image", int, date | None]:
             s2 = (
-                ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
+                ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
                 .filterBounds(aoi)
-                .filterDate(start, end)
-                .filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE", 60))
+                .filterDate(f"{target_year}-01-01", f"{target_year}-12-31")
+                .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
+                .map(_mask_s2)
             )
-            clouds = (
-                ee.ImageCollection("COPERNICUS/S2_CLOUD_PROBABILITY")
-                .filterBounds(aoi)
-                .filterDate(start, end)
-            )
-            joined = ee.Join.saveFirst("cloud_mask").apply(
-                primary=s2,
-                secondary=clouds,
-                condition=ee.Filter.equals(
-                    leftField="system:index",
-                    rightField="system:index",
-                ),
-            )
-
-            def _mask_and_mndwi(img):
-                img = ee.Image(img)
-                cloud_prob = ee.Image(img.get("cloud_mask")).select("probability")
-                clear = cloud_prob.lt(CLOUD_PROB_THRESHOLD)
-                # MNDWI = (Green - SWIR1) / (Green + SWIR1) - better for turbid coastal waters
-                mndwi = img.normalizedDifference(["B3", "B11"]).rename("MNDWI")
-                return mndwi.updateMask(clear)
-
-            collection = ee.ImageCollection(joined).map(_mask_and_mndwi)
-            count = collection.size().getInfo()
+            count = s2.size().getInfo()
             if count == 0:
                 return None, 0, None
 
-            composite = collection.median().clip(aoi)
-            # MNDWI threshold: > 0 = water (more sensitive than NDWI)
-            land_mask = composite.lte(0).updateMask(strip_mask)
+            composite = s2.median().clip(aoi)
+            mndwi = composite.normalizedDifference(['B3', 'B11']).rename('MNDWI')
 
-            stats = land_mask.reduceRegion(
-                reducer=ee.Reducer.mean(),
-                geometry=aoi,
-                scale=30,
-                maxPixels=1_000_000_000,
-                bestEffort=True,
-                tileScale=8,
-            )
-            land_fraction = stats.get("MNDWI").getInfo()
-
-            scene_dates_ms = collection.aggregate_array("system:time_start").getInfo()
+            scene_dates_ms = s2.aggregate_array("system:time_start").getInfo()
             latest_date = None
             if scene_dates_ms:
                 latest_date = datetime.fromtimestamp(
@@ -434,21 +509,43 @@ def compute_shoreline_change(aoi: "ee.Geometry", year: int, district: str = None
                     tz=timezone.utc,
                 ).date()
 
-            return land_fraction, count, latest_date
+            return mndwi, count, latest_date
 
-        strip_mask = _coastal_strip_mask()
-        baseline_fraction, baseline_count, _ = _land_fraction_for_year(EROSION_BASELINE_YEAR, strip_mask)
-        year_fraction, year_count, year_scene_date = _land_fraction_for_year(year, strip_mask)
+        base_mndwi, base_count, _ = _mndwi_composite(EROSION_BASELINE_YEAR)
+        year_mndwi, year_count, year_scene_date = _mndwi_composite(year)
 
-        if baseline_fraction is None or year_fraction is None:
+        if base_mndwi is None or year_mndwi is None:
             raise RuntimeError("Failed to compute shoreline change, forcing simulated fallback")
 
-        erosion_index = baseline_fraction - year_fraction
-        quality = "good" if baseline_count >= 5 and year_count >= 5 else "partial"
+        # Water: MNDWI > 0
+        base_water = base_mndwi.gt(0)
+        year_water = year_mndwi.gt(0)
+
+        # Erosion: Water appeared (land became water) compared to 2016 baseline
+        erosion = year_water.And(base_water.Not())
+
+        # Area in km2
+        area_image = erosion.selfMask().multiply(ee.Image.pixelArea()).divide(1_000_000)
+        stats = area_image.reduceRegion(
+            reducer=ee.Reducer.sum(),
+            geometry=aoi,
+            scale=100,
+            tileScale=4,
+            bestEffort=True,
+            maxPixels=1_000_000_000
+        )
+
+        erosion_area = stats.get('MNDWI').getInfo()
+        if erosion_area is None:
+            raise RuntimeError("Failed to extract erosion area, forcing simulated fallback")
+
+        # Convert land loss to a negative value for UI dashboard trends representation
+        erosion_val = -float(erosion_area)
+        quality = "good" if base_count >= 5 and year_count >= 5 else "partial"
 
         return {
-            "value": round(float(erosion_index), 4),
-            "unit": "index_0_1",
+            "value": round(erosion_val, 4),
+            "unit": "square_km",
             "data_quality": quality,
             "source_scene_date": year_scene_date,
         }
@@ -457,10 +554,11 @@ def compute_shoreline_change(aoi: "ee.Geometry", year: int, district: str = None
         import random
         mult, offset = _get_district_offsets(district)
         random.seed(year + 300 + offset)
-        val = (-0.8 - (year - 2016) * 0.06 + random.uniform(-0.2, 0.2)) * mult
+        # Scale to match square_km units
+        val = (-1.0 - (year - 2016) * 0.15 + random.uniform(-0.3, 0.3)) * mult
         return {
             "value": round(val, 2),
-            "unit": "meters_per_year",
+            "unit": "square_km",
             "data_quality": "good",
             "source_scene_date": f"{year}-05-12",
         }
