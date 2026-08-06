@@ -174,7 +174,7 @@ const ALL_HOTSPOT_OFFSETS: Record<string, Record<string, number>> = {
   "Gwadar Tombolo Lowland": { "tsunami-risk": 1.4 },
   "Pasni Town (1945 Epicenter proximity)": { "tsunami-risk": 1.6 },
   "Ormara City Lowland": { "tsunami-risk": 1.2 },
-  "Sonmiani Lagoon Flats": { "tsunami-risk": 1.2 },
+  "Sonmiani Lagoon Flats": { "tsunami-risk": 1.2, "vulnerability-index": 1.2 },
   "Gadani Coastal Settlements": { "tsunami-risk": 1.1 },
   "Kund Malir Coastline": { "tsunami-risk": 1.0 },
   "Sujawal Tidal Flats": { "tsunami-risk": 1.3 },
@@ -193,7 +193,6 @@ const ALL_HOTSPOT_OFFSETS: Record<string, Record<string, number>> = {
   "Pasni Settlement": { "vulnerability-index": 1.2 },
   "Ormara Town Area": { "vulnerability-index": 1.1 },
   "Gadani Town Coast": { "vulnerability-index": 1.3 },
-  "Sonmiani Lagoon Flats": { "vulnerability-index": 1.2 },
   "Kund Malir Coast": { "vulnerability-index": 1.0 },
   "Uthal Town Area": { "vulnerability-index": 1.1 },
   // Safe zones
@@ -359,7 +358,8 @@ export default function DistrictDetailsPage({ params }: { params: { district: st
             const floodVal = floodRes.find((item) => item.year === year)?.value ?? 0;
             const surgeVal = surgeRes.find((item) => item.year === year)?.value ?? 0;
             const erosionVal = erosionRes.find((item) => item.year === year)?.value ?? 0;
-            const slVal = slRes.find((item) => item.year === year)?.value ?? 0;
+            const slItem = slRes.find((item) => item.year === year);
+            const slVal = slItem ? (slItem.unit === 'm' ? slItem.value * 1000 : slItem.value) : 0;
             const cviVal = cviRes.find((item) => item.year === year)?.value ?? 0;
             const tsunamiVal = tsunamiRes.find((item) => item.year === year)?.value ?? 0;
             const safeZonesVal = safeZonesRes.find((item) => item.year === year)?.value ?? 0;

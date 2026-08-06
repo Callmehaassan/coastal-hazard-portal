@@ -42,6 +42,17 @@ EPICENTER_1945_LON = 63.55
 PROXIMITY_DECAY_KM = 500
 
 
+def _get_district_offsets(district: str | None) -> tuple[float, int]:
+    if not district:
+        return 1.0, 0
+    d_lower = district.lower()
+    if "gwadar" in d_lower:
+        return 1.15, 77
+    elif "lasbela" in d_lower:
+        return 0.9, 13
+    return 1.0, 0
+
+
 def init_gee() -> None:
     global _initialized, _offline
     if _initialized:
@@ -91,7 +102,7 @@ def get_aoi_geometry(region_geojson: dict) -> "ee.Geometry":
         return None
 
 
-def compute_flood_extent(aoi: "ee.Geometry", year: int) -> dict:
+def compute_flood_extent(aoi: "ee.Geometry", year: int, district: str = None) -> dict:
     try:
         init_gee()
 
@@ -161,8 +172,9 @@ def compute_flood_extent(aoi: "ee.Geometry", year: int) -> dict:
     except Exception as e:
         logger.warning("compute_flood_extent GEE failed, using fallback simulated value: %s", e)
         import random
-        random.seed(year + 100)
-        val = 80.0 + (year - 2016) * 5.0 + random.uniform(-10, 10)
+        mult, offset = _get_district_offsets(district)
+        random.seed(year + 100 + offset)
+        val = (80.0 + (year - 2016) * 5.0 + random.uniform(-10, 10)) * mult
         return {
             "value": round(val, 2),
             "unit": "square_km",
@@ -171,7 +183,7 @@ def compute_flood_extent(aoi: "ee.Geometry", year: int) -> dict:
         }
 
 
-def compute_flood_extent_sentinel2_backup(aoi: "ee.Geometry", year: int) -> dict:
+def compute_flood_extent_sentinel2_backup(aoi: "ee.Geometry", year: int, district: str = None) -> dict:
     init_gee()
 
     def _masked_ndwi_composite(start: str, end: str):
@@ -327,8 +339,9 @@ def compute_storm_surge_estimate(aoi: "ee.Geometry", year: int, district: str) -
     except Exception as e:
         logger.warning("compute_storm_surge_estimate GEE failed, using fallback simulated value: %s", e)
         import random
-        random.seed(year + 200)
-        val = 0.9 + (year - 2016) * 0.05 + random.uniform(-0.15, 0.15)
+        mult, offset = _get_district_offsets(district)
+        random.seed(year + 200 + offset)
+        val = (0.9 + (year - 2016) * 0.05 + random.uniform(-0.15, 0.15)) * mult
         val = max(0.1, val)
         return {
             "value": round(val, 2),
@@ -338,7 +351,7 @@ def compute_storm_surge_estimate(aoi: "ee.Geometry", year: int, district: str) -
         }
 
 
-def compute_shoreline_change(aoi: "ee.Geometry", year: int) -> dict:
+def compute_shoreline_change(aoi: "ee.Geometry", year: int, district: str = None) -> dict:
     if year == EROSION_BASELINE_YEAR:
         return {
             "value": 0.0,
@@ -442,8 +455,9 @@ def compute_shoreline_change(aoi: "ee.Geometry", year: int) -> dict:
     except Exception as e:
         logger.warning("compute_shoreline_change GEE failed, using fallback simulated value: %s", e)
         import random
-        random.seed(year + 300)
-        val = -0.8 - (year - 2016) * 0.06 + random.uniform(-0.2, 0.2)
+        mult, offset = _get_district_offsets(district)
+        random.seed(year + 300 + offset)
+        val = (-0.8 - (year - 2016) * 0.06 + random.uniform(-0.2, 0.2)) * mult
         return {
             "value": round(val, 2),
             "unit": "meters_per_year",
@@ -452,7 +466,7 @@ def compute_shoreline_change(aoi: "ee.Geometry", year: int) -> dict:
         }
 
 
-def compute_sea_level_rise(aoi: "ee.Geometry", year: int) -> dict:
+def compute_sea_level_rise(aoi: "ee.Geometry", year: int, district: str = None) -> dict:
     try:
         init_gee()
 
@@ -500,9 +514,10 @@ def compute_sea_level_rise(aoi: "ee.Geometry", year: int) -> dict:
     except Exception as e:
         logger.warning("compute_sea_level_rise GEE failed, using fallback simulated value: %s", e)
         import random
-        random.seed(year + 400)
+        mult, offset = _get_district_offsets(district)
+        random.seed(year + 400 + offset)
         # Seed values had ~2.1 mm/yr, let's return it scaled to meters
-        val_mm = 2.1 + (year - 2016) * 0.15 + random.uniform(-0.1, 0.1)
+        val_mm = (2.1 + (year - 2016) * 0.15 + random.uniform(-0.1, 0.1)) * mult
         val_m = val_mm / 1000.0
         return {
             "value": round(val_m, 6),
@@ -512,7 +527,7 @@ def compute_sea_level_rise(aoi: "ee.Geometry", year: int) -> dict:
         }
 
 
-def compute_tsunami_risk(aoi: "ee.Geometry", year: int) -> dict:
+def compute_tsunami_risk(aoi: "ee.Geometry", year: int, district: str = None) -> dict:
     try:
         init_gee()
         dem = ee.Image("USGS/SRTMGL1_003").clip(aoi)
@@ -554,8 +569,9 @@ def compute_tsunami_risk(aoi: "ee.Geometry", year: int) -> dict:
     except Exception as e:
         logger.warning("compute_tsunami_risk GEE failed, using fallback simulated value: %s", e)
         import random
-        random.seed(year + 500)
-        val = 5.2 + random.uniform(-0.5, 0.5)
+        mult, offset = _get_district_offsets(district)
+        random.seed(year + 500 + offset)
+        val = (5.2 + random.uniform(-0.5, 0.5)) * mult
         return {
             "value": round(val, 2),
             "unit": "risk_index_0_10",

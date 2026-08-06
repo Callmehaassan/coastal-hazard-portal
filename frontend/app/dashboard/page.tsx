@@ -490,7 +490,8 @@ export default function DashboardPage() {
       const groupedSL: Record<number, number[]> = {};
       slData.forEach((item) => {
         if (!groupedSL[item.year]) groupedSL[item.year] = [];
-        groupedSL[item.year].push(item.value);
+        const val = item.unit === 'm' ? item.value * 1000 : item.value;
+        groupedSL[item.year].push(val);
       });
       const slSeries = Object.entries(groupedSL).map(([yearStr, vals]) => {
         const year = Number(yearStr);
@@ -525,7 +526,8 @@ export default function DashboardPage() {
         const grouped: Record<number, number[]> = {};
         data.forEach((item) => {
           if (!grouped[item.year]) grouped[item.year] = [];
-          grouped[item.year].push(item.value);
+          const val = (key === 'seaLevel' && item.unit === 'm') ? item.value * 1000 : item.value;
+          grouped[item.year].push(val);
         });
 
         const getValForYear = (y: number) => {
@@ -682,7 +684,8 @@ export default function DashboardPage() {
         if (!grouped[r.year]) {
           grouped[r.year] = [];
         }
-        grouped[r.year].push(r.value);
+        const val = (selectedAnalysis === 'sea-level-rise' && r.unit === 'm') ? r.value * 1000 : r.value;
+        grouped[r.year].push(val);
       });
 
       const isAreaMetric = currentConfig.unit === 'km²';

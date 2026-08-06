@@ -206,7 +206,7 @@ export default function DashboardMap({
     const reading = hazardData.find(
       (item) => item.region_id === regionId && item.year === selectedYear
     );
-    return reading ? reading.value : 0;
+    return reading ? (reading.unit === 'm' && selectedAnalysis === 'sea-level-rise' ? reading.value * 1000 : reading.value) : 0;
   };
 
   // Style helper for region polygons

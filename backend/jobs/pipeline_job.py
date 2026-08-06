@@ -40,7 +40,7 @@ def _run_flooding(db, regions: list[Region], year_start: int, year_end: int) -> 
 
         for year in range(year_start, year_end + 1):
             try:
-                result = gee_service.compute_flood_extent(aoi, year)
+                result = gee_service.compute_flood_extent(aoi, year, region.name)
             except Exception:
                 logger.exception("compute_flood_extent failed for region=%s year=%s", region.name, year)
                 continue
@@ -52,7 +52,7 @@ def _run_flooding(db, regions: list[Region], year_start: int, year_end: int) -> 
                     year,
                 )
                 try:
-                    result = gee_service.compute_flood_extent_sentinel2_backup(aoi, year)
+                    result = gee_service.compute_flood_extent_sentinel2_backup(aoi, year, region.name)
                 except Exception:
                     logger.exception(
                         "Sentinel-2 backup also failed for region=%s year=%s", region.name, year
@@ -140,7 +140,7 @@ def _run_erosion(db, regions: list[Region], year_start: int, year_end: int) -> i
 
         for year in range(year_start, year_end + 1):
             try:
-                result = gee_service.compute_shoreline_change(aoi, year)
+                result = gee_service.compute_shoreline_change(aoi, year, region.name)
             except Exception:
                 logger.exception("compute_shoreline_change failed for region=%s year=%s", region.name, year)
                 continue
@@ -183,7 +183,7 @@ def _run_sea_level_rise(db, regions: list[Region], year_start: int, year_end: in
 
         for year in range(year_start, year_end + 1):
             try:
-                result = gee_service.compute_sea_level_rise(aoi, year)
+                result = gee_service.compute_sea_level_rise(aoi, year, region.name)
             except Exception:
                 logger.exception("compute_sea_level_rise failed for region=%s year=%s", region.name, year)
                 continue
@@ -232,7 +232,7 @@ def _run_tsunami_risk(db, regions: list[Region]) -> int:
         aoi = gee_service.get_aoi_geometry(aoi_geojson)
 
         try:
-            result = gee_service.compute_tsunami_risk(aoi, assessment_year)
+            result = gee_service.compute_tsunami_risk(aoi, assessment_year, region.name)
         except Exception:
             logger.exception("compute_tsunami_risk failed for region=%s", region.name)
             continue

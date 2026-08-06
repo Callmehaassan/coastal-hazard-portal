@@ -45,7 +45,7 @@ HOTSPOT_OFFSETS = {
     "Gwadar Tombolo Lowland": {"tsunami_risk": 1.4},
     "Pasni Town (1945 Epicenter proximity)": {"tsunami_risk": 1.6},
     "Ormara City Lowland": {"tsunami_risk": 1.2},
-    "Sonmiani Lagoon Flats": {"tsunami_risk": 1.2},
+    "Sonmiani Lagoon Flats": {"tsunami_risk": 1.2, "vulnerability_index": 1.2},
     "Gadani Coastal Settlements": {"tsunami_risk": 1.1},
     "Kund Malir Coastline": {"tsunami_risk": 1.0},
     "Sujawal Tidal Flats": {"tsunami_risk": 1.3},
@@ -64,7 +64,6 @@ HOTSPOT_OFFSETS = {
     "Pasni Settlement": {"vulnerability_index": 1.2},
     "Ormara Town Area": {"vulnerability_index": 1.1},
     "Gadani Town Coast": {"vulnerability_index": 1.3},
-    "Sonmiani Lagoon Flats": {"vulnerability_index": 1.2},
     "Kund Malir Coast": {"vulnerability_index": 1.0},
     "Uthal Town Area": {"vulnerability_index": 1.1},
     # safe zones
