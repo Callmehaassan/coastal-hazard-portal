@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect } from "react";
 import Link from "next/link";
-import { MapContainer, TileLayer, GeoJSON, Popup, useMap, CircleMarker, Polygon } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, Popup, useMap, CircleMarker, Polygon, Circle, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import type { Region, HazardReading } from "@/lib/types";
 
@@ -12,6 +12,8 @@ const LeafletGeoJSON = GeoJSON as any;
 const LeafletPopup = Popup as any;
 const LeafletCircleMarker = CircleMarker as any;
 const LeafletPolygon = Polygon as any;
+const LeafletCircle = Circle as any;
+const LeafletTooltip = Tooltip as any;
 
 // Helper to handle map centering and resizing dynamically
 function MapController({ center, zoom }: { center: [number, number]; zoom: number }) {
@@ -561,6 +563,98 @@ function isPointInRegion(point: [number, number], geometry: any) {
     }
   };
 
+  const getHeatmapCircles = () => {
+    if (!isAnalysisActive) return [];
+    
+    const blurs: any[] = [];
+    const activeDist = selectedDistrict.toLowerCase();
+    
+    regions.forEach((region) => {
+      const regionDist = region.district.toLowerCase();
+      if (activeDist !== 'all coastal districts' && regionDist !== activeDist) {
+        return;
+      }
+      
+      selectedHazards.forEach((hazard) => {
+        const hazardGroup = HAZARD_HOTSPOTS[hazard] || HAZARD_HOTSPOTS["vulnerability-index"] || {};
+        const spots = hazardGroup[region.district] || [];
+        
+        spots.forEach((spot, spotIdx) => {
+          let baseColor = "#ef4444"; // Red for erosion
+          if (hazard === "flooding") baseColor = "#06b6d4"; // Cyan
+          else if (hazard === "storm-surge") baseColor = "#f97316"; // Orange
+          
+          // Triple overlapping transparent circles to make a smooth radial blur heatmap blob!
+          blurs.push({
+            id: `${region.id}-${hazard}-${spotIdx}-outer`,
+            center: spot.coordinates,
+            radius: 22000, // 22km outer glow
+            color: baseColor,
+            fillOpacity: 0.08
+          });
+          blurs.push({
+            id: `${region.id}-${hazard}-${spotIdx}-mid`,
+            center: spot.coordinates,
+            radius: 12000, // 12km mid blur
+            color: baseColor,
+            fillOpacity: 0.22
+          });
+          blurs.push({
+            id: `${region.id}-${hazard}-${spotIdx}-inner`,
+            center: spot.coordinates,
+            radius: 6000, // 6km intense core
+            color: baseColor,
+            fillOpacity: 0.45
+          });
+        });
+      });
+    });
+    
+    return blurs;
+  };
+
+  const getHeatmapBeacons = () => {
+    if (!isAnalysisActive) return [];
+    
+    const beacons: any[] = [];
+    const activeDist = selectedDistrict.toLowerCase();
+    
+    regions.forEach((region) => {
+      const regionDist = region.district.toLowerCase();
+      if (activeDist !== 'all coastal districts' && regionDist !== activeDist) {
+        return;
+      }
+      
+      selectedHazards.forEach((hazard) => {
+        const hazardGroup = HAZARD_HOTSPOTS[hazard] || HAZARD_HOTSPOTS["vulnerability-index"] || {};
+        const spots = hazardGroup[region.district] || [];
+        
+        spots.forEach((spot, spotIdx) => {
+          let color = "#ef4444";
+          let label = "Erosion Alert";
+          if (hazard === "flooding") {
+            color = "#06b6d4";
+            label = "Flood Risk";
+          } else if (hazard === "storm-surge") {
+            color = "#f97316";
+            label = "Surge Alert";
+          }
+          
+          beacons.push({
+            id: `${region.id}-${hazard}-${spotIdx}-beacon`,
+            center: spot.coordinates,
+            name: spot.name,
+            hazard,
+            color,
+            labelText: `${spot.name} (${label})`
+          });
+        });
+      });
+    });
+    
+    return beacons;
+  };
+
   const getDistrictView = () => {
     const dist = selectedDistrict?.toLowerCase();
     if (dist === "gwadar") {
@@ -655,27 +749,53 @@ function isPointInRegion(point: [number, number], geometry: any) {
           />
         )}
 
-        {isAnalysisActive && getRasterGrid().map((cell) => (
-          <LeafletPolygon
-            key={`raster-cell-${cell.id}-${selectedHazards.join('-')}-${selectedDistrict}`}
-            positions={cell.bounds}
+        {/* Real Dynamic Heatmap Blurs (Concentric Circles) */}
+        {isAnalysisActive && getHeatmapCircles().map((blur) => (
+          <LeafletCircle
+            key={`blur-${blur.id}-${selectedDistrict}`}
+            center={blur.center}
+            radius={blur.radius}
             pathOptions={{
-              fillColor: getRasterColor(cell.score),
-              fillOpacity: 0.65,
+              fillColor: blur.color,
+              fillOpacity: blur.fillOpacity,
               color: "transparent",
               weight: 0
             }}
+          />
+        ))}
+
+        {/* Highly Visible Pulsing Hazard Beacons with Permanent Labels */}
+        {isAnalysisActive && getHeatmapBeacons().map((beacon) => (
+          <LeafletCircleMarker
+            key={`beacon-${beacon.id}-${selectedDistrict}`}
+            center={beacon.center}
+            radius={7}
+            fillColor={beacon.color}
+            fillOpacity={1.0}
+            color="#ffffff"
+            weight={2.0}
           >
+            <LeafletTooltip
+              permanent
+              direction="top"
+              offset={[0, -6]}
+              className="custom-glowing-tooltip"
+            >
+              <div className="px-2 py-1 text-[9px] font-sans font-bold bg-[#070e1b]/95 text-white border border-white/10 rounded-lg shadow-xl flex items-center gap-1.5 leading-none select-none">
+                <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: beacon.color }} />
+                {beacon.labelText}
+              </div>
+            </LeafletTooltip>
             <LeafletPopup>
-              <div className="text-slate-900 font-sans p-2.5 text-xs min-w-[160px]">
-                <h5 className="font-bold text-cyan-800 border-b pb-1 mb-1.5 flex items-center gap-1">
-                  🛰️ GEE Classified Grid Pixel
+              <div className="text-slate-900 font-sans p-1.5 text-xs min-w-[160px]">
+                <h5 className="font-bold text-cyan-800 border-b pb-0.5 mb-1.5 flex items-center gap-1">
+                  🛰️ GEE Hazard Profile
                 </h5>
-                <p className="text-slate-700">District: <strong>{cell.district.charAt(0).toUpperCase() + cell.district.slice(1)}</strong></p>
-                <p className="text-slate-500 mt-0.5">Classification Score: <span className="font-bold text-slate-800">{cell.score} / 5</span></p>
+                <p className="text-slate-700">Location: <strong>{beacon.name}</strong></p>
+                <p className="text-slate-500 mt-1">Hazard Group: <span className="capitalize font-semibold text-slate-800">{beacon.hazard}</span></p>
               </div>
             </LeafletPopup>
-          </LeafletPolygon>
+          </LeafletCircleMarker>
         ))}
 
         {showCoastline && (
