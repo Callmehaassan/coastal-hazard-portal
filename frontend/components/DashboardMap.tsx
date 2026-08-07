@@ -421,7 +421,7 @@ export default function DashboardMap({
 
   const getRasterColor = (score: number) => {
     // If multiple hazards are active, use CVI color ramp (Green -> Yellow -> Red)
-    const isMulti = selectedHazards.length > 1;
+    const isMulti = selectedHazards.length > 1 || selectedHazards.includes("vulnerability");
     if (isMulti) {
       switch (score) {
         case 1: return "#006400"; // Low (Dark Green)
@@ -583,6 +583,7 @@ function isPointInRegion(point: [number, number], geometry: any) {
           let baseColor = "#ef4444"; // Red for erosion
           if (hazard === "flooding") baseColor = "#06b6d4"; // Cyan
           else if (hazard === "storm-surge") baseColor = "#f97316"; // Orange
+          else if (hazard === "vulnerability") baseColor = "#a855f7"; // Purple for vulnerability
           
           // Triple overlapping transparent circles to make a smooth radial blur heatmap blob!
           blurs.push({
@@ -638,6 +639,9 @@ function isPointInRegion(point: [number, number], geometry: any) {
           } else if (hazard === "storm-surge") {
             color = "#f97316";
             label = "Surge Alert";
+          } else if (hazard === "vulnerability") {
+            color = "#a855f7";
+            label = "Vulnerability Risk";
           }
           
           beacons.push({
@@ -794,11 +798,13 @@ function isPointInRegion(point: [number, number], geometry: any) {
               direction={
                 beacon.hazard === "flooding" ? "top"
                 : beacon.hazard === "erosion" ? "bottom"
+                : beacon.hazard === "vulnerability" ? "left"
                 : "right"
               }
               offset={
                 beacon.hazard === "flooding" ? [0, -8]
                 : beacon.hazard === "erosion" ? [0, 8]
+                : beacon.hazard === "vulnerability" ? [-10, 0]
                 : [10, 0]
               }
               className="custom-glowing-tooltip"

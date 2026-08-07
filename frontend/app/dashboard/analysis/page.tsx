@@ -246,7 +246,8 @@ export default function AnalysisPage() {
                   {[
                     { key: 'flooding', label: 'Coastal Flooding', color: '#06b6d4' },
                     { key: 'storm-surge', label: 'Storm Surge', color: '#f59e0b' },
-                    { key: 'erosion', label: 'Coastal Erosion', color: '#ef4444' }
+                    { key: 'erosion', label: 'Coastal Erosion', color: '#ef4444' },
+                    { key: 'vulnerability', label: 'Coastal Vulnerability', color: '#a855f7' }
                   ].map((hazard) => (
                     <button
                       key={hazard.key}
@@ -469,7 +470,7 @@ export default function AnalysisPage() {
 
             {/* Custom Interactive Legend inside the Map area */}
             {isAnalysisActive && (() => {
-              const isMulti = selectedHazards.length > 1;
+              const isMulti = selectedHazards.length > 1 || selectedHazards.includes("vulnerability");
               if (isMulti) {
                 return (
                   <div className="absolute bottom-6 left-6 z-10 bg-[#070e1b]/95 border border-white/10 p-4 rounded-xl backdrop-blur-md text-[10px] text-slate-300 w-[160px] pointer-events-auto shadow-2xl flex flex-col gap-2 animate-in fade-in duration-300">
