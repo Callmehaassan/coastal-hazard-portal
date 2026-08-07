@@ -374,17 +374,21 @@ export default function LandingPage() {
                 </Link>
               </div>
             </div>
-            {/* Right Chart (matching mockup visual layout) */}
-            <div className="w-[45%] h-full bg-gradient-to-br from-emerald-800 to-teal-950 relative overflow-hidden">
-              <div className="absolute inset-0 opacity-[0.12] pointer-events-none bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]" />
+            {/* Right Chart (with ocean background image) */}
+            <div className="w-[45%] h-full relative overflow-hidden">
+              <div 
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                style={{ backgroundImage: "url('/slr-bg.jpg')" }}
+              />
+              <div className="absolute inset-0 bg-teal-950/15 pointer-events-none" />
               {/* SVG line graph path overlay */}
-              <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none opacity-50 select-none z-10">
+              <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none opacity-80 select-none z-10">
                 <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                   <path d="M 0 90 Q 20 70, 40 75 T 80 35 T 100 10 L 100 100 L 0 100 Z" fill="url(#slrGrad2)" />
                   <path d="M 0 90 Q 20 70, 40 75 T 80 35 T 100 10" fill="transparent" stroke="#22c55e" strokeWidth="2.5" />
                   <defs>
                     <linearGradient id="slrGrad2" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#22c55e" stopOpacity="1" />
+                      <stop offset="0%" stopColor="#22c55e" stopOpacity="0.7" />
                       <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
                     </linearGradient>
                   </defs>
@@ -470,221 +474,246 @@ export default function LandingPage() {
       <section className="max-w-[1400px] mx-auto px-6 py-6 w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         
         {/* Column 1: Historical Timeline */}
-        <div className="bg-white border border-slate-200 p-5 rounded-3xl shadow-sm flex flex-col justify-between min-h-[300px]">
+        <div className="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[320px]">
           <div>
-            <h5 className="font-extrabold text-[10px] text-slate-400 uppercase tracking-wider mb-3">Historical Timeline (2016-2025)</h5>
+            <div className="flex justify-between items-center mb-3">
+              <h5 className="font-extrabold text-[10px] text-slate-400 uppercase tracking-wider">Historical Timeline (2016-2025)</h5>
+              <span className="text-[10px] bg-slate-900 text-white font-bold px-2 py-0.5 rounded-full">{selectedTimelineYear}</span>
+            </div>
             
-            {/* Years timeline dots scrollable */}
-            <div className="flex gap-2.5 border-b border-slate-100 pb-3 mb-3 overflow-x-auto select-none">
-              {[2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025].map((yr) => (
-                <button 
-                  key={yr}
-                  onClick={() => setSelectedTimelineYear(yr)}
-                  className={`text-[9px] font-bold pb-1 transition flex-shrink-0 ${
-                    selectedTimelineYear === yr ? 'text-slate-900 border-b border-slate-900' : 'text-slate-400 hover:text-slate-600'
-                  }`}
-                >
-                  {yr}
-                </button>
-              ))}
+            {/* Interactive Timeline Track Visual */}
+            <div className="relative mb-5 mt-2 px-1 select-none">
+              {/* Slider Track Line */}
+              <div className="absolute left-1 right-1 top-[5px] h-1 bg-slate-100 rounded-full" />
+              {/* Highlight Track Line */}
+              <div 
+                className="absolute left-1 h-1 bg-[#132c25] rounded-full transition-all duration-300"
+                style={{ width: `${((selectedTimelineYear - 2016) / 9) * 98}%` }}
+              />
+              {/* Nodes and Dots */}
+              <div className="relative flex justify-between items-center z-10">
+                {[2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025].map((yr) => (
+                  <button 
+                    key={yr}
+                    onClick={() => setSelectedTimelineYear(yr)}
+                    className="flex flex-col items-center group relative focus:outline-none"
+                  >
+                    <div className={`w-3.5 h-3.5 rounded-full border-2 transition-all flex items-center justify-center ${
+                      selectedTimelineYear === yr 
+                        ? 'bg-[#132c25] border-white scale-125 shadow-md shadow-[#132c25]/30' 
+                        : 'bg-white border-slate-300 group-hover:border-slate-500 hover:scale-110'
+                    }`} />
+                    <span className={`text-[8px] font-black mt-1 transition-all ${
+                      selectedTimelineYear === yr ? 'text-slate-900 font-extrabold' : 'text-slate-400'
+                    }`}>{yr % 100}</span>
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Grid of Satellite map thumbnails */}
-            <div className="grid grid-cols-3 gap-2">
-              <div className="h-12 bg-slate-100 rounded-lg overflow-hidden border border-slate-200 relative">
-                <div className="absolute inset-0 bg-cover bg-center opacity-80" style={{ backgroundImage: "url('/coastal-bg.jpg')" }} />
-                <span className="absolute bottom-1 right-1 text-[8px] bg-slate-950/70 text-white px-1 rounded font-bold">Jiwani</span>
-              </div>
-              <div className="h-12 bg-slate-100 rounded-lg overflow-hidden border border-slate-200 relative">
-                <div className="absolute inset-0 bg-cover bg-center opacity-80" style={{ backgroundImage: "url('/coastal-bg.jpg')" }} />
-                <span className="absolute bottom-1 right-1 text-[8px] bg-slate-950/70 text-white px-1 rounded font-bold">Gwadar</span>
-              </div>
-              <div className="h-12 bg-slate-100 rounded-lg overflow-hidden border border-slate-200 relative">
-                <div className="absolute inset-0 bg-cover bg-center opacity-80" style={{ backgroundImage: "url('/coastal-bg.jpg')" }} />
-                <span className="absolute bottom-1 right-1 text-[8px] bg-slate-950/70 text-white px-1 rounded font-bold">Pasni</span>
-              </div>
-              <div className="h-12 bg-slate-100 rounded-lg overflow-hidden border border-slate-200 relative">
-                <div className="absolute inset-0 bg-cover bg-center opacity-80" style={{ backgroundImage: "url('/coastal-bg.jpg')" }} />
-                <span className="absolute bottom-1 right-1 text-[8px] bg-slate-950/70 text-white px-1 rounded font-bold">Ormara</span>
-              </div>
-              <div className="h-12 bg-slate-100 rounded-lg overflow-hidden border border-slate-200 relative">
-                <div className="absolute inset-0 bg-cover bg-center opacity-80" style={{ backgroundImage: "url('/coastal-bg.jpg')" }} />
-                <span className="absolute bottom-1 right-1 text-[8px] bg-slate-950/70 text-white px-1 rounded font-bold">Kund M.</span>
-              </div>
-              <div className="h-12 bg-slate-100 rounded-lg overflow-hidden border border-slate-200 relative">
-                <div className="absolute inset-0 bg-cover bg-center opacity-80" style={{ backgroundImage: "url('/coastal-bg.jpg')" }} />
-                <span className="absolute bottom-1 right-1 text-[8px] bg-slate-950/70 text-white px-1 rounded font-bold">Sonmiani</span>
-              </div>
+            {/* Grid of Satellite map thumbnails with Hover Zoom effects */}
+            <div className="grid grid-cols-3 gap-2 mt-4">
+              {[
+                { name: 'Jiwani', delay: 'delay-0' },
+                { name: 'Gwadar', delay: 'delay-75' },
+                { name: 'Pasni', delay: 'delay-100' },
+                { name: 'Ormara', delay: 'delay-150' },
+                { name: 'Kund M.', delay: 'delay-200' },
+                { name: 'Sonmiani', delay: 'delay-300' }
+              ].map((loc, idx) => (
+                <div key={idx} className="h-12 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 relative group/thumb shadow-sm">
+                  <div 
+                    className="absolute inset-0 bg-cover bg-center opacity-85 transition-transform duration-500 group-hover/thumb:scale-110" 
+                    style={{ backgroundImage: "url('/coastal-bg.jpg')" }} 
+                  />
+                  {/* Subtle dark bottom gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent opacity-80" />
+                  <span className="absolute bottom-1 left-1.5 text-[7.5px] text-white font-extrabold leading-none">{loc.name}</span>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="border-t border-slate-100 pt-3 mt-3">
-            <Link href="/dashboard" className="text-[9px] font-extrabold text-slate-600 hover:text-slate-900 flex items-center gap-1">
-              <span>View full timeline</span>
-              <ArrowRight className="w-3 h-3" />
+          <div className="border-t border-slate-100 pt-3 mt-4">
+            <Link href="/dashboard" className="text-[9.5px] font-extrabold text-[#132c25] hover:text-[#255044] flex items-center gap-1">
+              <span>View full timeline explorer</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
 
         {/* Column 2: Coastal Vulnerability Index */}
-        <div className="bg-white border border-slate-200 p-5 rounded-3xl shadow-sm flex flex-col justify-between min-h-[300px]">
+        <div className="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[320px]">
           <div>
             <h5 className="font-extrabold text-[10px] text-slate-400 uppercase tracking-wider mb-3">Coastal Vulnerability Index (CVI)</h5>
             
             {/* Ring progress and side metrics */}
-            <div className="flex gap-4 items-center">
+            <div className="flex gap-4 items-center mb-4">
               {/* Ring metric */}
-              <div className="relative w-20 h-20 flex-shrink-0 flex items-center justify-center">
+              <div className="relative w-20 h-20 flex-shrink-0 flex items-center justify-center drop-shadow-[0_2px_8px_rgba(234,179,8,0.15)]">
                 <svg className="w-full h-full transform -rotate-90">
                   <circle cx="40" cy="40" r="32" stroke="#f1f5f9" strokeWidth="6" fill="transparent" />
-                  <circle cx="40" cy="40" r="32" stroke="#eab308" strokeWidth="6" fill="transparent" strokeDasharray={2 * Math.PI * 32} strokeDashoffset={2 * Math.PI * 32 * (1 - 0.62)} />
+                  <circle cx="40" cy="40" r="32" stroke="url(#cviGrad)" strokeWidth="6.5" strokeLinecap="round" fill="transparent" strokeDasharray={2 * Math.PI * 32} strokeDashoffset={2 * Math.PI * 32 * (1 - 0.62)} />
+                  <defs>
+                    <linearGradient id="cviGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#fbbf24" />
+                      <stop offset="100%" stopColor="#f59e0b" />
+                    </linearGradient>
+                  </defs>
                 </svg>
                 <div className="absolute text-center">
-                  <span className="block text-sm font-black text-slate-900">0.62</span>
-                  <span className="text-[7px] text-slate-400 font-bold block uppercase leading-none">Mod Risk</span>
+                  <span className="block text-sm font-black text-slate-900 tracking-tighter">0.62</span>
+                  <span className="text-[7px] text-amber-600 font-extrabold block uppercase leading-none">Mod Risk</span>
                 </div>
               </div>
 
-              {/* Mini progress list */}
-              <div className="flex-1 space-y-1.5">
+              {/* Mini progress list with color gradients */}
+              <div className="flex-1 space-y-2">
                 <div>
-                  <div className="flex justify-between text-[7px] font-bold text-slate-500 leading-none mb-0.5">
+                  <div className="flex justify-between text-[7.5px] font-extrabold text-slate-500 leading-none mb-1">
                     <span>Population Exposure</span>
-                    <span>0.58</span>
+                    <span className="text-slate-800">0.58</span>
                   </div>
-                  <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden">
-                    <div className="bg-yellow-500 h-full" style={{ width: '58%' }} />
+                  <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div className="bg-gradient-to-r from-amber-400 to-amber-500 h-full rounded-full" style={{ width: '58%' }} />
                   </div>
                 </div>
                 <div>
-                  <div className="flex justify-between text-[7px] font-bold text-slate-500 leading-none mb-0.5">
+                  <div className="flex justify-between text-[7.5px] font-extrabold text-slate-500 leading-none mb-1">
                     <span>Infrastructure Exp</span>
-                    <span>0.64</span>
+                    <span className="text-slate-800">0.64</span>
                   </div>
-                  <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden">
-                    <div className="bg-yellow-500 h-full" style={{ width: '64%' }} />
+                  <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div className="bg-gradient-to-r from-amber-400 to-amber-500 h-full rounded-full" style={{ width: '64%' }} />
                   </div>
                 </div>
                 <div>
-                  <div className="flex justify-between text-[7px] font-bold text-slate-500 leading-none mb-0.5">
+                  <div className="flex justify-between text-[7.5px] font-extrabold text-slate-500 leading-none mb-1">
                     <span>Elevation (Low Lying)</span>
-                    <span>0.71</span>
+                    <span className="text-slate-800">0.71</span>
                   </div>
-                  <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden">
-                    <div className="bg-orange-500 h-full" style={{ width: '71%' }} />
+                  <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div className="bg-gradient-to-r from-orange-400 to-orange-500 h-full rounded-full" style={{ width: '71%' }} />
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Remaining metrics */}
-            <div className="grid grid-cols-3 gap-2 mt-4 text-center">
-              <div className="bg-slate-50 border border-slate-100 rounded-xl p-1.5">
-                <span className="block text-[8px] text-slate-500 font-bold leading-tight">Storm Surge</span>
-                <span className="text-xs font-black text-slate-900">0.66</span>
+            {/* Remaining metrics styled in neat grid cards */}
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="bg-slate-50/80 border border-slate-100 rounded-xl p-2 hover:bg-slate-100/50 transition">
+                <span className="block text-[7.5px] text-slate-400 font-extrabold leading-tight">Storm Surge</span>
+                <span className="text-xs font-black text-slate-800">0.66</span>
               </div>
-              <div className="bg-slate-50 border border-slate-100 rounded-xl p-1.5">
-                <span className="block text-[8px] text-slate-500 font-bold leading-tight">Flood Risk</span>
-                <span className="text-xs font-black text-slate-900">0.59</span>
+              <div className="bg-slate-50/80 border border-slate-100 rounded-xl p-2 hover:bg-slate-100/50 transition">
+                <span className="block text-[7.5px] text-slate-400 font-extrabold leading-tight">Flood Risk</span>
+                <span className="text-xs font-black text-slate-800">0.59</span>
               </div>
-              <div className="bg-slate-50 border border-slate-100 rounded-xl p-1.5">
-                <span className="block text-[8px] text-slate-500 font-bold leading-tight">Sea Level Rise</span>
-                <span className="text-xs font-black text-slate-900">0.63</span>
+              <div className="bg-slate-50/80 border border-slate-100 rounded-xl p-2 hover:bg-slate-100/50 transition">
+                <span className="block text-[7.5px] text-slate-400 font-extrabold leading-tight">Sea Level Rise</span>
+                <span className="text-xs font-black text-slate-800">0.63</span>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-slate-100 pt-3 mt-3">
-            <Link href="/dashboard/analysis" className="text-[9px] font-extrabold text-slate-600 hover:text-slate-900 flex items-center gap-1">
-              <span>View full assessment</span>
-              <ArrowRight className="w-3 h-3" />
+          <div className="border-t border-slate-100 pt-3 mt-4">
+            <Link href="/dashboard/analysis" className="text-[9.5px] font-extrabold text-[#132c25] hover:text-[#255044] flex items-center gap-1">
+              <span>View full CVI methodology</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
 
         {/* Column 3: Live Alerts */}
-        <div className="bg-white border border-slate-200 p-5 rounded-3xl shadow-sm flex flex-col justify-between min-h-[300px]">
+        <div className="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[320px]">
           <div>
-            <div className="flex justify-between items-center border-b border-slate-100 pb-2 mb-3">
+            <div className="flex justify-between items-center mb-3">
               <h5 className="font-extrabold text-[10px] text-slate-400 uppercase tracking-wider">Live Alerts</h5>
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
             </div>
 
-            {/* Alerts stack */}
-            <div className="space-y-3">
-              <div className="flex gap-2">
-                <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+            {/* Alerts stack styled as neat notification cards */}
+            <div className="space-y-2.5">
+              <div className="bg-red-50/30 border border-red-100/70 p-2.5 rounded-2xl flex gap-2.5 items-start hover:bg-red-50/60 transition shadow-inner">
+                <AlertTriangle className="w-4.5 h-4.5 text-red-500 flex-shrink-0 mt-0.5" />
                 <div>
-                  <span className="block text-[9px] font-bold text-slate-800 leading-tight">Storm Surge Watch</span>
-                  <span className="text-[8px] text-slate-400 block leading-tight">Gwadar Coast &bull; May 15, 09:20 AM</span>
+                  <span className="block text-[9.5px] font-black text-red-950 leading-tight">Storm Surge Watch</span>
+                  <span className="text-[8px] text-red-700/75 block leading-tight mt-0.5 font-semibold">Gwadar Coast &bull; May 15, 09:20 AM</span>
                 </div>
               </div>
 
-              <div className="flex gap-2">
-                <AlertTriangle className="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5" />
+              <div className="bg-amber-50/30 border border-amber-100/70 p-2.5 rounded-2xl flex gap-2.5 items-start hover:bg-amber-50/60 transition shadow-inner">
+                <AlertTriangle className="w-4.5 h-4.5 text-amber-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <span className="block text-[9px] font-bold text-slate-800 leading-tight">High Flood Risk</span>
-                  <span className="text-[8px] text-slate-400 block leading-tight">Lasbela District &bull; May 15, 08:45 AM</span>
+                  <span className="block text-[9.5px] font-black text-amber-950 leading-tight">High Flood Risk</span>
+                  <span className="text-[8px] text-amber-700/75 block leading-tight mt-0.5 font-semibold">Lasbela District &bull; May 15, 08:45 AM</span>
                 </div>
               </div>
 
-              <div className="flex gap-2">
-                <AlertTriangle className="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5" />
+              <div className="bg-amber-50/30 border border-amber-100/70 p-2.5 rounded-2xl flex gap-2.5 items-start hover:bg-amber-50/60 transition shadow-inner">
+                <AlertTriangle className="w-4.5 h-4.5 text-amber-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <span className="block text-[9px] font-bold text-slate-800 leading-tight">Shoreline Erosion Warning</span>
-                  <span className="text-[8px] text-slate-400 block leading-tight">Ormara Coast &bull; May 14, 11:15 PM</span>
+                  <span className="block text-[9.5px] font-black text-amber-950 leading-tight">Shoreline Erosion Warning</span>
+                  <span className="text-[8px] text-amber-700/75 block leading-tight mt-0.5 font-semibold">Ormara Coast &bull; May 14, 11:15 PM</span>
                 </div>
               </div>
 
-              <div className="flex gap-2">
-                <Info className="w-4 h-4 text-cyan-500 flex-shrink-0 mt-0.5" />
+              <div className="bg-blue-50/30 border border-blue-100/70 p-2.5 rounded-2xl flex gap-2.5 items-start hover:bg-blue-50/60 transition shadow-inner">
+                <Info className="w-4.5 h-4.5 text-blue-500 flex-shrink-0 mt-0.5" />
                 <div>
-                  <span className="block text-[9px] font-bold text-slate-800 leading-tight">Sea Level Rise Trend</span>
-                  <span className="text-[8px] text-slate-400 block leading-tight">Increasing +8.6 mm/yr &bull; May 14, 2025</span>
+                  <span className="block text-[9.5px] font-black text-blue-950 leading-tight">Sea Level Rise Trend</span>
+                  <span className="text-[8px] text-blue-700/75 block leading-tight mt-0.5 font-semibold">Increasing +8.6 mm/yr &bull; May 14, 2025</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-slate-100 pt-3 mt-3">
-            <Link href="/dashboard" className="text-[9px] font-extrabold text-slate-600 hover:text-slate-900 flex items-center gap-1">
-              <span>View all alerts</span>
-              <ArrowRight className="w-3 h-3" />
+          <div className="border-t border-slate-100 pt-3 mt-4">
+            <Link href="/dashboard" className="text-[9.5px] font-extrabold text-[#132c25] hover:text-[#255044] flex items-center gap-1">
+              <span>View live alerts log</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
 
         {/* Column 4: Data Sources */}
-        <div className="bg-white border border-slate-200 p-5 rounded-3xl shadow-sm flex flex-col justify-between min-h-[300px]">
+        <div className="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[320px]">
           <div>
             <h5 className="font-extrabold text-[10px] text-slate-400 uppercase tracking-wider mb-3">Data Sources</h5>
             
-            {/* List with styled text tags */}
-            <div className="grid grid-cols-2 gap-2 text-[9px] font-semibold text-slate-700">
-              <div className="bg-slate-50 border border-slate-100 rounded-lg p-2 flex items-center gap-1">
-                <span>🛰️ Sentinel-1/2</span>
+            {/* List with styled text tags and hover animations */}
+            <div className="grid grid-cols-2 gap-2 text-[9px] font-bold text-slate-700">
+              <div className="bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200 transition-all border border-slate-200/60 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
+                <span className="text-xs">🛰️</span>
+                <span className="mt-1 leading-tight text-[8.5px]">Sentinel-1/2</span>
               </div>
-              <div className="bg-slate-50 border border-slate-100 rounded-lg p-2 flex items-center gap-1">
-                <span>🛰️ Landsat 8/9</span>
+              <div className="bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200 transition-all border border-slate-200/60 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
+                <span className="text-xs">🛰️</span>
+                <span className="mt-1 leading-tight text-[8.5px]">Landsat 8/9</span>
               </div>
-              <div className="bg-slate-50 border border-slate-100 rounded-lg p-2 flex items-center gap-1">
-                <span>⛰️ DEM (SRTM)</span>
+              <div className="bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200 transition-all border border-slate-200/60 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
+                <span className="text-xs">⛰️</span>
+                <span className="mt-1 leading-tight text-[8.5px]">DEM (SRTM)</span>
               </div>
-              <div className="bg-slate-50 border border-slate-100 rounded-lg p-2 flex items-center gap-1">
-                <span>📊 PMD Tide Gauges</span>
+              <div className="bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200 transition-all border border-slate-200/60 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
+                <span className="text-xs">📊</span>
+                <span className="mt-1 leading-tight text-[8.5px]">PMD Gauges</span>
               </div>
-              <div className="bg-slate-50 border border-slate-100 rounded-lg p-2 flex items-center gap-1">
-                <span>📁 In-situ Data</span>
+              <div className="bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200 transition-all border border-slate-200/60 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
+                <span className="text-xs">📁</span>
+                <span className="mt-1 leading-tight text-[8.5px]">In-situ Data</span>
               </div>
-              <div className="bg-slate-50 border border-slate-100 rounded-lg p-2 flex items-center gap-1">
-                <span>🌀 Cyclone Track</span>
+              <div className="bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200 transition-all border border-slate-200/60 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
+                <span className="text-xs">🌀</span>
+                <span className="mt-1 leading-tight text-[8.5px]">Cyclone Track</span>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-slate-100 pt-3 mt-3">
-            <Link href="/dashboard" className="text-[9px] font-extrabold text-slate-600 hover:text-slate-900 flex items-center gap-1">
-              <span>View all sources</span>
-              <ArrowRight className="w-3 h-3" />
+          <div className="border-t border-slate-100 pt-3 mt-4">
+            <Link href="/dashboard" className="text-[9.5px] font-extrabold text-[#132c25] hover:text-[#255044] flex items-center gap-1">
+              <span>View all datasets</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
