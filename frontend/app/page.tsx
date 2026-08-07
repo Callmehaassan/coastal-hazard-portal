@@ -22,7 +22,16 @@ export default function LandingPage() {
   const [selectedTimelineYear, setSelectedTimelineYear] = useState(2025);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col font-sans selection:bg-cyan-500/20">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col font-sans selection:bg-cyan-500/20 relative">
+      
+      {/* Root Full-Bleed Hero Background Image */}
+      <div 
+        className="absolute top-0 left-0 right-0 h-[680px] bg-cover bg-center pointer-events-none z-0 opacity-85"
+        style={{ backgroundImage: "url('/coastal-bg.jpg')" }}
+      />
+      {/* Gradient overlays to fade to white on the right and bottom */}
+      <div className="absolute top-0 left-0 right-0 h-[680px] bg-gradient-to-r from-white/10 via-white/45 to-[#f8fafc] z-0 pointer-events-none" />
+      <div className="absolute top-0 left-0 right-0 h-[680px] bg-gradient-to-b from-transparent via-transparent to-[#f8fafc] z-0 pointer-events-none" />
       
       {/* Navigation Header */}
       <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm">
@@ -116,15 +125,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-28 pb-12 px-6 max-w-[1400px] mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center flex-1">
-        
-        {/* Coastal Background Image behind columns (masked layout) */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center -z-20 opacity-80 pointer-events-none"
-          style={{ backgroundImage: "url('/coastal-bg.jpg')" }}
-        />
-        {/* Soft gradient mask for text readability and layout blending */}
-        <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/60 to-[#f8fafc] -z-10 pointer-events-none" />
+      <section className="relative pt-28 pb-12 px-6 max-w-[1400px] mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center flex-1 z-10">
 
         {/* Hero Left Column (Info & Actions) */}
         <div className="lg:col-span-6 space-y-6">
