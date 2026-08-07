@@ -26,12 +26,12 @@ export default function LandingPage() {
       
       {/* Root Full-Bleed Hero Background Image */}
       <div 
-        className="absolute top-0 left-0 right-0 h-[680px] bg-cover bg-center pointer-events-none z-0 opacity-85"
+        className="absolute top-0 left-0 right-0 h-[680px] bg-cover bg-center pointer-events-none z-0 opacity-100"
         style={{ backgroundImage: "url('/coastal-bg.jpg')" }}
       />
-      {/* Gradient overlays to fade to white on the right and bottom */}
-      <div className="absolute top-0 left-0 right-0 h-[680px] bg-gradient-to-r from-white/10 via-white/45 to-[#f8fafc] z-0 pointer-events-none" />
-      <div className="absolute top-0 left-0 right-0 h-[680px] bg-gradient-to-b from-transparent via-transparent to-[#f8fafc] z-0 pointer-events-none" />
+      {/* Soft dark-warm shading and bottom gradient overlay to match mockup's dark-warm visible look */}
+      <div className="absolute top-0 left-0 right-0 h-[680px] bg-slate-900/[0.04] z-0 pointer-events-none" />
+      <div className="absolute top-0 left-0 right-0 h-[680px] bg-gradient-to-b from-transparent via-[#f8fafc]/30 to-[#f8fafc] z-0 pointer-events-none" />
       
       {/* Navigation Header */}
       <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm">
@@ -511,24 +511,23 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Grid of Satellite map thumbnails with Hover Zoom effects */}
-            <div className="grid grid-cols-3 gap-2 mt-4">
+            {/* Grid of 5 Satellite map thumbnails matching the mockup reference */}
+            <div className="grid grid-cols-5 gap-1.5 mt-4">
               {[
-                { name: 'Jiwani', delay: 'delay-0' },
-                { name: 'Gwadar', delay: 'delay-75' },
-                { name: 'Pasni', delay: 'delay-100' },
-                { name: 'Ormara', delay: 'delay-150' },
-                { name: 'Kund M.', delay: 'delay-200' },
-                { name: 'Sonmiani', delay: 'delay-300' }
+                { name: 'Jiwani' },
+                { name: 'Gwadar' },
+                { name: 'Pasni' },
+                { name: 'Ormara' },
+                { name: 'Sonmiani' }
               ].map((loc, idx) => (
-                <div key={idx} className="h-12 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 relative group/thumb shadow-sm">
+                <div key={idx} className="h-14 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 relative group/thumb shadow-sm">
                   <div 
                     className="absolute inset-0 bg-cover bg-center opacity-85 transition-transform duration-500 group-hover/thumb:scale-110" 
                     style={{ backgroundImage: "url('/coastal-bg.jpg')" }} 
                   />
                   {/* Subtle dark bottom gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent opacity-80" />
-                  <span className="absolute bottom-1 left-1.5 text-[7.5px] text-white font-extrabold leading-none">{loc.name}</span>
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 to-transparent opacity-85" />
+                  <span className="absolute bottom-1.5 left-1.5 text-[7px] text-white font-extrabold leading-none">{loc.name}</span>
                 </div>
               ))}
             </div>
@@ -536,7 +535,7 @@ export default function LandingPage() {
 
           <div className="border-t border-slate-100 pt-3 mt-4">
             <Link href="/dashboard" className="text-[9.5px] font-extrabold text-[#132c25] hover:text-[#255044] flex items-center gap-1">
-              <span>View full timeline explorer</span>
+              <span>View full timeline</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -563,62 +562,37 @@ export default function LandingPage() {
                 </svg>
                 <div className="absolute text-center">
                   <span className="block text-sm font-black text-slate-900 tracking-tighter">0.62</span>
-                  <span className="text-[7px] text-amber-600 font-extrabold block uppercase leading-none">Mod Risk</span>
+                  <span className="text-[7px] text-amber-600 font-extrabold block uppercase leading-none">Moderate Risk</span>
                 </div>
               </div>
 
-              {/* Mini progress list with color gradients */}
-              <div className="flex-1 space-y-2">
-                <div>
-                  <div className="flex justify-between text-[7.5px] font-extrabold text-slate-500 leading-none mb-1">
-                    <span>Population Exposure</span>
-                    <span className="text-slate-800">0.58</span>
+              {/* Mini progress list with all 6 items from mockup */}
+              <div className="flex-1 space-y-1">
+                {[
+                  { label: 'Population Exposure', val: 0.58, color: 'bg-emerald-500' },
+                  { label: 'Infrastructure Exposure', val: 0.64, color: 'bg-yellow-500' },
+                  { label: 'Elevation (Low Lying)', val: 0.71, color: 'bg-orange-500' },
+                  { label: 'Storm Surge Risk', val: 0.66, color: 'bg-yellow-500' },
+                  { label: 'Flood Risk', val: 0.59, color: 'bg-emerald-500' },
+                  { label: 'Sea Level Rise', val: 0.63, color: 'bg-yellow-500' }
+                ].map((item, idx) => (
+                  <div key={idx}>
+                    <div className="flex justify-between text-[7px] font-extrabold text-slate-500 leading-none mb-0.5">
+                      <span>{item.label}</span>
+                      <span className="text-slate-800">{item.val}</span>
+                    </div>
+                    <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden">
+                      <div className={`${item.color} h-full rounded-full`} style={{ width: `${item.val * 100}%` }} />
+                    </div>
                   </div>
-                  <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-gradient-to-r from-amber-400 to-amber-500 h-full rounded-full" style={{ width: '58%' }} />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-[7.5px] font-extrabold text-slate-500 leading-none mb-1">
-                    <span>Infrastructure Exp</span>
-                    <span className="text-slate-800">0.64</span>
-                  </div>
-                  <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-gradient-to-r from-amber-400 to-amber-500 h-full rounded-full" style={{ width: '64%' }} />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-[7.5px] font-extrabold text-slate-500 leading-none mb-1">
-                    <span>Elevation (Low Lying)</span>
-                    <span className="text-slate-800">0.71</span>
-                  </div>
-                  <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-gradient-to-r from-orange-400 to-orange-500 h-full rounded-full" style={{ width: '71%' }} />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Remaining metrics styled in neat grid cards */}
-            <div className="grid grid-cols-3 gap-2 text-center">
-              <div className="bg-slate-50/80 border border-slate-100 rounded-xl p-2 hover:bg-slate-100/50 transition">
-                <span className="block text-[7.5px] text-slate-400 font-extrabold leading-tight">Storm Surge</span>
-                <span className="text-xs font-black text-slate-800">0.66</span>
-              </div>
-              <div className="bg-slate-50/80 border border-slate-100 rounded-xl p-2 hover:bg-slate-100/50 transition">
-                <span className="block text-[7.5px] text-slate-400 font-extrabold leading-tight">Flood Risk</span>
-                <span className="text-xs font-black text-slate-800">0.59</span>
-              </div>
-              <div className="bg-slate-50/80 border border-slate-100 rounded-xl p-2 hover:bg-slate-100/50 transition">
-                <span className="block text-[7.5px] text-slate-400 font-extrabold leading-tight">Sea Level Rise</span>
-                <span className="text-xs font-black text-slate-800">0.63</span>
+                ))}
               </div>
             </div>
           </div>
 
           <div className="border-t border-slate-100 pt-3 mt-4">
             <Link href="/dashboard/analysis" className="text-[9.5px] font-extrabold text-[#132c25] hover:text-[#255044] flex items-center gap-1">
-              <span>View full CVI methodology</span>
+              <span>View full assessment</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -629,48 +603,34 @@ export default function LandingPage() {
           <div>
             <div className="flex justify-between items-center mb-3">
               <h5 className="font-extrabold text-[10px] text-slate-400 uppercase tracking-wider">Live Alerts</h5>
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              <Link href="/dashboard" className="text-[9px] font-bold text-slate-500 hover:text-slate-900 transition">View all alerts</Link>
             </div>
 
-            {/* Alerts stack styled as neat notification cards */}
-            <div className="space-y-2.5">
-              <div className="bg-red-50/30 border border-red-100/70 p-2.5 rounded-2xl flex gap-2.5 items-start hover:bg-red-50/60 transition shadow-inner">
-                <AlertTriangle className="w-4.5 h-4.5 text-red-500 flex-shrink-0 mt-0.5" />
-                <div>
-                  <span className="block text-[9.5px] font-black text-red-950 leading-tight">Storm Surge Watch</span>
-                  <span className="text-[8px] text-red-700/75 block leading-tight mt-0.5 font-semibold">Gwadar Coast &bull; May 15, 09:20 AM</span>
+            {/* Alerts stack aligned left-title right-date matching mockup */}
+            <div className="space-y-3">
+              {[
+                { icon: AlertTriangle, title: 'Storm Surge Watch', loc: 'Gwadar Coast', date: 'May 15, 09:20 AM', color: 'text-red-500' },
+                { icon: AlertTriangle, title: 'High Flood Risk', loc: 'Lasbela District', date: 'May 15, 08:45 AM', color: 'text-amber-500' },
+                { icon: AlertTriangle, title: 'Shoreline Erosion Warning', loc: 'Ormara Coast', date: 'May 14, 11:15 PM', color: 'text-amber-500' },
+                { icon: Info, title: 'Sea Level Rise Trend', loc: 'Increasing +8.6 mm/yr', date: 'May 14, 2025', color: 'text-cyan-500' }
+              ].map((alert, idx) => (
+                <div key={idx} className="flex justify-between items-start text-[9.5px] py-1.5 border-b border-slate-100 last:border-0">
+                  <div className="flex gap-2.5 items-start">
+                    <alert.icon className={`w-4 h-4 ${alert.color} mt-0.5`} />
+                    <div>
+                      <span className="font-extrabold text-slate-800 block">{alert.title}</span>
+                      <span className="text-[7.5px] text-slate-400 font-semibold">{alert.loc}</span>
+                    </div>
+                  </div>
+                  <span className="text-[8px] text-slate-400 font-medium whitespace-nowrap">{alert.date}</span>
                 </div>
-              </div>
-
-              <div className="bg-amber-50/30 border border-amber-100/70 p-2.5 rounded-2xl flex gap-2.5 items-start hover:bg-amber-50/60 transition shadow-inner">
-                <AlertTriangle className="w-4.5 h-4.5 text-amber-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <span className="block text-[9.5px] font-black text-amber-950 leading-tight">High Flood Risk</span>
-                  <span className="text-[8px] text-amber-700/75 block leading-tight mt-0.5 font-semibold">Lasbela District &bull; May 15, 08:45 AM</span>
-                </div>
-              </div>
-
-              <div className="bg-amber-50/30 border border-amber-100/70 p-2.5 rounded-2xl flex gap-2.5 items-start hover:bg-amber-50/60 transition shadow-inner">
-                <AlertTriangle className="w-4.5 h-4.5 text-amber-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <span className="block text-[9.5px] font-black text-amber-950 leading-tight">Shoreline Erosion Warning</span>
-                  <span className="text-[8px] text-amber-700/75 block leading-tight mt-0.5 font-semibold">Ormara Coast &bull; May 14, 11:15 PM</span>
-                </div>
-              </div>
-
-              <div className="bg-blue-50/30 border border-blue-100/70 p-2.5 rounded-2xl flex gap-2.5 items-start hover:bg-blue-50/60 transition shadow-inner">
-                <Info className="w-4.5 h-4.5 text-blue-500 flex-shrink-0 mt-0.5" />
-                <div>
-                  <span className="block text-[9.5px] font-black text-blue-950 leading-tight">Sea Level Rise Trend</span>
-                  <span className="text-[8px] text-blue-700/75 block leading-tight mt-0.5 font-semibold">Increasing +8.6 mm/yr &bull; May 14, 2025</span>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
           <div className="border-t border-slate-100 pt-3 mt-4">
             <Link href="/dashboard" className="text-[9.5px] font-extrabold text-[#132c25] hover:text-[#255044] flex items-center gap-1">
-              <span>View live alerts log</span>
+              <span>View all alerts</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -679,40 +639,32 @@ export default function LandingPage() {
         {/* Column 4: Data Sources */}
         <div className="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[320px]">
           <div>
-            <h5 className="font-extrabold text-[10px] text-slate-400 uppercase tracking-wider mb-3">Data Sources</h5>
+            <div className="flex justify-between items-center mb-3">
+              <h5 className="font-extrabold text-[10px] text-slate-400 uppercase tracking-wider">Data Sources</h5>
+              <Link href="/dashboard" className="text-[9px] font-bold text-slate-500 hover:text-slate-900 transition">View all sources</Link>
+            </div>
             
-            {/* List with styled text tags and hover animations */}
-            <div className="grid grid-cols-2 gap-2 text-[9px] font-bold text-slate-700">
-              <div className="bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200 transition-all border border-slate-200/60 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
-                <span className="text-xs">🛰️</span>
-                <span className="mt-1 leading-tight text-[8.5px]">Sentinel-1/2</span>
-              </div>
-              <div className="bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200 transition-all border border-slate-200/60 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
-                <span className="text-xs">🛰️</span>
-                <span className="mt-1 leading-tight text-[8.5px]">Landsat 8/9</span>
-              </div>
-              <div className="bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200 transition-all border border-slate-200/60 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
-                <span className="text-xs">⛰️</span>
-                <span className="mt-1 leading-tight text-[8.5px]">DEM (SRTM)</span>
-              </div>
-              <div className="bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200 transition-all border border-slate-200/60 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
-                <span className="text-xs">📊</span>
-                <span className="mt-1 leading-tight text-[8.5px]">PMD Gauges</span>
-              </div>
-              <div className="bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200 transition-all border border-slate-200/60 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
-                <span className="text-xs">📁</span>
-                <span className="mt-1 leading-tight text-[8.5px]">In-situ Data</span>
-              </div>
-              <div className="bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200 transition-all border border-slate-200/60 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
-                <span className="text-xs">🌀</span>
-                <span className="mt-1 leading-tight text-[8.5px]">Cyclone Track</span>
-              </div>
+            {/* Single column list with 6 checkmark items matching mockup */}
+            <div className="space-y-2.5 text-[9.5px] font-bold text-slate-700">
+              {[
+                { label: 'Sentinel-1 / Sentinel-2' },
+                { label: 'Landsat 8/9' },
+                { label: 'DEM (SRTM)' },
+                { label: 'PMD Tide Gauges' },
+                { label: 'In-situ & Historical Data' },
+                { label: 'Cyclone Track Data' }
+              ].map((item, idx) => (
+                <div key={idx} className="flex items-center gap-2.5 py-1 hover:text-emerald-800 transition">
+                  <span className="text-emerald-600 font-extrabold text-xs">☑</span>
+                  <span className="text-[9px] text-slate-700 font-semibold">{item.label}</span>
+                </div>
+              ))}
             </div>
           </div>
 
           <div className="border-t border-slate-100 pt-3 mt-4">
             <Link href="/dashboard" className="text-[9.5px] font-extrabold text-[#132c25] hover:text-[#255044] flex items-center gap-1">
-              <span>View all datasets</span>
+              <span>View all sources</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
