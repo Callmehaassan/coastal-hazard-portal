@@ -193,10 +193,10 @@ export default function LandingPage() {
           <div className="relative h-60 rounded-2xl overflow-hidden border border-slate-100 bg-[#e5e9f0]">
             <div 
               className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: "url('/coastal-bg.jpg')" }}
+              style={{ backgroundImage: "url('/coastal-map.jpg')" }}
             />
             {/* Translucent overlay mask */}
-            <div className="absolute inset-0 bg-slate-950/20 backdrop-blur-[1px]" />
+            <div className="absolute inset-0 bg-slate-950/10 backdrop-blur-[0.5px]" />
             
             {/* Custom Location Pins */}
             <div className="absolute top-[35%] left-[25%] flex flex-col items-center">
@@ -262,19 +262,19 @@ export default function LandingPage() {
           {/* Card 1: Flooding */}
           <div className="bg-white border border-slate-200/50 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-64 relative group">
             <div 
-              className="absolute inset-0 bg-cover bg-center opacity-[0.12] group-hover:opacity-[0.18] transition-opacity"
-              style={{ backgroundImage: "url('/coastal-bg.jpg')" }}
+              className="absolute inset-0 bg-cover bg-center opacity-[0.2] group-hover:opacity-[0.28] transition-opacity"
+              style={{ backgroundImage: "url('/flooding-bg.jpg')" }}
             />
             <div className="p-5 relative z-10">
-              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-4 border border-blue-100">
+              <div className="w-10 h-10 rounded-full bg-blue-50/90 flex items-center justify-center text-blue-600 mb-4 border border-blue-100 backdrop-blur-sm">
                 <Waves className="w-5 h-5" />
               </div>
-              <h4 className="font-extrabold text-sm text-slate-900 mb-1.5">Coastal Flooding</h4>
-              <p className="text-[11px] text-slate-500 leading-relaxed">
+              <h4 className="font-extrabold text-sm text-slate-900 mb-1.5 shadow-sm bg-white/40 px-1 py-0.5 rounded backdrop-blur-sm inline-block">Coastal Flooding</h4>
+              <p className="text-[11px] text-slate-600 font-medium leading-relaxed bg-white/45 p-1 rounded backdrop-blur-sm">
                 Detect and analyze inundation using Sentinel-1 & Sentinel-2 satellite imagery.
               </p>
             </div>
-            <div className="p-5 border-t border-slate-100 relative z-10 bg-white/70">
+            <div className="p-5 border-t border-slate-100 relative z-10 bg-white/80 backdrop-blur-sm">
               <Link href="/dashboard" className="text-[11px] font-extrabold text-blue-600 hover:text-blue-800 flex items-center gap-1">
                 <span>Explore</span>
                 <ArrowRight className="w-3 h-3" />
@@ -285,19 +285,19 @@ export default function LandingPage() {
           {/* Card 2: Storm Surge */}
           <div className="bg-white border border-slate-200/50 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-64 relative group">
             <div 
-              className="absolute inset-0 bg-cover bg-center opacity-[0.12] group-hover:opacity-[0.18] transition-opacity"
-              style={{ backgroundImage: "url('/coastal-bg.jpg')" }}
+              className="absolute inset-0 bg-cover bg-center opacity-[0.2] group-hover:opacity-[0.28] transition-opacity"
+              style={{ backgroundImage: "url('/surge-bg.jpg')" }}
             />
             <div className="p-5 relative z-10">
-              <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 mb-4 border border-orange-100">
+              <div className="w-10 h-10 rounded-full bg-orange-50/90 flex items-center justify-center text-orange-600 mb-4 border border-orange-100 backdrop-blur-sm">
                 <Waves className="w-5 h-5" />
               </div>
-              <h4 className="font-extrabold text-sm text-slate-900 mb-1.5">Storm Surge</h4>
-              <p className="text-[11px] text-slate-500 leading-relaxed">
+              <h4 className="font-extrabold text-sm text-slate-900 mb-1.5 shadow-sm bg-white/40 px-1 py-0.5 rounded backdrop-blur-sm inline-block">Storm Surge</h4>
+              <p className="text-[11px] text-slate-600 font-medium leading-relaxed bg-white/45 p-1 rounded backdrop-blur-sm">
                 Monitor historical storm surge events associated with Arabian Sea cyclones.
               </p>
             </div>
-            <div className="p-5 border-t border-slate-100 relative z-10 bg-white/70">
+            <div className="p-5 border-t border-slate-100 relative z-10 bg-white/80 backdrop-blur-sm">
               <Link href="/dashboard" className="text-[11px] font-extrabold text-orange-600 hover:text-orange-800 flex items-center gap-1">
                 <span>Explore</span>
                 <ArrowRight className="w-3 h-3" />
@@ -308,19 +308,19 @@ export default function LandingPage() {
           {/* Card 3: Shoreline Erosion */}
           <div className="bg-white border border-slate-200/50 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-64 relative group">
             <div 
-              className="absolute inset-0 bg-cover bg-center opacity-[0.12] group-hover:opacity-[0.18] transition-opacity"
-              style={{ backgroundImage: "url('/coastal-bg.jpg')" }}
+              className="absolute inset-0 bg-cover bg-center opacity-[0.2] group-hover:opacity-[0.28] transition-opacity"
+              style={{ backgroundImage: "url('/erosion-bg.jpg')" }}
             />
             <div className="p-5 relative z-10">
-              <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 mb-4 border border-amber-100">
+              <div className="w-10 h-10 rounded-full bg-amber-50/90 flex items-center justify-center text-amber-600 mb-4 border border-amber-100 backdrop-blur-sm">
                 <Waves className="w-5 h-5" />
               </div>
-              <h4 className="font-extrabold text-sm text-slate-900 mb-1.5">Shoreline Erosion</h4>
-              <p className="text-[11px] text-slate-500 leading-relaxed">
+              <h4 className="font-extrabold text-sm text-slate-900 mb-1.5 shadow-sm bg-white/40 px-1 py-0.5 rounded backdrop-blur-sm inline-block">Shoreline Erosion</h4>
+              <p className="text-[11px] text-slate-600 font-medium leading-relaxed bg-white/45 p-1 rounded backdrop-blur-sm">
                 Long-term shoreline change analysis using DSAS methodology.
               </p>
             </div>
-            <div className="p-5 border-t border-slate-100 relative z-10 bg-white/70">
+            <div className="p-5 border-t border-slate-100 relative z-10 bg-white/80 backdrop-blur-sm">
               <Link href="/dashboard" className="text-[11px] font-extrabold text-amber-600 hover:text-amber-800 flex items-center gap-1">
                 <span>Explore</span>
                 <ArrowRight className="w-3 h-3" />
@@ -329,22 +329,32 @@ export default function LandingPage() {
           </div>
 
           {/* Card 4: Sea Level Rise */}
-          <div className="bg-white border border-slate-200/50 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-64 relative group">
-            <div 
-              className="absolute inset-0 bg-cover bg-center opacity-[0.12] group-hover:opacity-[0.18] transition-opacity"
-              style={{ backgroundImage: "url('/coastal-bg.jpg')" }}
-            />
+          <div className="bg-gradient-to-br from-emerald-800 to-teal-950 border border-slate-200/20 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-64 relative group text-white">
+            <div className="absolute inset-0 opacity-[0.15] pointer-events-none bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]" />
+            {/* SVG line graph path overlay */}
+            <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none opacity-30 select-none">
+              <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <path d="M 0 90 Q 20 70, 40 75 T 80 35 T 100 10 L 100 100 L 0 100 Z" fill="url(#slrGrad)" />
+                <path d="M 0 90 Q 20 70, 40 75 T 80 35 T 100 10" fill="transparent" stroke="#22c55e" strokeWidth="2" />
+                <defs>
+                  <linearGradient id="slrGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#22c55e" stopOpacity="1" />
+                    <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
             <div className="p-5 relative z-10">
-              <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 mb-4 border border-emerald-100">
+              <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-4 border border-emerald-500/20">
                 <Waves className="w-5 h-5" />
               </div>
-              <h4 className="font-extrabold text-sm text-slate-900 mb-1.5">Sea Level Rise</h4>
-              <p className="text-[11px] text-slate-500 leading-relaxed">
+              <h4 className="font-extrabold text-sm text-white mb-1.5">Sea Level Rise</h4>
+              <p className="text-[11px] text-emerald-100/70 leading-relaxed">
                 Track sea level anomalies and long-term rise across the coast.
               </p>
             </div>
-            <div className="p-5 border-t border-slate-100 relative z-10 bg-white/70">
-              <Link href="/dashboard" className="text-[11px] font-extrabold text-emerald-600 hover:text-emerald-800 flex items-center gap-1">
+            <div className="p-5 border-t border-emerald-500/10 relative z-10 bg-emerald-950/20">
+              <Link href="/dashboard" className="text-[11px] font-extrabold text-emerald-300 hover:text-emerald-100 flex items-center gap-1">
                 <span>Explore</span>
                 <ArrowRight className="w-3 h-3" />
               </Link>
