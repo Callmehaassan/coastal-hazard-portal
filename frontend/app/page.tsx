@@ -263,20 +263,15 @@ export default function LandingPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           
           {/* Card 1: Flooding */}
-          <div className="bg-slate-50 border border-slate-200/60 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all h-64 relative group">
-            {/* Full-opacity background image */}
-            <div 
-              className="absolute inset-0 bg-cover bg-center opacity-100"
-              style={{ backgroundImage: "url('/flooding-bg.jpg')" }}
-            />
-            {/* Floating glass content panel on the left */}
-            <div className="relative z-10 w-[72%] h-full bg-white/95 border-r border-slate-200/50 p-5 flex flex-col justify-between shadow-xl">
+          <div className="bg-white border border-slate-200/60 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all h-64 flex group">
+            {/* Left Content (Text) */}
+            <div className="w-[55%] p-5 flex flex-col justify-between h-full bg-white border-r border-slate-100 relative z-10">
               <div>
                 <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-3.5 border border-blue-100">
                   <Waves className="w-5 h-5" />
                 </div>
                 <h4 className="font-extrabold text-xs text-slate-900 mb-1.5 uppercase tracking-tight">Coastal Flooding</h4>
-                <p className="text-[10px] text-slate-500 leading-relaxed">
+                <p className="text-[10.5px] text-slate-500 leading-relaxed font-medium">
                   Detect and analyze inundation using Sentinel-1 & Sentinel-2 satellite imagery.
                 </p>
               </div>
@@ -287,23 +282,25 @@ export default function LandingPage() {
                 </Link>
               </div>
             </div>
+            {/* Right Image */}
+            <div className="w-[45%] h-full relative overflow-hidden bg-slate-50">
+              <div 
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                style={{ backgroundImage: "url('/flooding-bg.jpg')" }}
+              />
+            </div>
           </div>
 
           {/* Card 2: Storm Surge */}
-          <div className="bg-slate-50 border border-slate-200/60 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all h-64 relative group">
-            {/* Full-opacity background image */}
-            <div 
-              className="absolute inset-0 bg-cover bg-center opacity-100"
-              style={{ backgroundImage: "url('/surge-bg.jpg')" }}
-            />
-            {/* Floating glass content panel on the left */}
-            <div className="relative z-10 w-[72%] h-full bg-white/95 border-r border-slate-200/50 p-5 flex flex-col justify-between shadow-xl">
+          <div className="bg-white border border-slate-200/60 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all h-64 flex group">
+            {/* Left Content (Text) */}
+            <div className="w-[55%] p-5 flex flex-col justify-between h-full bg-white border-r border-slate-100 relative z-10">
               <div>
                 <div className="w-9 h-9 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 mb-3.5 border border-orange-100">
                   <Waves className="w-5 h-5" />
                 </div>
                 <h4 className="font-extrabold text-xs text-slate-900 mb-1.5 uppercase tracking-tight">Storm Surge</h4>
-                <p className="text-[10px] text-slate-500 leading-relaxed">
+                <p className="text-[10.5px] text-slate-500 leading-relaxed font-medium">
                   Monitor historical storm surge events associated with Arabian Sea cyclones.
                 </p>
               </div>
@@ -314,29 +311,25 @@ export default function LandingPage() {
                 </Link>
               </div>
             </div>
+            {/* Right Image */}
+            <div className="w-[45%] h-full relative overflow-hidden bg-slate-50">
+              <div 
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                style={{ backgroundImage: "url('/surge-bg.jpg')" }}
+              />
+            </div>
           </div>
 
           {/* Card 3: Shoreline Erosion */}
-          <div className="bg-slate-50 border border-slate-200/60 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all h-64 relative group">
-            {/* Full-opacity background image */}
-            <div 
-              className="absolute inset-0 bg-cover bg-center opacity-100"
-              style={{ backgroundImage: "url('/erosion-bg.jpg')" }}
-            />
-            {/* Split Slider Handle Visual overlay to match mockup */}
-            <div className="absolute top-0 bottom-0 left-[70%] w-0.5 bg-white/70 z-20 pointer-events-none" />
-            <div className="absolute top-[50%] left-[70%] -translate-y-1/2 -translate-x-1/2 w-5.5 h-5.5 rounded-full bg-white border border-slate-200 shadow-md flex items-center justify-center text-[7px] font-bold text-slate-500 z-30 select-none pointer-events-none">
-              ◀ ▶
-            </div>
-            
-            {/* Floating glass content panel on the left */}
-            <div className="relative z-10 w-[70%] h-full bg-white/95 border-r border-slate-200/50 p-5 flex flex-col justify-between shadow-xl">
+          <div className="bg-white border border-slate-200/60 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all h-64 flex group relative">
+            {/* Left Content (Text) */}
+            <div className="w-[55%] p-5 flex flex-col justify-between h-full bg-white border-r border-slate-100 relative z-10">
               <div>
                 <div className="w-9 h-9 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 mb-3.5 border border-amber-100">
                   <Waves className="w-5 h-5" />
                 </div>
                 <h4 className="font-extrabold text-xs text-slate-900 mb-1.5 uppercase tracking-tight">Shoreline Erosion</h4>
-                <p className="text-[10px] text-slate-500 leading-relaxed">
+                <p className="text-[10.5px] text-slate-500 leading-relaxed font-medium">
                   Long-term shoreline change analysis using DSAS methodology.
                 </p>
               </div>
@@ -347,32 +340,30 @@ export default function LandingPage() {
                 </Link>
               </div>
             </div>
+            {/* Right Image */}
+            <div className="w-[45%] h-full relative overflow-hidden bg-slate-50">
+              <div 
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                style={{ backgroundImage: "url('/erosion-bg.jpg')" }}
+              />
+            </div>
+            {/* Split Slider Handle Visual overlay to match mockup exactly */}
+            <div className="absolute top-0 bottom-0 left-[55%] w-0.5 bg-white/80 z-20 pointer-events-none" />
+            <div className="absolute top-[50%] left-[55%] -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-white border border-slate-200 shadow-md flex items-center justify-center text-[7px] font-bold text-slate-500 z-30 select-none pointer-events-none">
+              ◀ ▶
+            </div>
           </div>
 
           {/* Card 4: Sea Level Rise */}
-          <div className="bg-gradient-to-br from-emerald-800 to-teal-950 border border-slate-200/20 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all h-64 relative group text-white">
-            <div className="absolute inset-0 opacity-[0.12] pointer-events-none bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]" />
-            {/* SVG line graph path overlay */}
-            <div className="absolute bottom-0 left-[70%] right-0 h-32 pointer-events-none opacity-40 select-none z-10">
-              <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <path d="M 0 90 Q 20 70, 40 75 T 80 35 T 100 10 L 100 100 L 0 100 Z" fill="url(#slrGrad)" />
-                <path d="M 0 90 Q 20 70, 40 75 T 80 35 T 100 10" fill="transparent" stroke="#22c55e" strokeWidth="2.5" />
-                <defs>
-                  <linearGradient id="slrGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#22c55e" stopOpacity="1" />
-                    <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
-            {/* Floating glass content panel on the left */}
-            <div className="relative z-20 w-[72%] h-full bg-white/95 border-r border-slate-200/50 p-5 flex flex-col justify-between shadow-xl text-slate-800">
+          <div className="bg-white border border-slate-200/60 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all h-64 flex group">
+            {/* Left Content (Text) */}
+            <div className="w-[55%] p-5 flex flex-col justify-between h-full bg-white border-r border-slate-100 relative z-10">
               <div>
                 <div className="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 mb-3.5 border border-emerald-100">
                   <Waves className="w-5 h-5" />
                 </div>
                 <h4 className="font-extrabold text-xs text-slate-900 mb-1.5 uppercase tracking-tight">Sea Level Rise</h4>
-                <p className="text-[10px] text-slate-500 leading-relaxed">
+                <p className="text-[10.5px] text-slate-500 leading-relaxed font-medium">
                   Track sea level anomalies and long-term rise across the coast.
                 </p>
               </div>
@@ -381,6 +372,23 @@ export default function LandingPage() {
                   <span>Explore</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
+              </div>
+            </div>
+            {/* Right Chart (matching mockup visual layout) */}
+            <div className="w-[45%] h-full bg-gradient-to-br from-emerald-800 to-teal-950 relative overflow-hidden">
+              <div className="absolute inset-0 opacity-[0.12] pointer-events-none bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]" />
+              {/* SVG line graph path overlay */}
+              <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none opacity-50 select-none z-10">
+                <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <path d="M 0 90 Q 20 70, 40 75 T 80 35 T 100 10 L 100 100 L 0 100 Z" fill="url(#slrGrad2)" />
+                  <path d="M 0 90 Q 20 70, 40 75 T 80 35 T 100 10" fill="transparent" stroke="#22c55e" strokeWidth="2.5" />
+                  <defs>
+                    <linearGradient id="slrGrad2" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#22c55e" stopOpacity="1" />
+                      <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                </svg>
               </div>
             </div>
           </div>
