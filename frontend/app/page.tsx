@@ -120,9 +120,11 @@ export default function LandingPage() {
         
         {/* Coastal Background Image behind columns (masked layout) */}
         <div 
-          className="absolute inset-0 bg-cover bg-center -z-20 opacity-[0.06] pointer-events-none"
+          className="absolute inset-0 bg-cover bg-center -z-20 opacity-80 pointer-events-none"
           style={{ backgroundImage: "url('/coastal-bg.jpg')" }}
         />
+        {/* Soft gradient mask for text readability and layout blending */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/60 to-[#f8fafc] -z-10 pointer-events-none" />
 
         {/* Hero Left Column (Info & Actions) */}
         <div className="lg:col-span-6 space-y-6">
