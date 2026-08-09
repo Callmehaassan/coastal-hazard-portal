@@ -125,7 +125,9 @@ export default function AboutPage() {
       <main className="max-w-[1000px] mx-auto px-6 pt-32 pb-16 flex-1 w-full space-y-12 z-10 relative">
         
         {/* Page Header */}
-        <div className="text-center space-y-4 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className={`text-center space-y-4 max-w-3xl mx-auto p-8 rounded-3xl border backdrop-blur-md shadow-sm transition-all duration-300 ${
+          darkMode ? 'bg-slate-950/85 border-slate-800/80' : 'bg-white/95 border-slate-200/60'
+        }`}>
           <span className={`px-3 py-1 rounded-full font-extrabold text-[10px] uppercase tracking-wider shadow-sm ${
             darkMode ? 'bg-cyan-950 border border-cyan-900 text-cyan-400' : 'bg-cyan-50 border border-cyan-100 text-cyan-600'
           }`}>
@@ -134,7 +136,7 @@ export default function AboutPage() {
           <h2 className={`text-3xl md:text-4xl font-black tracking-tight leading-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
             Advanced Environmental Intelligence for Pakistan's Makran Coastline
           </h2>
-          <p className={`text-sm leading-relaxed font-bold ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+          <p className={`text-sm leading-relaxed font-bold ${darkMode ? 'text-slate-350' : 'text-slate-655'}`}>
             The Coastal Hazard Portal is a state-of-the-art decision support platform built to monitor, assess, and simulate geological and oceanographic risks along the Balochistan coast.
           </p>
         </div>
@@ -191,9 +193,11 @@ export default function AboutPage() {
 
         {/* Development Team Profile Cards */}
         <div className="space-y-6 pt-6 border-t border-slate-200/80">
-          <div className="text-center space-y-2">
+          <div className={`text-center space-y-2 p-6 rounded-3xl border backdrop-blur-md max-w-md mx-auto shadow-sm transition-all duration-300 ${
+            darkMode ? 'bg-slate-950/85 border-slate-800/80' : 'bg-white/95 border-slate-200/60'
+          }`}>
             <h3 className={`text-xl font-black ${darkMode ? 'text-white' : 'text-slate-900'}`}>Development Team</h3>
-            <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">The brains behind this portal</p>
+            <p className={`text-xs font-bold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>The brains behind this portal</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
@@ -212,7 +216,7 @@ export default function AboutPage() {
                 <p className="text-[10px] text-cyan-600 font-bold uppercase tracking-wider mt-0.5">Full-Stack Developer</p>
               </div>
               <p className={`text-xs leading-relaxed font-bold ${darkMode ? 'text-slate-350' : 'text-slate-655'}`}>
-                Worked on backend API development, Google Earth Engine (GEE) spatial dataset integration (alongside Laiba), custom API rate limiters, database schema modeling, and secure token authentication.
+                Worked on backend API development, Google Earth Engine (GEE) spatial dataset integration, custom API rate limiters, database schema modeling, and secure token authentication.
               </p>
             </div>
 
@@ -230,7 +234,7 @@ export default function AboutPage() {
                 <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider mt-0.5">GEE & GIS Specialist</p>
               </div>
               <p className={`text-xs leading-relaxed font-bold ${darkMode ? 'text-slate-350' : 'text-slate-655'}`}>
-                Worked on GEE Sentinel satellite image processing, hazard classification pipelines (alongside Ali), and district geographic boundary mapping in ArcMap/QGIS.
+                Worked on GEE Sentinel satellite image processing, hazard classification pipelines, and district geographic boundary mapping in ArcMap/QGIS.
               </p>
             </div>
 
