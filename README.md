@@ -24,6 +24,26 @@ A state-of-the-art decision support system and multi-hazard mapping application 
 
 ---
 
+## 🎨 UI, Mobile & 🔒 Security Enhancements
+
+We recently introduced several core UI, accessibility, and backend security upgrades:
+
+- **Branding & Light-Theme Styling**:
+  - Integrated the circular Urdu-English **Coastal Hazard Portal logo** across all header navigation bars.
+  - Converted the entire dashboard page layout, sidebars, charts (Recharts config), AI chatbot log, mapping controls/legends, modals, and the **GEE Live Analysis** page to a beautiful, clean white glassmorphic Light-Theme matching the homepage styling.
+- **Mobile Responsiveness**:
+  - Added a collapsible mobile hamburger navigation menu (toggle button showing `Menu`/`X` close icons) on the homepage.
+  - Styled the **GEE Live Analysis** workspace to adapt dynamically (`flex-col md:flex-row`). The weights console stacks cleanly on top on mobile, leaving the Leaflet canvas to occupy the remaining screen height.
+- **Robust Security Upgrades**:
+  - **In-Memory Rate Limiter**: Configured a backend IP-based rate limiting middleware enforcing a maximum threshold of `100 requests per minute` on all `/api` endpoints, blocking DDoS and brute-force abuse.
+  - **HTTP Security Headers**: Updated the Next.js configurations to serve secure HTTP headers protecting users from typical attack vectors:
+    - `Strict-Transport-Security`: Forces secure SSL/HTTPS traffic.
+    - `X-Frame-Options (SAMEORIGIN)`: Eliminates clickjacking vulnerability.
+    - `X-Content-Type-Options (nosniff)`: Prevents MIME-type sniffing exploits.
+    - `Referrer-Policy`: Secures navigation logs.
+
+---
+
 ## 🏗️ Architecture Stack
 
 - **Frontend**:
