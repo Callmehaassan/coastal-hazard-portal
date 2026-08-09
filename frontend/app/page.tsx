@@ -474,20 +474,20 @@ export default function LandingPage() {
       <section className="max-w-[1400px] mx-auto px-6 py-6 w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         
         {/* Column 1: Historical Timeline */}
-        <div className="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[320px]">
+        <div className="bg-white/90 backdrop-blur-sm border border-slate-200/60 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[320px] relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-gradient-to-r before:from-cyan-500 before:to-blue-600">
           <div>
             <div className="flex justify-between items-center mb-3">
               <h5 className="font-extrabold text-[10px] text-slate-400 uppercase tracking-wider">Historical Timeline (2016-2025)</h5>
-              <span className="text-[10px] bg-slate-900 text-white font-bold px-2 py-0.5 rounded-full">{selectedTimelineYear}</span>
+              <span className="text-[10px] bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-black px-2.5 py-0.5 rounded-full shadow-sm">{selectedTimelineYear}</span>
             </div>
             
             {/* Interactive Timeline Track Visual */}
-            <div className="relative mb-5 mt-2 px-1 select-none">
+            <div className="relative mb-5 mt-3 px-1 select-none">
               {/* Slider Track Line */}
-              <div className="absolute left-1 right-1 top-[5px] h-1 bg-slate-100 rounded-full" />
+              <div className="absolute left-1 right-1 top-[5px] h-1.5 bg-slate-100 rounded-full" />
               {/* Highlight Track Line */}
               <div 
-                className="absolute left-1 h-1 bg-[#132c25] rounded-full transition-all duration-300"
+                className="absolute left-1 h-1.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full transition-all duration-300"
                 style={{ width: `${((selectedTimelineYear - 2016) / 9) * 98}%` }}
               />
               {/* Nodes and Dots */}
@@ -500,11 +500,11 @@ export default function LandingPage() {
                   >
                     <div className={`w-3.5 h-3.5 rounded-full border-2 transition-all flex items-center justify-center ${
                       selectedTimelineYear === yr 
-                        ? 'bg-[#132c25] border-white scale-125 shadow-md shadow-[#132c25]/30' 
+                        ? 'bg-gradient-to-r from-cyan-600 to-blue-600 border-white scale-125 shadow-md shadow-blue-500/30' 
                         : 'bg-white border-slate-300 group-hover:border-slate-500 hover:scale-110'
                     }`} />
                     <span className={`text-[8px] font-black mt-1 transition-all ${
-                      selectedTimelineYear === yr ? 'text-slate-900 font-extrabold' : 'text-slate-400'
+                      selectedTimelineYear === yr ? 'text-slate-950 font-extrabold scale-105' : 'text-slate-400'
                     }`}>{yr % 100}</span>
                   </button>
                 ))}
@@ -520,14 +520,14 @@ export default function LandingPage() {
                 { name: 'Ormara' },
                 { name: 'Sonmiani' }
               ].map((loc, idx) => (
-                <div key={idx} className="h-14 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 relative group/thumb shadow-sm">
+                <div key={idx} className="h-14 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 relative group/thumb shadow-sm hover:border-cyan-400 transition-all">
                   <div 
                     className="absolute inset-0 bg-cover bg-center opacity-85 transition-transform duration-500 group-hover/thumb:scale-110" 
                     style={{ backgroundImage: "url('/coastal-bg.jpg')" }} 
                   />
                   {/* Subtle dark bottom gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 to-transparent opacity-85" />
-                  <span className="absolute bottom-1.5 left-1.5 text-[7px] text-white font-extrabold leading-none">{loc.name}</span>
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent opacity-90" />
+                  <span className="absolute bottom-1.5 left-1.5 text-[7px] text-white font-extrabold leading-none tracking-tight">{loc.name}</span>
                 </div>
               ))}
             </div>
@@ -542,14 +542,14 @@ export default function LandingPage() {
         </div>
 
         {/* Column 2: Coastal Vulnerability Index */}
-        <div className="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[320px]">
+        <div className="bg-white/90 backdrop-blur-sm border border-slate-200/80 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[320px] relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-gradient-to-r before:from-amber-400 before:to-orange-500">
           <div>
             <h5 className="font-extrabold text-[10px] text-slate-400 uppercase tracking-wider mb-3">Coastal Vulnerability Index (CVI)</h5>
             
             {/* Ring progress and side metrics */}
             <div className="flex gap-4 items-center mb-4">
               {/* Ring metric */}
-              <div className="relative w-20 h-20 flex-shrink-0 flex items-center justify-center drop-shadow-[0_2px_8px_rgba(234,179,8,0.15)]">
+              <div className="relative w-20 h-20 flex-shrink-0 flex items-center justify-center drop-shadow-[0_2px_8px_rgba(245,158,11,0.25)]">
                 <svg className="w-full h-full transform -rotate-90">
                   <circle cx="40" cy="40" r="32" stroke="#f1f5f9" strokeWidth="6" fill="transparent" />
                   <circle cx="40" cy="40" r="32" stroke="url(#cviGrad)" strokeWidth="6.5" strokeLinecap="round" fill="transparent" strokeDasharray={2 * Math.PI * 32} strokeDashoffset={2 * Math.PI * 32 * (1 - 0.62)} />
@@ -569,19 +569,19 @@ export default function LandingPage() {
               {/* Mini progress list with all 6 items from mockup */}
               <div className="flex-1 space-y-1">
                 {[
-                  { label: 'Population Exposure', val: 0.58, color: 'bg-emerald-500' },
-                  { label: 'Infrastructure Exposure', val: 0.64, color: 'bg-yellow-500' },
-                  { label: 'Elevation (Low Lying)', val: 0.71, color: 'bg-orange-500' },
-                  { label: 'Storm Surge Risk', val: 0.66, color: 'bg-yellow-500' },
-                  { label: 'Flood Risk', val: 0.59, color: 'bg-emerald-500' },
-                  { label: 'Sea Level Rise', val: 0.63, color: 'bg-yellow-500' }
+                  { label: 'Population Exposure', val: 0.58, color: 'bg-gradient-to-r from-emerald-400 to-teal-500' },
+                  { label: 'Infrastructure Exposure', val: 0.64, color: 'bg-gradient-to-r from-yellow-400 to-amber-500' },
+                  { label: 'Elevation (Low Lying)', val: 0.71, color: 'bg-gradient-to-r from-orange-400 to-red-500' },
+                  { label: 'Storm Surge Risk', val: 0.66, color: 'bg-gradient-to-r from-yellow-400 to-amber-500' },
+                  { label: 'Flood Risk', val: 0.59, color: 'bg-gradient-to-r from-emerald-400 to-teal-500' },
+                  { label: 'Sea Level Rise', val: 0.63, color: 'bg-gradient-to-r from-yellow-400 to-amber-500' }
                 ].map((item, idx) => (
                   <div key={idx}>
                     <div className="flex justify-between text-[7px] font-extrabold text-slate-500 leading-none mb-0.5">
                       <span>{item.label}</span>
                       <span className="text-slate-800">{item.val}</span>
                     </div>
-                    <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden">
+                    <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden shadow-inner">
                       <div className={`${item.color} h-full rounded-full`} style={{ width: `${item.val * 100}%` }} />
                     </div>
                   </div>
@@ -599,30 +599,30 @@ export default function LandingPage() {
         </div>
 
         {/* Column 3: Live Alerts */}
-        <div className="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[320px]">
+        <div className="bg-white/90 backdrop-blur-sm border border-slate-200/80 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[320px] relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-gradient-to-r before:from-red-500 before:to-rose-600">
           <div>
             <div className="flex justify-between items-center mb-3">
               <h5 className="font-extrabold text-[10px] text-slate-400 uppercase tracking-wider">Live Alerts</h5>
-              <Link href="/dashboard" className="text-[9px] font-bold text-slate-500 hover:text-slate-900 transition">View all alerts</Link>
+              <Link href="/dashboard" className="text-[9px] font-bold text-red-600 hover:text-red-800 transition">View all alerts</Link>
             </div>
 
             {/* Alerts stack aligned left-title right-date matching mockup */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               {[
-                { icon: AlertTriangle, title: 'Storm Surge Watch', loc: 'Gwadar Coast', date: 'May 15, 09:20 AM', color: 'text-red-500' },
-                { icon: AlertTriangle, title: 'High Flood Risk', loc: 'Lasbela District', date: 'May 15, 08:45 AM', color: 'text-amber-500' },
-                { icon: AlertTriangle, title: 'Shoreline Erosion Warning', loc: 'Ormara Coast', date: 'May 14, 11:15 PM', color: 'text-amber-500' },
-                { icon: Info, title: 'Sea Level Rise Trend', loc: 'Increasing +8.6 mm/yr', date: 'May 14, 2025', color: 'text-cyan-500' }
+                { icon: AlertTriangle, title: 'Storm Surge Watch', loc: 'Gwadar Coast', date: 'May 15, 09:20 AM', color: 'text-red-500', border: 'border-l-4 border-red-500 bg-red-50/20' },
+                { icon: AlertTriangle, title: 'High Flood Risk', loc: 'Lasbela District', date: 'May 15, 08:45 AM', color: 'text-amber-500', border: 'border-l-4 border-amber-500 bg-amber-50/20' },
+                { icon: AlertTriangle, title: 'Shoreline Erosion Warning', loc: 'Ormara Coast', date: 'May 14, 11:15 PM', color: 'text-amber-500', border: 'border-l-4 border-amber-500 bg-amber-50/20' },
+                { icon: Info, title: 'Sea Level Rise Trend', loc: 'Increasing +8.6 mm/yr', date: 'May 14, 2025', color: 'text-cyan-500', border: 'border-l-4 border-cyan-500 bg-cyan-50/20' }
               ].map((alert, idx) => (
-                <div key={idx} className="flex justify-between items-start text-[9.5px] py-1.5 border-b border-slate-100 last:border-0">
-                  <div className="flex gap-2.5 items-start">
+                <div key={idx} className={`flex justify-between items-start text-[9.5px] p-2 rounded-xl ${alert.border} transition hover:bg-slate-100/40 shadow-sm`}>
+                  <div className="flex gap-2 items-start">
                     <alert.icon className={`w-4 h-4 ${alert.color} mt-0.5`} />
                     <div>
-                      <span className="font-extrabold text-slate-800 block">{alert.title}</span>
-                      <span className="text-[7.5px] text-slate-400 font-semibold">{alert.loc}</span>
+                      <span className="font-extrabold text-slate-900 block leading-tight">{alert.title}</span>
+                      <span className="text-[7.5px] text-slate-500 font-semibold">{alert.loc}</span>
                     </div>
                   </div>
-                  <span className="text-[8px] text-slate-400 font-medium whitespace-nowrap">{alert.date}</span>
+                  <span className="text-[8px] text-slate-400 font-bold whitespace-nowrap ml-2">{alert.date}</span>
                 </div>
               ))}
             </div>
@@ -637,7 +637,7 @@ export default function LandingPage() {
         </div>
 
         {/* Column 4: Data Sources */}
-        <div className="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[320px]">
+        <div className="bg-white/90 backdrop-blur-sm border border-slate-200/80 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[320px] relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-gradient-to-r before:from-emerald-500 before:to-teal-600">
           <div>
             <div className="flex justify-between items-center mb-3">
               <h5 className="font-extrabold text-[10px] text-slate-400 uppercase tracking-wider">Data Sources</h5>
@@ -645,7 +645,7 @@ export default function LandingPage() {
             </div>
             
             {/* Single column list with 6 checkmark items matching mockup */}
-            <div className="space-y-2.5 text-[9.5px] font-bold text-slate-700">
+            <div className="space-y-2 text-[9.5px] font-bold text-slate-700">
               {[
                 { label: 'Sentinel-1 / Sentinel-2' },
                 { label: 'Landsat 8/9' },
@@ -654,9 +654,9 @@ export default function LandingPage() {
                 { label: 'In-situ & Historical Data' },
                 { label: 'Cyclone Track Data' }
               ].map((item, idx) => (
-                <div key={idx} className="flex items-center gap-2.5 py-1 hover:text-emerald-800 transition">
+                <div key={idx} className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-emerald-50/50 hover:text-emerald-800 transition shadow-sm border border-transparent hover:border-emerald-100/50 bg-slate-50/50">
                   <span className="text-emerald-600 font-extrabold text-xs">☑</span>
-                  <span className="text-[9px] text-slate-700 font-semibold">{item.label}</span>
+                  <span className="text-[9px] text-slate-700 font-extrabold">{item.label}</span>
                 </div>
               ))}
             </div>

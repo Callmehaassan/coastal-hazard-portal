@@ -503,16 +503,12 @@ export default function DashboardPage() {
       .catch((err) => {
         console.error('Failed to load regions:', err);
       });
-    loadHazardData();
-    loadBottomChartsData();
-    loadTopMetricsData();
+    loadDashboardData();
   }, []);
 
   useEffect(() => {
     if (mounted) {
-      loadHazardData();
-      loadBottomChartsData();
-      loadTopMetricsData();
+      loadDashboardData();
     }
   }, [selectedAnalysis, selectedDistrict, selectedYear]);
 
@@ -520,54 +516,55 @@ export default function DashboardPage() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
 
-  const loadHazardData = async () => {
+  const loadDashboardData = async () => {
     setLoading(true);
     setError(null);
     try {
-      const config = ANALYSIS_CONFIG[selectedAnalysis];
-      const data = await getHazards(
-        config.apiPath,
-        selectedDistrict === 'All Coastal Districts' ? undefined : selectedDistrict
-      );
-      setHazardData(data);
-    } catch (err) {
-      console.error('Failed to load hazard data:', err);
-      setError('Failed to load data');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadBottomChartsData = async () => {
-    try {
       const districtParam = selectedDistrict === 'All Coastal Districts' ? undefined : selectedDistrict;
       
-      // Fetch erosion records
-      const erosionData = await getHazards('erosion', districtParam);
+      // Fetch all 5 hazard datasets concurrently - ONE single round-trip!
+      const [floodRes, surgeRes, erosionRes, slRes, cviRes] = await Promise.all([
+        getHazards('flooding', districtParam),
+        getHazards('storm-surge', districtParam),
+        getHazards('erosion', districtParam),
+        getHazards('sea-level', districtParam),
+        getHazards('vulnerability-index'),
+      ]);
+
+      // 1. Distribute active hazard data based on selectedAnalysis
+      if (selectedAnalysis === 'flooding') setHazardData(floodRes);
+      else if (selectedAnalysis === 'storm-surge') setHazardData(surgeRes);
+      else if (selectedAnalysis === 'coastal-erosion') setHazardData(erosionRes);
+      else if (selectedAnalysis === 'sea-level-rise') setHazardData(slRes);
+      else if (selectedAnalysis === 'vulnerability-index') setHazardData(cviRes);
+      else {
+        // Fetch on-demand for other analyses to keep initial load very fast
+        const config = ANALYSIS_CONFIG[selectedAnalysis];
+        getHazards(config.apiPath, districtParam).then(setHazardData);
+      }
+
+      // 2. Process erosion history (bottom charts)
       const groupedErosion: Record<number, number[]> = {};
-      erosionData.forEach((item) => {
+      erosionRes.forEach((item) => {
         if (!groupedErosion[item.year]) groupedErosion[item.year] = [];
         groupedErosion[item.year].push(item.value);
       });
       const shorelineSeries = Object.entries(groupedErosion).map(([yearStr, vals]) => {
         const year = Number(yearStr);
         const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
-        // Seed values had negative drift, let's keep negative for erosion, positive for accretion
         return {
           year,
           erosion: avg < 0 ? Math.round(avg * 100) / 100 : 0,
           accretion: avg >= 0 ? Math.round(avg * 100) / 100 : 0
         };
       }).sort((a, b) => a.year - b.year);
-      
       if (shorelineSeries.length > 0) {
         setShorelineHistory(shorelineSeries);
       }
 
-      // Fetch sea level anomaly records
-      const slData = await getHazards('sea-level', districtParam);
+      // 3. Process sea level history (bottom charts)
       const groupedSL: Record<number, number[]> = {};
-      slData.forEach((item) => {
+      slRes.forEach((item) => {
         if (!groupedSL[item.year]) groupedSL[item.year] = [];
         const val = item.unit === 'm' ? item.value * 1000 : item.value;
         groupedSL[item.year].push(val);
@@ -580,27 +577,11 @@ export default function DashboardPage() {
           anomaly: Math.round(avg * 100) / 100
         };
       }).sort((a, b) => a.year - b.year);
-      
       if (slSeries.length > 0) {
         setSeaLevelHistory(slSeries);
       }
-    } catch (err) {
-      console.error("Error loading bottom charts data:", err);
-    }
-  };
 
-  const loadTopMetricsData = async () => {
-    try {
-      const districtParam = selectedDistrict === 'All Coastal Districts' ? undefined : selectedDistrict;
-      
-      const [floodRes, surgeRes, erosionRes, slRes, cviRes] = await Promise.all([
-        getHazards('flooding', districtParam),
-        getHazards('storm-surge', districtParam),
-        getHazards('erosion', districtParam),
-        getHazards('sea-level', districtParam),
-        getHazards('vulnerability-index'),
-      ]);
-
+      // 4. Calculate top metrics
       const calculateMetric = (data: any[], key: string) => {
         const grouped: Record<number, number[]> = {};
         data.forEach((item) => {
@@ -696,13 +677,21 @@ export default function DashboardPage() {
         setCviExposureData(exposureList);
       }
     } catch (err) {
-      console.error("Error loading top metrics:", err);
+      console.error('Failed to load dashboard data:', err);
+      setError('Failed to load data');
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Define backward compatible alias functions to prevent compiler/runtime issues in page.tsx
+  const loadHazardData = loadDashboardData;
+  const loadTopMetricsData = loadDashboardData;
+  const loadBottomChartsData = loadDashboardData;
+
   const handleGenerate = async () => {
     setGenerating(true);
-    await loadHazardData();
+    await loadDashboardData();
     setTimeout(() => {
       setGenerating(false);
     }, 800);
