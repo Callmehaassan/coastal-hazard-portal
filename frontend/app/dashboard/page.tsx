@@ -846,22 +846,22 @@ export default function DashboardPage() {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed text-white flex flex-col font-sans overflow-x-hidden selection:bg-cyan-500/30 relative"
-      style={{ backgroundImage: "url('/bg-sunset.jpg')" }}
+      className="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed text-slate-800 flex flex-col font-sans overflow-x-hidden selection:bg-cyan-500/20 relative"
+      style={{ backgroundImage: "url('/coastal-bg.jpg')" }}
     >
-      {/* Dark tint overlay to ensure high contrast, readability, and glassmorphism highlight */}
-      <div className="absolute inset-0 bg-[#070e1b]/85 backdrop-blur-[2px] pointer-events-none -z-10" />
+      {/* Soft light tint overlay to match homepage */}
+      <div className="absolute inset-0 bg-[#f8fafc]/90 backdrop-blur-[1px] pointer-events-none -z-10" />
 
       {/* Dynamic Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-cyan-600/5 rounded-full blur-3xl pointer-events-none -z-10 animate-pulse" />
+      <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-3xl pointer-events-none -z-10 animate-pulse" />
       <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
 
       {/* TOP HEADER BAR */}
-      <header className="flex justify-between items-center px-6 py-3 border-b border-white/10 backdrop-blur-xl sticky top-0 z-40 bg-[#070e1b]/80">
+      <header className="flex justify-between items-center px-6 py-3 border-b border-slate-200/80 backdrop-blur-md sticky top-0 z-40 bg-white/80 shadow-sm">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden p-2 hover:bg-white/5 rounded-xl transition"
+            className="lg:hidden p-2 hover:bg-slate-100 rounded-xl transition text-slate-650"
             aria-label="Toggle navigation menu"
           >
             {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -871,8 +871,8 @@ export default function DashboardPage() {
               <Waves className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-sm md:text-base font-bold tracking-tight">COASTAL HAZARD PORTAL</h1>
-              <p className="text-[10px] text-cyan-400 font-semibold tracking-wider uppercase">
+              <h1 className="text-sm md:text-base font-bold tracking-tight text-slate-900">COASTAL HAZARD PORTAL</h1>
+              <p className="text-[10px] text-cyan-600 font-bold tracking-wider uppercase">
                 Balochistan Coastline
               </p>
             </div>
@@ -881,21 +881,21 @@ export default function DashboardPage() {
 
         {/* Top Header Indicators */}
         <div className="flex items-center gap-4">
-          <div className="hidden lg:flex items-center gap-2 glass-sm px-3.5 py-1.5 text-[11px] text-slate-300">
-            <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="hidden lg:flex items-center gap-2 bg-slate-50 border border-slate-200 px-3.5 py-1.5 rounded-xl shadow-sm text-[11px] text-slate-600">
+            <Calendar className="w-3.5 h-3.5 text-cyan-600" />
             <span>Data Updated:</span>
-            <strong className="text-white">May 15, 2025 10:30 AM</strong>
+            <strong className="text-slate-950 font-bold">May 15, 2025 10:30 AM</strong>
           </div>
 
-          <div className="hidden lg:flex items-center gap-2 glass-sm px-3.5 py-1.5 text-[11px] text-slate-300">
-            <Globe className="w-3.5 h-3.5 text-blue-400" />
+          <div className="hidden lg:flex items-center gap-2 bg-slate-50 border border-slate-200 px-3.5 py-1.5 rounded-xl shadow-sm text-[11px] text-slate-600">
+            <Globe className="w-3.5 h-3.5 text-blue-600" />
             <span>Data Source:</span>
-            <strong className="text-white">Google Earth Engine</strong>
+            <strong className="text-slate-950 font-bold">Google Earth Engine</strong>
           </div>
 
           {/* District Selector Dropdown */}
-          <div className="flex items-center gap-1.5 glass-sm px-3.5 py-1.5 text-[11px] text-slate-300">
-            <MapPin className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3.5 py-1.5 rounded-xl shadow-sm text-[11px] text-slate-600">
+            <MapPin className="w-3.5 h-3.5 text-cyan-600" />
             <span>District:</span>
             <select
               value={selectedDistrict}
@@ -909,11 +909,11 @@ export default function DashboardPage() {
                   if (match) setSelectedRegionId(match.id);
                 }
               }}
-              className="bg-transparent text-white font-bold outline-none cursor-pointer font-sans"
+              className="bg-transparent text-slate-900 font-extrabold outline-none cursor-pointer font-sans"
             >
-              <option value="All Coastal Districts" className="bg-[#070e1b]">All Coastal Districts</option>
-              <option value="Gwadar" className="bg-[#070e1b]">Gwadar</option>
-              <option value="Lasbela" className="bg-[#070e1b]">Lasbela</option>
+              <option value="All Coastal Districts" className="bg-white text-slate-900">All Coastal Districts</option>
+              <option value="Gwadar" className="bg-white text-slate-900">Gwadar</option>
+              <option value="Lasbela" className="bg-white text-slate-900">Lasbela</option>
             </select>
           </div>
 
@@ -923,18 +923,18 @@ export default function DashboardPage() {
             <input
               type="text"
               placeholder="Search location, district..."
-              className="bg-white/5 border border-white/10 rounded-xl py-1.5 pl-9 pr-4 text-xs focus:border-cyan-400 outline-none w-[200px] transition-all"
+              className="bg-slate-50 border border-slate-200 rounded-xl py-1.5 pl-9 pr-4 text-xs focus:border-cyan-500 focus:bg-white outline-none w-[200px] transition-all text-slate-800 placeholder-slate-400"
             />
           </div>
 
           {/* Notifications */}
           <button
             onClick={() => setActiveModal('alerts')}
-            className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition relative"
+            className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center hover:bg-slate-100 transition relative"
             aria-label="View Active Alerts"
           >
-            <Bell className="w-4.5 h-4.5 text-slate-300" />
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center shadow-lg">
+            <Bell className="w-4.5 h-4.5 text-slate-600" />
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center text-white shadow-lg">
               3
             </span>
           </button>
@@ -942,15 +942,15 @@ export default function DashboardPage() {
           {/* Profile Dropdown */}
           <button
             onClick={() => setActiveModal('users')}
-            className="flex items-center gap-2.5 glass-sm px-3 py-1 text-xs hover:bg-white/5"
+            className="flex items-center gap-2.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-xl px-3 py-1 text-xs transition shadow-sm"
             aria-label="User Profile"
           >
-            <div className="w-7 h-7 rounded-full bg-cyan-500/10 flex items-center justify-center">
-              <User className="w-4 h-4 text-cyan-400" />
+            <div className="w-7 h-7 rounded-full bg-cyan-50 flex items-center justify-center">
+              <User className="w-4 h-4 text-cyan-600" />
             </div>
             <div className="text-left hidden md:block">
-              <p className="font-semibold text-slate-200">Analyst</p>
-              <p className="text-[9px] text-slate-400 font-medium">Level 2</p>
+              <p className="font-extrabold text-slate-900">Analyst</p>
+              <p className="text-[9px] text-slate-500 font-medium">Level 2</p>
             </div>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden md:block" />
           </button>
@@ -960,15 +960,15 @@ export default function DashboardPage() {
       <div className="flex-1 flex relative">
         {/* LEFT VERTICAL SIDEBAR */}
         <aside
-          className={`w-[260px] shrink-0 border-r border-white/10 flex flex-col p-4 justify-between bg-[#070e1b]/50 backdrop-blur-md absolute lg:relative inset-y-0 left-0 z-30 transform lg:transform-none transition-transform duration-300 ease-out ${
+          className={`w-[260px] shrink-0 border-r border-slate-200 flex flex-col p-4 justify-between bg-white/80 backdrop-blur-md absolute lg:relative inset-y-0 left-0 z-30 transform lg:transform-none transition-transform duration-300 ease-out shadow-sm ${
             sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
           }`}
         >
           <div className="space-y-5">
             <nav className="space-y-1" aria-label="Main Navigation">
               {/* Dashboard Link (Active) */}
-              <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs bg-gradient-to-r from-cyan-500/15 to-blue-500/5 border border-cyan-500/20 text-white font-semibold shadow-inner">
-                <Compass className="w-4 h-4 text-cyan-400" />
+              <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs bg-slate-100 border border-slate-200 text-slate-900 font-extrabold shadow-sm">
+                <Compass className="w-4 h-4 text-cyan-600" />
                 <span>Dashboard</span>
               </button>
 
@@ -976,9 +976,9 @@ export default function DashboardPage() {
                 onClick={() => {
                   setSelectedDistrict('All Coastal Districts');
                   setSelectedYear(2025);
-                  loadHazardData();
+                  loadDashboardData();
                 }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-400 hover:text-white hover:bg-white/5"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/80"
               >
                 <Activity className="w-4 h-4" />
                 <span>Live Overview</span>
@@ -988,7 +988,7 @@ export default function DashboardPage() {
               <div>
                 <button
                   onClick={() => setHazardsMenuOpen(!hazardsMenuOpen)}
-                  className="w-full flex justify-between items-center px-3 py-2.5 rounded-xl text-xs border border-transparent text-slate-400 hover:text-white hover:bg-white/5"
+                  className="w-full flex justify-between items-center px-3 py-2.5 rounded-xl text-xs border border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/80"
                 >
                   <div className="flex items-center gap-3">
                     <Layers className="w-4 h-4" />
@@ -1002,18 +1002,18 @@ export default function DashboardPage() {
                 </button>
 
                 {hazardsMenuOpen && (
-                  <div className="pl-6 pr-2 py-1 space-y-1.5 border-l border-white/5 ml-5 mt-1">
+                  <div className="pl-6 pr-2 py-1 space-y-1.5 border-l border-slate-200 ml-5 mt-1">
                     {Object.entries(ANALYSIS_CONFIG).map(([key, config]) => (
                       <button
                         key={key}
                         onClick={() => {
                           setSelectedAnalysis(key as AnalysisType);
-                          loadHazardData();
+                          loadDashboardData();
                         }}
                         className={`w-full flex items-center justify-between text-left text-[11px] py-1.5 px-2 rounded-lg transition ${
                           selectedAnalysis === key
-                            ? 'text-cyan-400 font-semibold bg-cyan-500/5'
-                            : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+                            ? 'text-cyan-600 font-bold bg-cyan-50'
+                            : 'text-slate-655 hover:text-slate-900 hover:bg-slate-50/85'
                         }`}
                       >
                         <span>{config.label}</span>
@@ -1032,7 +1032,7 @@ export default function DashboardPage() {
               {/* Other Navigation Links */}
               <Link
                 href="/dashboard/analysis"
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-400 hover:text-white hover:bg-white/5"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/80"
               >
                 <Sliders className="w-4 h-4" />
                 <span>GEE Live Analysis</span>
@@ -1040,7 +1040,7 @@ export default function DashboardPage() {
 
               <button
                 onClick={() => setActiveModal('alerts')}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-400 hover:text-white hover:bg-white/5"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/80"
               >
                 <AlertTriangle className="w-4 h-4" />
                 <span>Alerts & Notifications</span>
@@ -1052,15 +1052,15 @@ export default function DashboardPage() {
                   askWidget?.focus();
                   askWidget?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-400 hover:text-white hover:bg-white/5"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/80"
               >
-                <Bot className="w-4 h-4 text-cyan-400" />
+                <Bot className="w-4 h-4 text-cyan-600" />
                 <span>AI Insights (Ask)</span>
               </button>
 
               <button
                 onClick={() => setActiveModal('reports')}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-400 hover:text-white hover:bg-white/5"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/80"
               >
                 <FileSpreadsheet className="w-4 h-4" />
                 <span>Reports</span>
@@ -1068,7 +1068,7 @@ export default function DashboardPage() {
 
               <button
                 onClick={() => triggerExportFlow('csv')}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-400 hover:text-white hover:bg-white/5"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/80"
               >
                 <BarChart3 className="w-4 h-4" />
                 <span>Data Explorer</span>
@@ -1076,7 +1076,7 @@ export default function DashboardPage() {
 
               <button
                 onClick={() => triggerExportFlow('geotiff')}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-400 hover:text-white hover:bg-white/5"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/80"
               >
                 <Download className="w-4 h-4" />
                 <span>Downloads</span>
@@ -1084,7 +1084,7 @@ export default function DashboardPage() {
 
               <button
                 onClick={() => setActiveModal('settings')}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-400 hover:text-white hover:bg-white/5"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/80"
               >
                 <Settings className="w-4 h-4" />
                 <span>Settings</span>
@@ -1092,7 +1092,7 @@ export default function DashboardPage() {
 
               <button
                 onClick={() => setActiveModal('users')}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-400 hover:text-white hover:bg-white/5"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/80"
               >
                 <Users className="w-4 h-4" />
                 <span>Users & Roles</span>
@@ -1102,8 +1102,8 @@ export default function DashboardPage() {
 
           {/* CVI Ring Chart card at bottom of sidebar */}
           <div className="space-y-4">
-            <div className="glass p-4 border-white/5 bg-[#0f172a]/30">
-              <h5 className="text-[10px] text-slate-400 font-bold tracking-wider uppercase mb-3">
+            <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <h5 className="text-[10px] text-slate-500 font-extrabold tracking-wider uppercase mb-3">
                 Coastal Vulnerability Index
               </h5>
               
@@ -1114,7 +1114,7 @@ export default function DashboardPage() {
                     cx="56"
                     cy="56"
                     r="46"
-                    stroke="rgba(255,255,255,0.03)"
+                    stroke="#f1f5f9"
                     strokeWidth="8"
                     fill="transparent"
                   />
@@ -1137,24 +1137,24 @@ export default function DashboardPage() {
                   </defs>
                 </svg>
                 <div className="absolute text-center">
-                  <span className="text-xl font-black text-white">{overallCvi.toFixed(2)}</span>
+                  <span className="text-xl font-black text-slate-900">{overallCvi.toFixed(2)}</span>
                   {(() => {
-                    if (overallCvi >= 0.75) return <p className="text-[8px] text-red-500 font-bold uppercase mt-0.5">High Risk</p>;
-                    if (overallCvi >= 0.5) return <p className="text-[8px] text-yellow-500 font-bold uppercase mt-0.5">Moderate Risk</p>;
-                    return <p className="text-[8px] text-green-500 font-bold uppercase mt-0.5">Low Risk</p>;
+                    if (overallCvi >= 0.75) return <p className="text-[8px] text-red-600 font-bold uppercase mt-0.5">High Risk</p>;
+                    if (overallCvi >= 0.5) return <p className="text-[8px] text-amber-600 font-bold uppercase mt-0.5">Moderate Risk</p>;
+                    return <p className="text-[8px] text-emerald-600 font-bold uppercase mt-0.5">Low Risk</p>;
                   })()}
                 </div>
               </div>
 
-              <div className="flex justify-between items-center mt-3 text-[10px] text-slate-400">
+              <div className="flex justify-between items-center mt-3 text-[10px] text-slate-500">
                 <span>Overall (Balochistan Coast)</span>
-                <span className="text-green-400 font-semibold flex items-center gap-0.5">
+                <span className="text-emerald-600 font-bold flex items-center gap-0.5">
                   {(overallCvi * 100).toFixed(0)}%
                 </span>
               </div>
             </div>
 
-            <p className="text-[9px] text-slate-500 text-center">
+            <p className="text-[9px] text-slate-400 text-center">
               &copy; 2025 NCGSA Initiative.<br />All rights reserved.
             </p>
           </div>
@@ -1168,21 +1168,21 @@ export default function DashboardPage() {
             {(() => {
               const { valueStr, percentStr } = getDynamicMetric('flooding');
               return (
-                <div className="glass p-4 bg-[#0f172a]/30 hover:bg-[#0f172a]/45 transition border-l-4 border-l-cyan-400 flex items-center justify-between">
+                <div className="bg-white/90 border border-slate-200/80 hover:shadow-md transition shadow-sm rounded-2xl p-4 border-l-4 border-l-cyan-500 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                    <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider block">
                       Coastal Flood (Inundation)
                     </span>
-                    <strong className="text-xl font-extrabold text-cyan-400 mt-1 block">{valueStr}</strong>
+                    <strong className="text-xl font-extrabold text-cyan-600 mt-1 block">{valueStr}</strong>
                     <span className="text-[9px] text-slate-400 block mt-0.5">Affected Area ({selectedYear})</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-cyan-400 font-bold flex items-center gap-0.5 justify-end">
-                      {percentStr} <span className="text-slate-500 text-[8px]">vs {selectedYear - 1}</span>
+                    <span className="text-[10px] text-cyan-600 font-bold flex items-center gap-0.5 justify-end">
+                      {percentStr} <span className="text-slate-400 text-[8px]">vs {selectedYear - 1}</span>
                     </span>
                     {/* SVG sparkline */}
                     <svg className="w-12 h-6 mt-1.5 ml-auto" viewBox="0 0 50 20">
-                      <path d="M0,15 Q10,12 20,18 T40,5 T50,8" fill="none" stroke="#22d3ee" strokeWidth="2" />
+                      <path d="M0,15 Q10,12 20,18 T40,5 T50,8" fill="none" stroke="#0891b2" strokeWidth="2" />
                     </svg>
                   </div>
                 </div>
@@ -1193,20 +1193,20 @@ export default function DashboardPage() {
             {(() => {
               const { valueStr, percentStr } = getDynamicMetric('surge');
               return (
-                <div className="glass p-4 bg-[#0f172a]/30 hover:bg-[#0f172a]/45 transition border-l-4 border-l-amber-500 flex items-center justify-between">
+                <div className="bg-white/90 border border-slate-200/80 hover:shadow-md transition shadow-sm rounded-2xl p-4 border-l-4 border-l-amber-500 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                    <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider block">
                       Storm Surge Risk
                     </span>
-                    <strong className="text-xl font-extrabold text-amber-500 mt-1 block">{valueStr}</strong>
+                    <strong className="text-xl font-extrabold text-amber-600 mt-1 block">{valueStr}</strong>
                     <span className="text-[9px] text-slate-400 block mt-0.5">Risk Level ({selectedYear})</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-amber-500 font-bold flex items-center gap-0.5 justify-end">
+                    <span className="text-[10px] text-amber-600 font-bold flex items-center gap-0.5 justify-end">
                       {percentStr}
                     </span>
                     <svg className="w-12 h-6 mt-1.5 ml-auto" viewBox="0 0 50 20">
-                      <path d="M0,18 Q15,10 25,12 T50,4" fill="none" stroke="#f59e0b" strokeWidth="2" />
+                      <path d="M0,18 Q15,10 25,12 T50,4" fill="none" stroke="#d97706" strokeWidth="2" />
                     </svg>
                   </div>
                 </div>
@@ -1217,20 +1217,20 @@ export default function DashboardPage() {
             {(() => {
               const { valueStr, percentStr } = getDynamicMetric('erosion');
               return (
-                <div className="glass p-4 bg-[#0f172a]/30 hover:bg-[#0f172a]/45 transition border-l-4 border-l-emerald-500 flex items-center justify-between">
+                <div className="bg-white/90 border border-slate-200/80 hover:shadow-md transition shadow-sm rounded-2xl p-4 border-l-4 border-l-emerald-500 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                    <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider block">
                       Shoreline Change
                     </span>
-                    <strong className="text-xl font-extrabold text-emerald-500 mt-1 block">{valueStr}</strong>
+                    <strong className="text-xl font-extrabold text-emerald-600 mt-1 block">{valueStr}</strong>
                     <span className="text-[9px] text-slate-400 block mt-0.5">Net Erosion (2016-{selectedYear})</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-0.5 justify-end">
-                      {percentStr} <span className="text-slate-500 text-[8px]">vs {selectedYear - 1}</span>
+                    <span className="text-[10px] text-emerald-650 font-bold flex items-center gap-0.5 justify-end">
+                      {percentStr} <span className="text-slate-400 text-[8px]">vs {selectedYear - 1}</span>
                     </span>
                     <svg className="w-12 h-6 mt-1.5 ml-auto" viewBox="0 0 50 20">
-                      <path d="M0,19 Q10,17 25,10 T50,15" fill="none" stroke="#10b981" strokeWidth="2" />
+                      <path d="M0,19 Q10,17 25,10 T50,15" fill="none" stroke="#059669" strokeWidth="2" />
                     </svg>
                   </div>
                 </div>
@@ -1241,20 +1241,20 @@ export default function DashboardPage() {
             {(() => {
               const { valueStr, percentStr } = getDynamicMetric('seaLevel');
               return (
-                <div className="glass p-4 bg-[#0f172a]/30 hover:bg-[#0f172a]/45 transition border-l-4 border-l-sky-400 flex items-center justify-between">
+                <div className="bg-white/90 border border-slate-200/80 hover:shadow-md transition shadow-sm rounded-2xl p-4 border-l-4 border-l-sky-500 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                    <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider block">
                       Sea Level Anomaly
                     </span>
-                    <strong className="text-xl font-extrabold text-sky-400 mt-1 block">{valueStr}</strong>
+                    <strong className="text-xl font-extrabold text-sky-600 mt-1 block">{valueStr}</strong>
                     <span className="text-[9px] text-slate-400 block mt-0.5">Trend (2016-{selectedYear})</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-sky-400 font-bold flex items-center gap-0.5 justify-end">
-                      {percentStr} <span className="text-slate-500 text-[8px]">vs {selectedYear - 1}</span>
+                    <span className="text-[10px] text-sky-600 font-bold flex items-center gap-0.5 justify-end">
+                      {percentStr} <span className="text-slate-400 text-[8px]">vs {selectedYear - 1}</span>
                     </span>
                     <svg className="w-12 h-6 mt-1.5 ml-auto" viewBox="0 0 50 20">
-                      <path d="M0,16 Q10,13 25,11 T50,3" fill="none" stroke="#38bdf8" strokeWidth="2" />
+                      <path d="M0,16 Q10,13 25,11 T50,3" fill="none" stroke="#0284c7" strokeWidth="2" />
                     </svg>
                   </div>
                 </div>
@@ -1264,17 +1264,17 @@ export default function DashboardPage() {
             {/* Metric 5 (Alerts trigger) */}
             <button
               onClick={() => setActiveModal('alerts')}
-              className="glass p-4 bg-[#0f172a]/30 hover:bg-[#0f172a]/45 transition border-l-4 border-l-red-500 flex items-center justify-between text-left"
+              className="bg-white/90 border border-slate-200/80 hover:shadow-md transition shadow-sm rounded-2xl p-4 border-l-4 border-l-red-500 flex items-center justify-between text-left"
             >
               <div>
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider block">
                   Active Alerts
                 </span>
-                <strong className="text-xl font-extrabold text-red-500 mt-1 block">3</strong>
+                <strong className="text-xl font-extrabold text-red-600 mt-1 block">3</strong>
                 <span className="text-[9px] text-slate-400 block mt-0.5">Districts Affected</span>
               </div>
               <div>
-                <span className="text-[10px] text-red-400 font-bold flex items-center gap-0.5">
+                <span className="text-[10px] text-red-600 font-bold flex items-center gap-0.5">
                   View All →
                 </span>
               </div>
@@ -1284,28 +1284,28 @@ export default function DashboardPage() {
           {/* MIDDLE GRID: MAP + SIDEBAR WIDGETS */}
           <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             {/* LEFT SECTION (MAP CARD) */}
-            <div className="lg:col-span-8 glass p-5 flex flex-col relative min-h-[480px]">
+            <div className="lg:col-span-8 bg-white border border-slate-200/80 rounded-3xl p-5 flex flex-col relative min-h-[480px] shadow-sm hover:shadow-md transition-all">
               {/* Overlaid Map Filter Header */}
               <div className="absolute top-8 left-8 right-8 z-10 flex flex-wrap gap-4 items-center justify-between pointer-events-none">
-                <div className="bg-[#070e1b]/90 border border-white/10 px-4 py-2 rounded-xl backdrop-blur-md pointer-events-auto">
-                  <h3 className="text-xs font-bold text-white">Balochistan Coastline Overview</h3>
-                  <p className="text-[9px] text-slate-400 mt-0.5">Interactive spatial hazard metrics</p>
+                <div className="bg-white/95 border border-slate-200 px-4 py-2 rounded-xl backdrop-blur-md pointer-events-auto shadow-md">
+                  <h3 className="text-xs font-bold text-slate-900">Balochistan Coastline Overview</h3>
+                  <p className="text-[9px] text-slate-500 mt-0.5">Interactive spatial hazard metrics</p>
                 </div>
 
                 <div className="flex gap-2.5 pointer-events-auto">
                   {/* Layer dropdown */}
-                  <div className="flex items-center gap-1.5 bg-[#070e1b]/90 border border-white/10 px-3 py-1.5 rounded-xl text-xs backdrop-blur-md">
-                    <span className="text-slate-400">Layer:</span>
+                  <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs backdrop-blur-md shadow-sm">
+                    <span className="text-slate-500 font-medium">Layer:</span>
                     <select
                       value={selectedAnalysis}
                       onChange={(e) => {
                         setSelectedAnalysis(e.target.value as AnalysisType);
-                        loadHazardData();
+                        loadDashboardData();
                       }}
-                      className="bg-transparent text-white font-bold outline-none cursor-pointer"
+                      className="bg-transparent text-slate-900 font-extrabold outline-none cursor-pointer"
                     >
                       {Object.entries(ANALYSIS_CONFIG).map(([key, config]) => (
-                        <option key={key} value={key} className="bg-[#070e1b]">
+                        <option key={key} value={key} className="bg-white text-slate-900">
                           {config.label}
                         </option>
                       ))}
@@ -1313,15 +1313,15 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Year dropdown */}
-                  <div className="flex items-center gap-1.5 bg-[#070e1b]/90 border border-white/10 px-3 py-1.5 rounded-xl text-xs backdrop-blur-md">
-                    <span className="text-slate-400">Year:</span>
+                  <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs backdrop-blur-md shadow-sm">
+                    <span className="text-slate-500 font-medium">Year:</span>
                     <select
                       value={selectedYear}
                       onChange={(e) => setSelectedYear(Number(e.target.value))}
-                      className="bg-transparent text-white font-bold outline-none cursor-pointer"
+                      className="bg-transparent text-slate-900 font-extrabold outline-none cursor-pointer"
                     >
                       {[2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016].map((y) => (
-                        <option key={y} value={y} className="bg-[#070e1b]">
+                        <option key={y} value={y} className="bg-white text-slate-900">
                           {y}
                         </option>
                       ))}
@@ -1331,9 +1331,9 @@ export default function DashboardPage() {
               </div>
 
               {/* Overlaid Legend box (Bottom-left) */}
-              <div className="absolute bottom-8 left-8 z-10 bg-[#070e1b]/95 border border-white/10 p-3 rounded-xl backdrop-blur-md text-[10px] w-[180px] pointer-events-auto">
-                <span className="font-bold text-white block mb-2">{currentConfig.label} Risk Level</span>
-                <div className="space-y-1.5 text-slate-300">
+              <div className="absolute bottom-8 left-8 z-10 bg-white/95 border border-slate-200 p-3 rounded-xl backdrop-blur-md text-[10px] w-[180px] pointer-events-auto shadow-md">
+                <span className="font-bold text-slate-900 block mb-2">{currentConfig.label} Risk Level</span>
+                <div className="space-y-1.5 text-slate-700">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-[#22c55e] rounded" />
                     <span>Low Risk</span>
@@ -1351,18 +1351,18 @@ export default function DashboardPage() {
 
               {/* Overlaid Compass and scale indicators (Bottom-right) */}
               <div className="absolute bottom-8 right-8 z-10 flex flex-col items-center gap-3 pointer-events-none">
-                <div className="bg-[#070e1b]/95 border border-white/10 p-2 rounded-xl backdrop-blur-md flex items-center justify-center w-8 h-8 pointer-events-auto">
-                  <Compass className="w-4.5 h-4.5 text-cyan-400" />
+                <div className="bg-white/95 border border-slate-200 p-2 rounded-xl backdrop-blur-md flex items-center justify-center w-8 h-8 pointer-events-auto shadow-md">
+                  <Compass className="w-4.5 h-4.5 text-cyan-600" />
                 </div>
-                <div className="bg-[#070e1b]/95 border border-white/10 px-2 py-1 rounded-lg backdrop-blur-md text-[9px] text-slate-400 pointer-events-auto">
+                <div className="bg-white/95 border border-slate-200 px-2 py-1 rounded-lg backdrop-blur-md text-[9px] text-slate-500 pointer-events-auto shadow-sm">
                   0 &nbsp; 25 &nbsp; 50 &nbsp; 75 km
                 </div>
               </div>
 
               {/* Overlaid Layers Panel */}
-              <div className="absolute top-24 right-8 z-10 bg-[#070e1b]/95 border border-white/10 p-4 rounded-xl backdrop-blur-md text-[11px] w-[180px] pointer-events-auto shadow-2xl">
-                <span className="font-bold text-white block mb-2 pb-1.5 border-b border-white/15">Layers</span>
-                <div className="space-y-2 text-slate-300">
+              <div className="absolute top-24 right-8 z-10 bg-white/95 border border-slate-200 p-4 rounded-xl backdrop-blur-md text-[11px] w-[180px] pointer-events-auto shadow-xl text-slate-800">
+                <span className="font-bold text-slate-900 block mb-2 pb-1.5 border-b border-slate-200">Layers</span>
+                <div className="space-y-2 text-slate-650">
                   {[
                     { key: 'Coastline', label: 'Coastline' },
                     { key: 'District Boundary', label: 'District Boundary' },
@@ -1374,7 +1374,7 @@ export default function DashboardPage() {
                   ].map((layer) => {
                     const isChecked = visibleLayers.includes(layer.key);
                     return (
-                      <label key={layer.key} className="flex items-center gap-2 cursor-pointer hover:text-white select-none">
+                      <label key={layer.key} className="flex items-center gap-2 cursor-pointer hover:text-slate-950 select-none">
                         <input
                           type="checkbox"
                           checked={isChecked}
@@ -1390,7 +1390,7 @@ export default function DashboardPage() {
                         <div className={`w-3.5 h-3.5 rounded flex items-center justify-center border transition ${
                           isChecked 
                             ? 'bg-cyan-500 border-cyan-500 text-white' 
-                            : 'border-white/20 hover:border-white/40'
+                            : 'border-slate-300 hover:border-slate-400 bg-white'
                         }`}>
                           {isChecked && (
                             <svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 20 20">
@@ -1404,15 +1404,15 @@ export default function DashboardPage() {
                   })}
                 </div>
 
-                <div className="pt-2.5 mt-2.5 border-t border-white/15">
-                  <span className="font-bold text-white block mb-2">Basemap</span>
+                <div className="pt-2.5 mt-2.5 border-t border-slate-200">
+                  <span className="font-bold text-slate-900 block mb-2">Basemap</span>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setActiveBasemap('osm')}
                       className={`flex-1 py-1 rounded text-center transition font-bold text-[10px] ${
                         activeBasemap === 'osm'
-                          ? 'bg-cyan-500 text-white font-semibold'
-                          : 'bg-white/5 text-slate-400 hover:text-slate-200'
+                          ? 'bg-cyan-500 text-white font-semibold shadow-sm'
+                          : 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800'
                       }`}
                     >
                       Map
@@ -1421,8 +1421,8 @@ export default function DashboardPage() {
                       onClick={() => setActiveBasemap('satellite')}
                       className={`flex-1 py-1 rounded text-center transition font-bold text-[10px] ${
                         activeBasemap === 'satellite'
-                          ? 'bg-cyan-500 text-white font-semibold'
-                          : 'bg-white/5 text-slate-400 hover:text-slate-200'
+                          ? 'bg-cyan-500 text-white font-semibold shadow-sm'
+                          : 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800'
                       }`}
                     >
                       Satellite
@@ -1433,17 +1433,17 @@ export default function DashboardPage() {
 
               {/* Floating GEE Active Indicator */}
               {isAnalysisActive && (
-                <div className="absolute top-24 left-8 z-10 bg-cyan-950/90 border border-cyan-500/30 px-3.5 py-2.5 rounded-xl backdrop-blur-md text-[10px] text-cyan-300 max-w-[240px] pointer-events-auto shadow-2xl flex items-center justify-between gap-3 animate-in slide-in-from-top-4 duration-300">
+                <div className="absolute top-24 left-8 z-10 bg-cyan-50/95 border border-cyan-200 px-3.5 py-2.5 rounded-xl backdrop-blur-md text-[10px] text-cyan-800 max-w-[240px] pointer-events-auto shadow-xl flex items-center justify-between gap-3 animate-in slide-in-from-top-4 duration-300">
                   <div className="space-y-0.5">
-                    <strong className="text-white block font-bold">🛰️ GEE Live Overlay Active</strong>
-                    <span className="text-[9px] text-slate-400">Custom multi-criteria CVI weights mapped.</span>
+                    <strong className="text-cyan-950 block font-bold">🛰️ GEE Live Overlay Active</strong>
+                    <span className="text-[9px] text-slate-500">Custom multi-criteria CVI weights mapped.</span>
                   </div>
                   <button
                     onClick={() => {
                       setIsAnalysisActive(false);
-                      loadTopMetricsData(); // restore standard database values
+                      loadDashboardData(); // restore standard database values
                     }}
-                    className="p-1 px-1.5 rounded bg-cyan-500/15 hover:bg-cyan-500/30 text-white font-bold transition-all text-[8px]"
+                    className="p-1 px-1.5 rounded bg-cyan-100 hover:bg-cyan-200 text-cyan-950 font-bold transition-all text-[8px]"
                   >
                     CLEAR
                   </button>
@@ -1478,14 +1478,14 @@ export default function DashboardPage() {
                 const displayVal = `${latestVal.toFixed(currentConfig.unit === 'km²' ? 1 : 2)} ${currentConfig.unit}`;
 
                 return (
-                  <div className="absolute bottom-8 right-32 z-10 bg-[#070e1b]/95 border border-white/10 p-3 rounded-xl backdrop-blur-md text-xs w-[210px] pointer-events-auto shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-                    <div className="border-b border-white/10 pb-1.5 mb-1.5 flex justify-between items-center">
-                      <strong className="text-white">{displayName}</strong>
-                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 uppercase font-bold">
+                  <div className="absolute bottom-8 right-32 z-10 bg-white/95 border border-slate-200 p-3 rounded-xl backdrop-blur-md text-xs w-[210px] pointer-events-auto shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-slate-800">
+                    <div className="border-b border-slate-200 pb-1.5 mb-1.5 flex justify-between items-center">
+                      <strong className="text-slate-900">{displayName}</strong>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-600 uppercase font-bold">
                         {isAllDistricts ? 'Region' : 'District'}
                       </span>
                     </div>
-                    <div className="space-y-1 text-slate-300">
+                    <div className="space-y-1 text-slate-600">
                       <p className="flex justify-between gap-1">
                         <span>{selectedYear} {currentConfig.label}:</span>
                         <strong style={{ color: currentConfig.color }}>
@@ -1495,7 +1495,7 @@ export default function DashboardPage() {
                     </div>
                     <Link
                       href={`/dashboard/details/${isAllDistricts ? 'all' : displayName.toLowerCase()}?hazard=${selectedAnalysis}`}
-                      className="block w-full mt-3.5 py-1.5 px-3 rounded-xl bg-white/5 border border-white/10 text-center font-semibold text-[10px] text-cyan-400 hover:bg-white/10 active:scale-95 transition-all"
+                      className="block w-full mt-3.5 py-1.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-center font-bold text-[10px] text-cyan-600 hover:bg-slate-100 active:scale-95 transition-all shadow-sm"
                     >
                       View Details Panel →
                     </Link>
@@ -1507,15 +1507,15 @@ export default function DashboardPage() {
             {/* RIGHT SIDEBAR COLUMN: ALERTS + ASK AI */}
             <div className="lg:col-span-4 flex flex-col gap-6">
               {/* Recent Alerts Widget */}
-              <section className="glass p-5 border-white/10 bg-[#0f172a]/30 flex flex-col">
-                <div className="flex justify-between items-center border-b border-white/10 pb-3.5 mb-4">
-                  <h4 className="text-xs font-bold text-white flex items-center gap-2">
+              <section className="bg-white/90 border border-slate-200/80 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col">
+                <div className="flex justify-between items-center border-b border-slate-200 pb-3.5 mb-4">
+                  <h4 className="text-xs font-bold text-slate-900 flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4 text-red-500" />
                     <span>Recent Alerts</span>
                   </h4>
                   <button
                     onClick={() => setActiveModal('alerts')}
-                    className="text-[10px] text-cyan-400 hover:text-cyan-300 font-semibold"
+                    className="text-[10px] text-cyan-600 hover:text-cyan-700 font-semibold"
                   >
                     View All
                   </button>
@@ -1525,7 +1525,7 @@ export default function DashboardPage() {
                   {recentAlerts.map((alert) => (
                     <div
                       key={alert.id}
-                      className="p-3 rounded-xl border border-white/5 bg-[#070e1b]/40 flex gap-3 items-start"
+                      className="p-3 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100/85 transition-all shadow-sm flex gap-3 items-start"
                     >
                       <div
                         className={`w-2.5 h-2.5 rounded-full shrink-0 mt-1 ${
@@ -1537,8 +1537,8 @@ export default function DashboardPage() {
                         }`}
                       />
                       <div className="flex-1 min-w-0">
-                        <strong className="text-xs text-white block truncate">{alert.title}</strong>
-                        <span className="text-[10px] text-slate-400 block mt-0.5">
+                        <strong className="text-xs text-slate-900 block truncate font-extrabold">{alert.title}</strong>
+                        <span className="text-[10px] text-slate-500 block mt-0.5">
                           {alert.district} &bull; {alert.time}
                         </span>
                       </div>
@@ -1548,11 +1548,11 @@ export default function DashboardPage() {
               </section>
 
               {/* Ask Coastal AI chatbot widget */}
-              <section className="glass p-5 border-white/10 bg-[#0f172a]/30 flex-1 flex flex-col min-h-[350px]">
-                <div className="flex items-center gap-2 border-b border-white/10 pb-3 mb-3">
-                  <Bot className="w-4.5 h-4.5 text-cyan-400" />
-                  <h4 className="text-xs font-bold text-white">Ask Coastal AI</h4>
-                  <span className="text-[8px] bg-cyan-500/10 text-cyan-400 font-bold uppercase px-1.5 py-0.5 rounded">
+              <section className="bg-white/90 border border-slate-200/80 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all flex-1 flex flex-col min-h-[350px]">
+                <div className="flex items-center gap-2 border-b border-slate-200 pb-3 mb-3">
+                  <Bot className="w-4.5 h-4.5 text-cyan-650" />
+                  <h4 className="text-xs font-bold text-slate-900">Ask Coastal AI</h4>
+                  <span className="text-[8px] bg-cyan-50 text-cyan-650 font-bold uppercase px-1.5 py-0.5 rounded">
                     BETA
                   </span>
                 </div>
@@ -1569,17 +1569,17 @@ export default function DashboardPage() {
                       <div
                         className={`p-3 rounded-xl leading-relaxed ${
                           msg.sender === 'user'
-                            ? 'bg-cyan-500/20 text-white rounded-tr-none border border-cyan-500/15'
-                            : 'bg-[#070e1b]/70 text-slate-200 rounded-tl-none border border-white/5'
+                            ? 'bg-cyan-50 text-cyan-950 border border-cyan-100 rounded-tr-none'
+                            : 'bg-slate-50 text-slate-800 border border-slate-200/60 rounded-tl-none'
                         }`}
                       >
                         {msg.text}
                       </div>
-                      <span className="text-[8px] text-slate-500 mt-1 px-1">{msg.time}</span>
+                      <span className="text-[8px] text-slate-400 mt-1 px-1">{msg.time}</span>
                     </div>
                   ))}
                   {chatLoading && (
-                    <div className="flex items-center gap-2 text-[10px] text-cyan-400">
+                    <div className="flex items-center gap-2 text-[10px] text-cyan-600">
                       <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                       <span>Thinking...</span>
                     </div>
@@ -1597,7 +1597,7 @@ export default function DashboardPage() {
                     <button
                       key={idx}
                       onClick={() => handleChatSend(s)}
-                      className="w-full text-left text-[10px] py-1.5 px-3 rounded-lg bg-white/5 border border-white/5 text-slate-300 hover:bg-white/10 hover:text-white transition block"
+                      className="w-full text-left text-[10px] py-1.5 px-3 rounded-xl bg-slate-50 border border-slate-200/60 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition block shadow-sm"
                     >
                       {s}
                     </button>
@@ -1615,11 +1615,11 @@ export default function DashboardPage() {
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') handleChatSend(chatInput);
                     }}
-                    className="w-full bg-[#070e1b]/80 border border-white/10 rounded-xl py-2.5 pl-3.5 pr-10 text-xs focus:border-cyan-400 outline-none text-white placeholder-slate-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-3.5 pr-10 text-xs focus:border-cyan-500 outline-none text-slate-800 placeholder-slate-400"
                   />
                   <button
                     onClick={() => handleChatSend(chatInput)}
-                    className="absolute right-2 top-2 w-7 h-7 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/20 flex items-center justify-center text-cyan-400 transition"
+                    className="absolute right-2 top-2 w-7 h-7 rounded-lg bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center transition"
                     aria-label="Send query"
                   >
                     <Send className="w-3.5 h-3.5" />
@@ -1632,11 +1632,11 @@ export default function DashboardPage() {
           {/* BOTTOM ROW: CHARTS AND QUICK INFO */}
           <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             {/* Card 1: Shoreline Change */}
-            <div className="glass p-5 border-white/10 bg-[#0f172a]/30 flex flex-col min-h-[300px]">
-              <div className="flex justify-between items-center border-b border-white/10 pb-3.5 mb-4">
+            <div className="bg-white/90 border border-slate-200/80 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col min-h-[300px]">
+              <div className="flex justify-between items-center border-b border-slate-200 pb-3.5 mb-4">
                 <div>
-                  <h4 className="text-xs font-bold text-white">Shoreline Change (2016-2025)</h4>
-                  <span className="text-[9px] text-green-400 block mt-0.5">
+                  <h4 className="text-xs font-bold text-slate-900">Shoreline Change (2016-2025)</h4>
+                  <span className="text-[9px] text-emerald-600 font-bold block mt-0.5">
                     Net Change: {(() => {
                       if (shorelineHistory.length === 0) return "-1.2 m/yr";
                       const latest = shorelineHistory[shorelineHistory.length - 1];
@@ -1645,7 +1645,7 @@ export default function DashboardPage() {
                     })()}
                   </span>
                 </div>
-                <Globe className="w-4 h-4 text-emerald-400" />
+                <Globe className="w-4 h-4 text-emerald-600" />
               </div>
 
               <div className="flex-1 w-full text-[10px] min-h-[180px]">
@@ -1661,11 +1661,11 @@ export default function DashboardPage() {
                         <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid stroke="rgba(255,255,255,0.03)" vertical={false} />
-                    <XAxis dataKey="year" stroke="rgba(255,255,255,0.3)" interval={0} />
-                    <YAxis stroke="rgba(255,255,255,0.3)" />
+                    <CartesianGrid stroke="rgba(0,0,0,0.06)" vertical={false} />
+                    <XAxis dataKey="year" stroke="rgba(0,0,0,0.4)" interval={0} />
+                    <YAxis stroke="rgba(0,0,0,0.4)" />
                     <RechartsTooltip
-                      contentStyle={{ backgroundColor: '#070e1b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                      contentStyle={{ backgroundColor: '#ffffff', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '8.5px', color: '#1e293b' }}
                     />
                     <Area type="monotone" dataKey="erosion" name="Erosion (m)" stroke="#ef4444" fillOpacity={1} fill="url(#erosionColor)" />
                     <Area type="monotone" dataKey="accretion" name="Accretion (m)" stroke="#10b981" fillOpacity={1} fill="url(#accretionColor)" />
@@ -1675,11 +1675,11 @@ export default function DashboardPage() {
             </div>
 
             {/* Card 2: Sea Level Anomaly */}
-            <div className="glass p-5 border-white/10 bg-[#0f172a]/30 flex flex-col min-h-[300px]">
-              <div className="flex justify-between items-center border-b border-white/10 pb-3.5 mb-4">
+            <div className="bg-white/90 border border-slate-200/80 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col min-h-[300px]">
+              <div className="flex justify-between items-center border-b border-slate-200 pb-3.5 mb-4">
                 <div>
-                  <h4 className="text-xs font-bold text-white">Sea Level Anomaly (2016-2025)</h4>
-                  <span className="text-[9px] text-cyan-400 block mt-0.5">
+                  <h4 className="text-xs font-bold text-slate-900">Sea Level Anomaly (2016-2025)</h4>
+                  <span className="text-[9px] text-cyan-600 font-bold block mt-0.5">
                     Trend: {(() => {
                       if (seaLevelHistory.length === 0) return "+3.5 mm/yr";
                       const latestVal = seaLevelHistory[seaLevelHistory.length - 1].anomaly;
@@ -1687,17 +1687,17 @@ export default function DashboardPage() {
                     })()}
                   </span>
                 </div>
-                <TrendingUp className="w-4 h-4 text-cyan-400" />
+                <TrendingUp className="w-4 h-4 text-cyan-600" />
               </div>
 
               <div className="flex-1 w-full text-[10px] min-h-[180px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={seaLevelHistory}>
-                    <CartesianGrid stroke="rgba(255,255,255,0.03)" vertical={false} />
-                    <XAxis dataKey="year" stroke="rgba(255,255,255,0.3)" interval={0} />
-                    <YAxis stroke="rgba(255,255,255,0.3)" />
+                    <CartesianGrid stroke="rgba(0,0,0,0.06)" vertical={false} />
+                    <XAxis dataKey="year" stroke="rgba(0,0,0,0.4)" interval={0} />
+                    <YAxis stroke="rgba(0,0,0,0.4)" />
                     <RechartsTooltip
-                      contentStyle={{ backgroundColor: '#070e1b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                      contentStyle={{ backgroundColor: '#ffffff', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '8.5px', color: '#1e293b' }}
                     />
                     <Line type="monotone" dataKey="anomaly" name="Anomaly (mm)" stroke="#06b6d4" strokeWidth={2.5} dot={{ r: 3.5, fill: '#06b6d4' }} />
                   </LineChart>
@@ -1706,10 +1706,10 @@ export default function DashboardPage() {
             </div>
 
             {/* Card 3: Hazard Exposure Donut */}
-            <div className="glass p-5 border-white/10 bg-[#0f172a]/30 flex flex-col min-h-[300px]">
-              <div className="flex justify-between items-center border-b border-white/10 pb-3.5 mb-4">
-                <h4 className="text-xs font-bold text-white">Hazard Exposure by District</h4>
-                <Shield className="w-4 h-4 text-orange-400" />
+            <div className="bg-white/90 border border-slate-200/80 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col min-h-[300px]">
+              <div className="flex justify-between items-center border-b border-slate-200 pb-3.5 mb-4">
+                <h4 className="text-xs font-bold text-slate-900">Hazard Exposure by District</h4>
+                <Shield className="w-4 h-4 text-orange-500" />
               </div>
 
               <div className="flex-1 flex items-center justify-between gap-4 text-[10px]">
@@ -1734,14 +1734,14 @@ export default function DashboardPage() {
                   </ResponsiveContainer>
                 </div>
                 
-                <div className="flex-1 space-y-1.5 text-slate-300">
+                <div className="flex-1 space-y-1.5 text-slate-600">
                   {cviExposureData.map((d, idx) => (
                     <div key={idx} className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: d.color }} />
                         <span className="truncate max-w-[80px]">{d.name}</span>
                       </div>
-                      <strong className="text-white">{d.value}</strong>
+                      <strong className="text-slate-900 font-extrabold">{d.value}</strong>
                     </div>
                   ))}
                 </div>
@@ -1750,36 +1750,36 @@ export default function DashboardPage() {
             </div>
 
             {/* Card 4: Quick Info */}
-            <div className="glass p-5 border-white/10 bg-[#0f172a]/30 flex flex-col justify-between min-h-[300px]">
-              <div className="border-b border-white/10 pb-3.5">
-                <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
-                  <Info className="w-4 h-4 text-cyan-400" />
+            <div className="bg-white/90 border border-slate-200/80 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[300px]">
+              <div className="border-b border-slate-200 pb-3.5">
+                <h4 className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                  <Info className="w-4 h-4 text-cyan-600" />
                   <span>Quick Info</span>
                 </h4>
               </div>
 
-              <div className="space-y-3 py-3 text-xs text-slate-300">
-                <div className="flex justify-between items-center border-b border-white/5 pb-2">
-                  <span className="text-slate-400">Total Coastline (Balochistan)</span>
-                  <strong className="text-white">~700 km</strong>
+              <div className="space-y-3 py-3 text-xs text-slate-600">
+                <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+                  <span className="text-slate-500">Total Coastline (Balochistan)</span>
+                  <strong className="text-slate-900 font-extrabold">~700 km</strong>
                 </div>
-                <div className="flex justify-between items-center border-b border-white/5 pb-2">
-                  <span className="text-slate-400">Districts Covered</span>
-                  <strong className="text-white">2</strong>
+                <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+                  <span className="text-slate-500">Districts Covered</span>
+                  <strong className="text-slate-900 font-extrabold">2</strong>
                 </div>
-                <div className="flex justify-between items-center border-b border-white/5 pb-2">
-                  <span className="text-slate-400">Years Analyzed</span>
-                  <strong className="text-white">2016 - 2025</strong>
+                <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+                  <span className="text-slate-500">Years Analyzed</span>
+                  <strong className="text-slate-900 font-extrabold">2016 - 2025</strong>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Data Sources</span>
-                  <strong className="text-white">12+</strong>
+                  <span className="text-slate-500">Data Sources</span>
+                  <strong className="text-slate-900 font-extrabold">12+</strong>
                 </div>
               </div>
 
               <button
                 onClick={() => setActiveModal('methodology')}
-                className="w-full py-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/25 hover:border-cyan-500/40 text-xs font-bold transition flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-cyan-600 border border-slate-200 hover:border-slate-350 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm"
               >
                 <span>View Methodology</span>
                 <BookOpen className="w-4 h-4" />
@@ -1788,16 +1788,16 @@ export default function DashboardPage() {
           </section>
 
           {/* FOOTER METADATA pills */}
-          <footer className="glass p-4 bg-[#0f172a]/20 border-white/10 flex flex-wrap gap-4 items-center justify-between text-xs text-slate-400">
+          <footer className="bg-white/90 border border-slate-200/80 p-4 rounded-2xl shadow-sm flex flex-wrap gap-4 items-center justify-between text-xs text-slate-500">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] text-cyan-400 font-bold uppercase tracking-wider">Data Sources:</span>
-              <span className="text-white">Sentinel-1, Sentinel-2, Landsat 8/9, DEM, PMD, Tide Gauges & more</span>
+              <span className="text-[10px] text-cyan-600 font-extrabold uppercase tracking-wider">Data Sources:</span>
+              <span className="text-slate-800 font-medium">Sentinel-1, Sentinel-2, Landsat 8/9, DEM, PMD, Tide Gauges & more</span>
             </div>
             <div className="flex items-center gap-6">
-              <p>Temporal Coverage: <strong className="text-white">2016 - 2025 (Yearly)</strong></p>
-              <p>Spatial Resolution: <strong className="text-white">10 m - 30 m</strong></p>
-              <p>Update Frequency: <strong className="text-white">Yearly Analysis</strong></p>
-              <p>Processing Platform: <strong className="text-white">Google Earth Engine</strong></p>
+              <p>Temporal Coverage: <strong className="text-slate-800">2016 - 2025 (Yearly)</strong></p>
+              <p>Spatial Resolution: <strong className="text-slate-800">10 m - 30 m</strong></p>
+              <p>Update Frequency: <strong className="text-slate-800">Yearly Analysis</strong></p>
+              <p>Processing Platform: <strong className="text-slate-800">Google Earth Engine</strong></p>
             </div>
           </footer>
         </main>
@@ -1805,11 +1805,11 @@ export default function DashboardPage() {
 
       {/* DYNAMIC DIALOG MODALS */}
       {activeModal && (
-        <div className="fixed inset-0 z-50 bg-[#070e1b]/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="glass w-full max-w-lg p-6 bg-[#0f172a]/95 border-white/10 relative shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-250 w-full max-w-lg p-6 rounded-3xl shadow-2xl relative animate-in fade-in zoom-in-95 duration-200 text-slate-800">
             <button
               onClick={() => setActiveModal(null)}
-              className="absolute right-4 top-4 p-2 hover:bg-white/5 rounded-xl border border-white/5 text-slate-400 hover:text-white transition"
+              className="absolute right-4 top-4 p-2 hover:bg-slate-100 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-950 transition"
               aria-label="Close modal"
             >
               <X className="w-5 h-5" />
@@ -1817,11 +1817,11 @@ export default function DashboardPage() {
 
             {activeModal === 'reports' && (
               <div>
-                <h3 className="text-base font-bold text-white flex items-center gap-2 border-b border-white/10 pb-3 mb-4">
-                  <FileText className="w-5 h-5 text-cyan-400" />
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-200 pb-3 mb-4">
+                  <FileText className="w-5 h-5 text-cyan-600" />
                   <span>Interactive Reports Hub</span>
                 </h3>
-                <p className="text-xs text-slate-300 mb-4 leading-relaxed">
+                <p className="text-xs text-slate-655 mb-4 leading-relaxed">
                   Generate and compile localized environmental hazard profiles for specific districts.
                 </p>
                 <div className="space-y-3">
@@ -1830,26 +1830,26 @@ export default function DashboardPage() {
                       setActiveModal(null);
                       triggerExportFlow('report');
                     }}
-                    className="w-full flex items-center justify-between p-3 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 text-left transition"
+                    className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-left transition shadow-sm"
                   >
                     <div>
-                      <strong className="text-xs text-white block">Download Complete Report (PDF)</strong>
-                      <span className="text-[10px] text-slate-400 mt-0.5">Includes full CVI summary maps & trend lines</span>
+                      <strong className="text-xs text-slate-900 block font-extrabold">Download Complete Report (PDF)</strong>
+                      <span className="text-[10px] text-slate-500 mt-0.5">Includes full CVI summary maps & trend lines</span>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-cyan-400" />
+                    <ChevronRight className="w-4 h-4 text-cyan-600" />
                   </button>
                   <button
                     onClick={() => {
                       setActiveModal(null);
                       triggerExportFlow('csv');
                     }}
-                    className="w-full flex items-center justify-between p-3 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 text-left transition"
+                    className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-left transition shadow-sm"
                   >
                     <div>
-                      <strong className="text-xs text-white block">Export Historical Data (CSV)</strong>
-                      <span className="text-[10px] text-slate-400 mt-0.5">Raw yearly hazard metrics for other spreadsheet tools</span>
+                      <strong className="text-xs text-slate-900 block font-extrabold">Export Historical Data (CSV)</strong>
+                      <span className="text-[10px] text-slate-500 mt-0.5">Raw yearly hazard metrics for other spreadsheet tools</span>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-cyan-400" />
+                    <ChevronRight className="w-4 h-4 text-cyan-600" />
                   </button>
                 </div>
               </div>
@@ -1857,7 +1857,7 @@ export default function DashboardPage() {
 
             {activeModal === 'alerts' && (
               <div>
-                <h3 className="text-base font-bold text-white flex items-center gap-2 border-b border-white/10 pb-3 mb-4">
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-200 pb-3 mb-4">
                   <AlertTriangle className="w-5 h-5 text-red-500" />
                   <span>District Active Alerts & Notifications</span>
                 </h3>
@@ -1865,7 +1865,7 @@ export default function DashboardPage() {
                   {recentAlerts.map((alert) => (
                     <div
                       key={alert.id}
-                      className="p-3.5 rounded-xl border border-white/5 bg-[#070e1b]/40 flex gap-3 items-start"
+                      className="p-3.5 rounded-xl border border-slate-100 bg-slate-50 flex gap-3 items-start shadow-sm"
                     >
                       <div
                         className={`w-3 h-3 rounded-full shrink-0 mt-1 ${
@@ -1877,11 +1877,11 @@ export default function DashboardPage() {
                         }`}
                       />
                       <div>
-                        <strong className="text-xs text-white block">{alert.title}</strong>
-                        <p className="text-[10px] text-slate-400 mt-0.5">
+                        <strong className="text-xs text-slate-900 block font-extrabold">{alert.title}</strong>
+                        <p className="text-[10px] text-slate-500 mt-0.5">
                           {alert.district} &bull; {alert.time}
                         </p>
-                        <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
+                        <p className="text-xs text-slate-655 mt-1.5 leading-relaxed">
                           Potential coastal threat detected via active SAR imagery. Authorities recommend precautionary measures.
                         </p>
                       </div>
@@ -1893,35 +1893,35 @@ export default function DashboardPage() {
 
             {activeModal === 'settings' && (
               <div>
-                <h3 className="text-base font-bold text-white flex items-center gap-2 border-b border-white/10 pb-3 mb-4">
-                  <Settings className="w-5 h-5 text-cyan-400" />
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-200 pb-3 mb-4">
+                  <Settings className="w-5 h-5 text-cyan-600" />
                   <span>Portal Settings</span>
                 </h3>
-                <div className="space-y-4 text-xs text-slate-300">
-                  <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                <div className="space-y-4 text-xs text-slate-655">
+                  <div className="flex justify-between items-center border-b border-slate-100 pb-3">
                     <div>
-                      <strong className="text-white block">Theme Mode</strong>
-                      <span className="text-[10px] text-slate-400 mt-0.5">Toggle light/dark interfaces</span>
+                      <strong className="text-slate-900 block font-extrabold">Theme Mode</strong>
+                      <span className="text-[10px] text-slate-500 mt-0.5">Toggle light/dark interfaces</span>
                     </div>
-                    <span className="px-2.5 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-bold uppercase text-[10px]">
-                      Dark (Fixed)
+                    <span className="px-2.5 py-1 rounded-lg bg-cyan-50 border border-cyan-200 text-cyan-700 font-bold uppercase text-[10px]">
+                      Light Mode
                     </span>
                   </div>
-                  <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                  <div className="flex justify-between items-center border-b border-slate-100 pb-3">
                     <div>
-                      <strong className="text-white block">Units of Measurement</strong>
-                      <span className="text-[10px] text-slate-400 mt-0.5">Standard metric or imperial</span>
+                      <strong className="text-slate-900 block font-extrabold">Units of Measurement</strong>
+                      <span className="text-[10px] text-slate-500 mt-0.5">Standard metric or imperial</span>
                     </div>
-                    <span className="px-2.5 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-bold uppercase text-[10px]">
+                    <span className="px-2.5 py-1 rounded-lg bg-cyan-50 border border-cyan-200 text-cyan-700 font-bold uppercase text-[10px]">
                       Metric (SI)
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <div>
-                      <strong className="text-white block">Automatic Refresh</strong>
-                      <span className="text-[10px] text-slate-400 mt-0.5">Reload GEE imagery overlays hourly</span>
+                      <strong className="text-slate-900 block font-extrabold">Automatic Refresh</strong>
+                      <span className="text-[10px] text-slate-500 mt-0.5">Reload GEE imagery overlays hourly</span>
                     </div>
-                    <span className="px-2.5 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-bold uppercase text-[10px]">
+                    <span className="px-2.5 py-1 rounded-lg bg-cyan-50 border border-cyan-200 text-cyan-700 font-bold uppercase text-[10px]">
                       Enabled
                     </span>
                   </div>
@@ -1931,36 +1931,36 @@ export default function DashboardPage() {
 
             {activeModal === 'users' && (
               <div>
-                <h3 className="text-base font-bold text-white flex items-center gap-2 border-b border-white/10 pb-3 mb-4">
-                  <Users className="w-5 h-5 text-cyan-400" />
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-200 pb-3 mb-4">
+                  <Users className="w-5 h-5 text-cyan-600" />
                   <span>Users & Access Control</span>
                 </h3>
                 <div className="space-y-3.5">
-                  <div className="flex items-center justify-between p-3 rounded-xl border border-white/5 bg-[#070e1b]/40">
+                  <div className="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50 shadow-sm">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center font-bold text-cyan-400">
+                      <div className="w-8 h-8 rounded-full bg-cyan-50 flex items-center justify-center font-bold text-cyan-600">
                         A
                       </div>
                       <div>
-                        <strong className="text-xs text-white block">Analyst User</strong>
-                        <span className="text-[10px] text-slate-400 block mt-0.5">Level 2 Staff &bull; analyst@ncesa.org</span>
+                        <strong className="text-xs text-slate-900 block font-extrabold">Analyst User</strong>
+                        <span className="text-[10px] text-slate-500 block mt-0.5">Level 2 Staff &bull; analyst@ncesa.org</span>
                       </div>
                     </div>
-                    <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 uppercase">
+                    <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-cyan-50 text-cyan-600 uppercase">
                       Active
                     </span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-xl border border-white/5 bg-[#070e1b]/40 opacity-75">
+                  <div className="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50 opacity-75 shadow-sm">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-slate-500/10 flex items-center justify-center font-bold text-slate-400">
+                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500">
                         O
                       </div>
                       <div>
-                        <strong className="text-xs text-slate-300 block">Observer User</strong>
+                        <strong className="text-xs text-slate-700 block">Observer User</strong>
                         <span className="text-[10px] text-slate-500 block mt-0.5">Read-Only Viewer &bull; observer@ncesa.org</span>
                       </div>
                     </div>
-                    <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-slate-500/10 text-slate-500 uppercase">
+                    <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-550 uppercase">
                       Guest
                     </span>
                   </div>
@@ -1971,11 +1971,11 @@ export default function DashboardPage() {
 
             {activeModal === 'methodology' && (
               <div>
-                <h3 className="text-base font-bold text-white flex items-center gap-2 border-b border-white/10 pb-3 mb-4">
-                  <BookOpen className="w-5 h-5 text-cyan-400" />
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-200 pb-3 mb-4">
+                  <BookOpen className="w-5 h-5 text-cyan-600" />
                   <span>GEE Ingestion Methodology</span>
                 </h3>
-                <div className="space-y-3 text-xs text-slate-300 leading-relaxed max-h-[300px] overflow-y-auto pr-1">
+                <div className="space-y-3 text-xs text-slate-655 leading-relaxed max-h-[300px] overflow-y-auto pr-1">
                   <p>
                     The Pakistan Coastal Hazard Portal computes spatial indicators using Google Earth Engine (GEE) script queries:
                   </p>
@@ -2002,32 +2002,32 @@ export default function DashboardPage() {
 
       {/* EXPORT FLOW MODAL */}
       {exportModalVisible && (
-        <div className="fixed inset-0 z-50 bg-[#070e1b]/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="glass w-full max-w-md p-6 bg-[#0f172a]/95 border-white/10 relative shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-250 w-full max-w-md p-6 rounded-3xl shadow-2xl relative text-slate-800">
             {exportStatus === 'preparing' && (
               <div className="text-center py-4 space-y-4">
-                <RefreshCw className="w-10 h-10 text-cyan-400 animate-spin mx-auto" />
+                <RefreshCw className="w-10 h-10 text-cyan-600 animate-spin mx-auto" />
                 <div>
-                  <h3 className="text-sm font-bold text-white">Preparing Export File...</h3>
-                  <p className="text-[11px] text-slate-400 mt-1">Generating GEE dataset bundle. Please wait.</p>
+                  <h3 className="text-sm font-bold text-slate-900">Preparing Export File...</h3>
+                  <p className="text-[11px] text-slate-500 mt-1">Generating GEE dataset bundle. Please wait.</p>
                 </div>
                 {/* Progress bar */}
-                <div className="w-full bg-white/5 rounded-full h-2 overflow-hidden border border-white/5">
+                <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200">
                   <div
-                    className="bg-gradient-to-r from-cyan-400 to-blue-500 h-full transition-all duration-300 ease-out"
+                    className="bg-gradient-to-r from-cyan-500 to-blue-600 h-full transition-all duration-300 ease-out"
                     style={{ width: `${exportProgress}%` }}
                   />
                 </div>
-                <span className="text-[10px] text-slate-400 block font-semibold">{exportProgress}%</span>
+                <span className="text-[10px] text-slate-500 block font-semibold">{exportProgress}%</span>
               </div>
             )}
 
             {exportStatus === 'success' && (
               <div className="space-y-4">
                 <div className="text-center py-2">
-                  <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-2" />
-                  <h3 className="text-sm font-bold text-white">Export Ready!</h3>
-                  <p className="text-[11px] text-slate-400 mt-1">
+                  <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-2" />
+                  <h3 className="text-sm font-bold text-slate-900">Export Ready!</h3>
+                  <p className="text-[11px] text-slate-500 mt-1">
                     Your {exportFormat.toUpperCase()} file has been compiled successfully.
                   </p>
                 </div>
@@ -2039,34 +2039,34 @@ export default function DashboardPage() {
                     onClick={() => {
                       setExportModalVisible(false);
                     }}
-                    className="flex-1 py-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/25 text-xs font-bold text-center block transition"
+                    className="flex-1 py-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 border border-cyan-500/25 text-xs font-bold text-center block transition shadow-sm"
                   >
                     Download File
                   </a>
                   <button
                     onClick={() => setExportModalVisible(false)}
-                    className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-300 transition"
+                    className="px-4 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs text-slate-655 transition shadow-sm"
                   >
                     Close
                   </button>
                 </div>
 
                 {/* Email dispatch section */}
-                <form onSubmit={handleEmailSubmit} className="border-t border-white/10 pt-4 mt-2">
-                  <label className="text-[10px] text-slate-400 font-bold uppercase block mb-2">
+                <form onSubmit={handleEmailSubmit} className="border-t border-slate-200 pt-4 mt-2">
+                  <label className="text-[10px] text-slate-500 font-extrabold uppercase block mb-2">
                     Send to Email Address
                   </label>
                   {!emailSubmitted ? (
                     <div className="flex gap-2">
                       <div className="relative flex-1">
-                        <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
+                        <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
                         <input
                           type="email"
                           required
                           placeholder="name@agency.gov"
                           value={emailInput}
                           onChange={(e) => setEmailInput(e.target.value)}
-                          className="w-full bg-[#070e1b]/80 border border-white/10 rounded-xl py-2 pl-9 pr-3 text-xs focus:border-cyan-400 outline-none text-white"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-9 pr-3 text-xs focus:border-cyan-500 outline-none text-slate-800 placeholder-slate-400"
                         />
                       </div>
                       <button
@@ -2077,7 +2077,7 @@ export default function DashboardPage() {
                       </button>
                     </div>
                   ) : (
-                    <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-xs flex items-center gap-2">
+                    <div className="p-3 rounded-xl bg-green-50 border border-green-200 text-green-700 text-xs flex items-center gap-2 shadow-sm">
                       <CheckCircle className="w-4 h-4 shrink-0" />
                       <span>Report successfully dispatched to <strong>{emailInput}</strong>!</span>
                     </div>
@@ -2090,12 +2090,12 @@ export default function DashboardPage() {
               <div className="text-center py-4 space-y-4 animate-in fade-in zoom-in-95 duration-200">
                 <AlertTriangle className="w-10 h-10 text-red-500 mx-auto" />
                 <div>
-                  <h3 className="text-sm font-bold text-white">Export Failed</h3>
-                  <p className="text-[11px] text-slate-400 mt-1">Failed to connect to Google Earth Engine. Please try again.</p>
+                  <h3 className="text-sm font-bold text-slate-900">Export Failed</h3>
+                  <p className="text-[11px] text-slate-500 mt-1">Failed to connect to Google Earth Engine. Please try again.</p>
                 </div>
                 <button
                   onClick={() => setExportModalVisible(false)}
-                  className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-300 transition"
+                  className="px-5 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs text-slate-655 transition shadow-sm"
                 >
                   Close
                 </button>
