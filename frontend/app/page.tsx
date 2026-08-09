@@ -57,39 +57,7 @@ export default function LandingPage() {
             <Link href="/dashboard" className="text-xs font-semibold text-slate-600 hover:text-slate-950 transition">
               Dashboard
             </Link>
-            
-            {/* Hazards Dropdown */}
-            <div className="relative">
-              <button 
-                onClick={() => setIsHazardsOpen(!isHazardsOpen)}
-                className="text-xs font-semibold text-slate-600 hover:text-slate-950 flex items-center gap-1 transition"
-              >
-                <span>Hazards</span>
-                <ChevronDown className="w-3.5 h-3.5" />
-              </button>
-              {isHazardsOpen && (
-                <div className="absolute top-full mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-xl p-2 flex flex-col gap-1 z-50">
-                  <Link href="/dashboard" className="text-[11px] p-2 hover:bg-slate-50 rounded-lg font-medium text-slate-700">Coastal Flooding</Link>
-                  <Link href="/dashboard" className="text-[11px] p-2 hover:bg-slate-50 rounded-lg font-medium text-slate-700">Storm Surge</Link>
-                  <Link href="/dashboard" className="text-[11px] p-2 hover:bg-slate-50 rounded-lg font-medium text-slate-700">Coastal Erosion</Link>
-                  <Link href="/dashboard/analysis" className="text-[11px] p-2 hover:bg-slate-50 rounded-lg font-medium text-slate-700">Coastal Vulnerability</Link>
-                </div>
-              )}
-            </div>
-
-            <Link href="/dashboard" className="text-xs font-semibold text-slate-600 hover:text-slate-950 transition">
-              Map Explorer
-            </Link>
-            <Link href="/dashboard" className="text-xs font-semibold text-slate-600 hover:text-slate-950 transition">
-              Trends
-            </Link>
-            <Link href="/dashboard" className="text-xs font-semibold text-slate-600 hover:text-slate-950 transition">
-              Reports
-            </Link>
-            <Link href="/dashboard/analysis" className="text-xs font-semibold text-slate-600 hover:text-slate-950 transition">
-              AI Insights
-            </Link>
-            <Link href="/dashboard" className="text-xs font-semibold text-slate-600 hover:text-slate-950 transition">
+            <Link href="/about" target="_blank" className="text-xs font-semibold text-slate-600 hover:text-slate-950 transition">
               About
             </Link>
           </nav>
@@ -151,18 +119,12 @@ export default function LandingPage() {
               Dashboard
             </Link>
             <Link 
-              href="/dashboard" 
+              href="/about" 
+              target="_blank"
               onClick={() => setMobileMenuOpen(false)}
               className="text-xs font-semibold text-slate-700 hover:text-slate-950 p-2.5 hover:bg-slate-50 rounded-xl block"
             >
-              Map Explorer
-            </Link>
-            <Link 
-              href="/dashboard/analysis" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-xs font-semibold text-slate-700 hover:text-slate-950 p-2.5 hover:bg-slate-50 rounded-xl block"
-            >
-              GEE Live Analysis
+              About
             </Link>
           </div>
         )}
