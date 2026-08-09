@@ -13,12 +13,15 @@ import {
   Info, 
   Check, 
   Sparkles, 
-  ChevronDown 
+  ChevronDown,
+  Menu,
+  X
 } from 'lucide-react';
 
 export default function LandingPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isHazardsOpen, setIsHazardsOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedTimelineYear, setSelectedTimelineYear] = useState(2025);
 
   return (
@@ -39,9 +42,7 @@ export default function LandingPage() {
           
           {/* Logo & Title */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-600 to-blue-600 flex items-center justify-center shadow-md">
-              <Waves className="w-5.5 h-5.5 text-white" />
-            </div>
+            <img src="/logo-portal.png" className="w-10 h-10 object-contain rounded-full border border-slate-200/80 shadow-md bg-white flex-shrink-0" alt="Coastal Hazard Portal Logo" />
             <div>
               <span className="text-sm font-black tracking-tight text-slate-900 block uppercase">COASTAL HAZARD PORTAL</span>
               <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Balochistan Coastline</span>
@@ -94,7 +95,7 @@ export default function LandingPage() {
           </nav>
 
           {/* Right Header Section */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             {/* Search Input */}
             <div className="relative hidden md:block">
               <input 
@@ -118,10 +119,53 @@ export default function LandingPage() {
               className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm shadow-slate-900/10"
             >
               <User className="w-3.5 h-3.5" />
-              <span>Login</span>
+              <span className="hidden sm:inline">Login</span>
             </Link>
+
+            {/* Mobile Menu Toggle Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 hover:bg-slate-100 rounded-xl border border-slate-200 text-slate-600 transition"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Navigation Dropdown */}
+        {mobileMenuOpen && (
+          <div className="absolute top-full left-0 right-0 bg-white border-b border-slate-200 p-4 flex flex-col gap-3 shadow-lg lg:hidden z-50">
+            <Link 
+              href="/" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-xs font-bold text-slate-900 bg-slate-50 p-2.5 rounded-xl block"
+            >
+              Home
+            </Link>
+            <Link 
+              href="/dashboard" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-xs font-semibold text-slate-700 hover:text-slate-950 p-2.5 hover:bg-slate-50 rounded-xl block"
+            >
+              Dashboard
+            </Link>
+            <Link 
+              href="/dashboard" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-xs font-semibold text-slate-700 hover:text-slate-950 p-2.5 hover:bg-slate-50 rounded-xl block"
+            >
+              Map Explorer
+            </Link>
+            <Link 
+              href="/dashboard/analysis" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-xs font-semibold text-slate-700 hover:text-slate-950 p-2.5 hover:bg-slate-50 rounded-xl block"
+            >
+              GEE Live Analysis
+            </Link>
+          </div>
+        )}
       </header>
 
       {/* Hero Section */}

@@ -867,9 +867,7 @@ export default function DashboardPage() {
             {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
-              <Waves className="w-5 h-5 text-white" />
-            </div>
+            <img src="/logo-portal.png" className="w-9 h-9 object-contain rounded-full border border-slate-200/80 shadow-md bg-white flex-shrink-0" alt="Coastal Hazard Portal Logo" />
             <div>
               <h1 className="text-sm md:text-base font-bold tracking-tight text-slate-900">COASTAL HAZARD PORTAL</h1>
               <p className="text-[10px] text-cyan-600 font-bold tracking-wider uppercase">
