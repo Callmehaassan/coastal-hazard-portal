@@ -717,42 +717,81 @@ export default function LandingPage() {
       </section>
 
       {/* Footer Branding Banner */}
-      <footer className="bg-slate-100 border-t border-slate-200 py-6 mt-auto">
-        <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+      <footer className="bg-white/90 backdrop-blur-md border-t border-slate-200/80 pt-12 pb-6 mt-16 shadow-lg z-10 relative">
+        <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-8 mb-10">
           
-          {/* NCGSA */}
-          <div className="flex items-center gap-3 justify-start">
-            <img src="/ncgsa-logo.png" alt="NCGSA Logo" className="h-10 w-auto object-contain flex-shrink-0" />
-            <div>
-              <span className="text-[9px] font-black text-slate-900 block uppercase">A Project of NCGSA Initiative</span>
-              <span className="text-[8px] text-slate-500 font-semibold block uppercase tracking-wider leading-none">National Center of GIS & Space Applications</span>
-              <span className="text-[8px] text-slate-400 block leading-tight">National Cloud & Geo-Spatial Analytics</span>
+          {/* Column 1: Brand & Logo */}
+          <div className="md:col-span-4 space-y-4">
+            <div className="flex items-center gap-3">
+              <img src="/logo-portal.png" className="w-10 h-10 object-contain rounded-full border border-slate-200 shadow-md bg-white" alt="Portal Logo" />
+              <div>
+                <span className="text-xs font-black tracking-tight text-slate-900 block uppercase">COASTAL HAZARD PORTAL</span>
+                <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">Balochistan Coastline</span>
+              </div>
+            </div>
+            <p className="text-[11px] text-slate-500 leading-relaxed max-w-xs font-semibold">
+              A state-of-the-art decision support system leveraging real-time satellite imagery, SAR backscatter models, and Google Earth Engine (GEE) algorithms to map and monitor coastal vulnerability.
+            </p>
+          </div>
+
+          {/* Column 2: Navigation */}
+          <div className="md:col-span-2 space-y-3">
+            <h6 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Navigation</h6>
+            <ul className="space-y-2 text-[11px] font-bold text-slate-600">
+              <li><Link href="/" className="hover:text-cyan-600 transition">Home</Link></li>
+              <li><Link href="/dashboard" className="hover:text-cyan-600 transition">Dashboard</Link></li>
+              <li><Link href="/dashboard/analysis" className="hover:text-cyan-600 transition">GEE Live Analysis</Link></li>
+              <li><Link href="/dashboard" className="hover:text-cyan-600 transition">Map Explorer</Link></li>
+            </ul>
+          </div>
+
+          {/* Column 3: Resources */}
+          <div className="md:col-span-3 space-y-3">
+            <h6 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Resources</h6>
+            <ul className="space-y-2 text-[11px] font-bold text-slate-600">
+              <li><a href="http://localhost:8000/docs" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-600 transition">API Documentation</a></li>
+              <li><Link href="/dashboard" className="hover:text-cyan-600 transition">Methodology Guide</Link></li>
+              <li><a href="https://console.cloud.google.com/" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-600 transition">GEE Platform Console</a></li>
+            </ul>
+          </div>
+
+          {/* Column 4: Partners */}
+          <div className="md:col-span-3 space-y-4">
+            <h6 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Partners</h6>
+            <div className="space-y-3">
+              <div className="flex items-center gap-2.5 bg-slate-50/50 p-2 rounded-xl border border-slate-100 shadow-sm">
+                <img src="/ncgsa-logo.png" alt="NCGSA Logo" className="h-7 w-auto object-contain flex-shrink-0" />
+                <div>
+                  <span className="text-[9px] font-bold text-slate-800 block uppercase leading-none">NCGSA Initiative</span>
+                  <span className="text-[7.5px] text-slate-500 font-semibold block leading-tight">National Center of GIS & Space Applications</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2.5 bg-slate-50/50 p-2 rounded-xl border border-slate-100 shadow-sm">
+                <img src="/ist-logo.png" alt="IST Logo" className="h-7 w-auto object-contain flex-shrink-0" />
+                <div>
+                  <span className="text-[9px] font-bold text-slate-800 block uppercase leading-none">IST Islamabad</span>
+                  <span className="text-[7.5px] text-slate-500 font-semibold block leading-tight">Institute of Space Technology</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Built With logos */}
-          <div className="flex flex-col items-center justify-center gap-1.5">
-            <span className="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider">Built with</span>
-            <div className="flex flex-wrap items-center justify-center gap-4 text-[9px] font-bold text-slate-600 select-none">
-              <span>Google Earth Engine</span>
-              <span>PostGIS</span>
-              <span>FastAPI</span>
-              <span>React</span>
-              <span>Tailwind CSS</span>
-              <span>Groq AI</span>
-            </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="max-w-[1400px] mx-auto px-6 pt-6 border-t border-slate-200/80 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="text-[10px] text-slate-400 font-bold">
+            &copy; {new Date().getFullYear()} Coastal Hazard Portal. All rights reserved.
           </div>
 
-          {/* IST */}
-          <div className="flex items-center gap-3 justify-end">
-            <div className="text-right">
-              <span className="text-[9px] font-black text-slate-900 block uppercase">Institute of Space Technology (IST)</span>
-              <span className="text-[8px] text-slate-500 font-semibold block uppercase tracking-wider leading-none">Islamabad, Pakistan</span>
-              <span className="text-[8px] text-slate-400 block leading-tight">Space Science & Geoinformatics</span>
-            </div>
-            <img src="/ist-logo.png" alt="IST Logo" className="h-10 w-auto object-contain flex-shrink-0" />
+          <div className="flex flex-wrap items-center justify-center gap-2 text-[9px] font-extrabold text-slate-500">
+            <span className="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mr-1">Powered by:</span>
+            {['Google Earth Engine', 'PostGIS', 'FastAPI', 'React', 'Tailwind CSS', 'Groq AI'].map((tech, idx) => (
+              <span key={idx} className="px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-slate-655 shadow-sm">
+                {tech}
+              </span>
+            ))}
           </div>
-
         </div>
       </footer>
 
