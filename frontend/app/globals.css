@@ -94,54 +94,74 @@ button:hover {
   color: #f8fafc !important;
 }
 
+/* Override all cards, panels, popups to dark slate background and slate border */
 .dark-theme .bg-white\/90,
 .dark-theme .bg-white\/95,
 .dark-theme .bg-white,
-.dark-theme .bg-white\/80 {
-  background-color: rgba(15, 23, 42, 0.95) !important;
-  border-color: rgba(51, 65, 85, 0.4) !important;
+.dark-theme .bg-white\/80,
+.dark-theme .bg-slate-50\/50 {
+  background-color: rgba(15, 23, 42, 0.96) !important;
+  border-color: rgba(51, 65, 85, 0.5) !important;
   color: #f1f5f9 !important;
 }
 
 .dark-theme .bg-slate-50,
 .dark-theme .bg-slate-100 {
-  background-color: rgba(30, 41, 59, 0.8) !important;
-  border-color: rgba(51, 65, 85, 0.5) !important;
+  background-color: rgba(30, 41, 59, 0.9) !important;
+  border-color: rgba(51, 65, 85, 0.6) !important;
   color: #f1f5f9 !important;
 }
 
+/* Ensure all text classes are clearly visible in dark mode */
+.dark-theme .text-slate-955,
+.dark-theme .text-slate-950,
 .dark-theme .text-slate-900,
+.dark-theme .text-slate-850,
 .dark-theme .text-slate-800,
 .dark-theme .text-slate-700,
 .dark-theme .text-slate-655,
-.dark-theme .text-slate-600 {
-  color: #f1f5f9 !important;
+.dark-theme .text-slate-600,
+.dark-theme .text-\[\#132c25\],
+.dark-theme .text-\[\#1a3a32\],
+.dark-theme .text-\[\#255044\] {
+  color: #f8fafc !important;
 }
 
 .dark-theme .text-slate-500,
 .dark-theme .text-slate-400 {
-  color: #94a3b8 !important;
+  color: #cbd5e1 !important;
 }
 
 .dark-theme .border-slate-100,
 .dark-theme .border-slate-200,
+.dark-theme .border-slate-250,
 .dark-theme .border-slate-200\/80,
 .dark-theme .border-slate-200\/60 {
-  border-color: rgba(51, 65, 85, 0.4) !important;
+  border-color: rgba(71, 85, 105, 0.5) !important;
 }
 
 .dark-theme .hover\:bg-slate-50:hover,
 .dark-theme .hover\:bg-slate-100:hover,
 .dark-theme .hover\:bg-slate-50\/80:hover {
-  background-color: rgba(30, 41, 59, 0.9) !important;
+  background-color: rgba(30, 41, 59, 0.95) !important;
 }
 
+/* Make primary dark green buttons stand out as glowing cyan in dark mode */
+.dark-theme .bg-\[\#132c25\] {
+  background-color: #06b6d4 !important;
+  color: #0f172a !important;
+}
+.dark-theme .bg-\[\#132c25\]:hover {
+  background-color: #22d3ee !important;
+}
+
+/* Inputs, drop-downs and textareas */
 .dark-theme input,
 .dark-theme select,
 .dark-theme textarea {
-  background-color: rgba(15, 23, 42, 0.95) !important;
+  background-color: rgba(15, 23, 42, 0.98) !important;
   color: #f1f5f9 !important;
-  border-color: rgba(51, 65, 85, 0.6) !important;
+  border-color: rgba(71, 85, 105, 0.6) !important;
 }
 
 .dark-theme option {
@@ -149,8 +169,23 @@ button:hover {
   color: #f1f5f9 !important;
 }
 
+/* Leaflet maps custom control */
 .dark-theme .leaflet-control {
-  background-color: rgba(15, 23, 42, 0.95) !important;
-  border-color: rgba(51, 65, 85, 0.6) !important;
+  background-color: rgba(15, 23, 42, 0.96) !important;
+  border-color: rgba(71, 85, 105, 0.6) !important;
   color: #f1f5f9 !important;
+}
+
+/* Recharts chart labels and helper elements in dark mode */
+.dark-theme .recharts-cartesian-axis-tick-value {
+  fill: #94a3b8 !important;
+}
+
+.dark-theme .recharts-legend-item-text {
+  color: #cbd5e1 !important;
+}
+
+.dark-theme .recharts-tooltip-wrapper {
+  background-color: #0f172a !important;
+  border-color: #1e293b !important;
 }

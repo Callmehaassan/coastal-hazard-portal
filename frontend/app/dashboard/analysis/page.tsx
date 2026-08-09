@@ -165,7 +165,7 @@ export default function AnalysisPage() {
   return (
     <div
       className={`h-screen bg-cover bg-center bg-no-repeat bg-fixed text-slate-800 flex flex-col font-sans overflow-hidden relative transition-colors duration-300 ${
-        darkMode ? 'text-slate-100 bg-[#070e1b]' : 'text-slate-800 bg-[#f8fafc]'
+        darkMode ? 'text-slate-100 bg-[#070e1b] dark-theme' : 'text-slate-800 bg-[#f8fafc]'
       }`}
       style={{ backgroundImage: "url('/coastal-bg.jpg')" }}
     >

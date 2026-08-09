@@ -39,7 +39,7 @@ export default function LandingPage() {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 flex flex-col font-sans selection:bg-cyan-500/20 relative ${
-      darkMode ? 'bg-[#070e1b] text-slate-100' : 'bg-[#f8fafc] text-slate-800'
+      darkMode ? 'bg-[#070e1b] text-slate-100 dark-theme' : 'bg-[#f8fafc] text-slate-800'
     }`}>
       
       {/* Root Full-Bleed Hero Background Image */}
