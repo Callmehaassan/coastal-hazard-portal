@@ -1,10 +1,13 @@
-﻿"""
+"""
 Coastal Hazard Portal - FastAPI entrypoint.
 Run with: uvicorn main:app --reload
 """
 from contextlib import asynccontextmanager
+import time
+from collections import defaultdict
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 import models  # noqa: F401 - registers all models on Base.metadata before create_all
@@ -36,6 +39,31 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+RATE_LIMIT_DURATION = 60  # seconds
+RATE_LIMIT_MAX_REQUESTS = 100  # max requests per duration
+request_history = defaultdict(list)
+
+
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    # Only rate limit api routes, bypass health checks
+    if request.url.path.startswith("/api") and request.url.path != "/api/health":
+        client_ip = request.client.host if request.client else "unknown"
+        now = time.time()
+        
+        # Filter request timestamps in the active window
+        timestamps = [t for t in request_history[client_ip] if now - t < RATE_LIMIT_DURATION]
+        request_history[client_ip] = timestamps
+        
+        if len(timestamps) >= RATE_LIMIT_MAX_REQUESTS:
+            return JSONResponse(
+                status_code=429,
+                content={"detail": "Too many requests. Please try again later."}
+            )
+        request_history[client_ip].append(now)
+        
+    return await call_next(request)
 
 app.include_router(auth.router)
 app.include_router(regions.router)
