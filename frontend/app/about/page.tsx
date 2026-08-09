@@ -171,16 +171,12 @@ export default function AboutPage() {
                 AH
               </div>
               <div>
-                <h4 className="font-extrabold text-slate-950 text-base">Ali Hassan</h4>
-                <p className="text-[10px] text-cyan-600 font-bold uppercase tracking-wider mt-0.5">Lead Full-Stack Developer</p>
+                <h4 className="font-extrabold text-slate-955 text-base">Ali Hassan</h4>
+                <p className="text-[10px] text-cyan-600 font-bold uppercase tracking-wider mt-0.5">Full-Stack Developer</p>
               </div>
               <p className="text-xs text-slate-500 leading-relaxed font-semibold">
-                Designed the backend API infrastructure, integrated the Google Earth Engine python client SDK pipelines, and implemented the custom rate limiters and auth systems.
+                Worked on backend development, API infrastructure, custom rate-limiting middleware, database schema modeling, and secure authentication systems.
               </p>
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-center gap-1.5 text-[10px] text-slate-500 font-bold">
-                <Mail className="w-3.5 h-3.5 text-slate-400" />
-                <span>ali.hassan@ncgsa.org</span>
-              </div>
             </div>
 
             {/* Laiba Rafi */}
@@ -189,16 +185,12 @@ export default function AboutPage() {
                 LR
               </div>
               <div>
-                <h4 className="font-extrabold text-slate-950 text-base">Laiba Rafi</h4>
-                <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider mt-0.5">GIS & Earth Observation Specialist</p>
+                <h4 className="font-extrabold text-slate-955 text-base">Laiba Rafi</h4>
+                <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider mt-0.5">GEE & GIS Specialist</p>
               </div>
               <p className="text-xs text-slate-500 leading-relaxed font-semibold">
-                Formulated spatial classification indices, prepared the shape-clipped administrative boundaries for Gwadar/Lasbela, and refined UI mockups and colors.
+                Worked on Google Earth Engine (GEE) algorithms, Sentinel satellite image classification pipelines, and administrative district boundary mapping in ArcMap/QGIS.
               </p>
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-center gap-1.5 text-[10px] text-slate-500 font-bold">
-                <Mail className="w-3.5 h-3.5 text-slate-400" />
-                <span>laiba.rafi@ncgsa.org</span>
-              </div>
             </div>
 
           </div>

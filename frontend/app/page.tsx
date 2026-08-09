@@ -57,7 +57,7 @@ export default function LandingPage() {
             <Link href="/dashboard" className="text-xs font-semibold text-slate-600 hover:text-slate-950 transition">
               Dashboard
             </Link>
-            <Link href="/about" target="_blank" className="text-xs font-semibold text-slate-600 hover:text-slate-950 transition">
+            <Link href="/about" className="text-xs font-semibold text-slate-600 hover:text-slate-950 transition">
               About
             </Link>
           </nav>
@@ -120,7 +120,6 @@ export default function LandingPage() {
             </Link>
             <Link 
               href="/about" 
-              target="_blank"
               onClick={() => setMobileMenuOpen(false)}
               className="text-xs font-semibold text-slate-700 hover:text-slate-950 p-2.5 hover:bg-slate-50 rounded-xl block"
             >
