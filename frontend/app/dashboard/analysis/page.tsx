@@ -26,7 +26,9 @@ import {
   ChevronDown,
   ChevronRight,
   Activity,
-  ArrowRight
+  ArrowRight,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 import {
@@ -47,6 +49,7 @@ const DashboardMap = dynamic(() => import('@/components/DashboardMap'), {
 });
 
 export default function AnalysisPage() {
+  const [darkMode, setDarkMode] = useState(false);
   const [regions, setRegions] = useState<Region[]>([]);
   const [selectedRegionId, setSelectedRegionId] = useState<number | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<string>('All Coastal Districts');
@@ -75,7 +78,15 @@ export default function AnalysisPage() {
   const [analysisStatus, setAnalysisStatus] = useState<'idle' | 'running' | 'success'>('idle');
   const [analysisLogs, setAnalysisLogs] = useState<string[]>([]);
 
+  const toggleDarkMode = () => {
+    const nextTheme = !darkMode;
+    setDarkMode(nextTheme);
+    localStorage.setItem('darkMode', String(nextTheme));
+  };
+
   useEffect(() => {
+    const savedTheme = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(savedTheme);
     getRegions()
       .then((data) => {
         setRegions(data);
@@ -153,20 +164,26 @@ export default function AnalysisPage() {
 
   return (
     <div
-      className="h-screen bg-cover bg-center bg-no-repeat bg-fixed text-slate-800 flex flex-col font-sans overflow-hidden relative"
+      className={`h-screen bg-cover bg-center bg-no-repeat bg-fixed text-slate-800 flex flex-col font-sans overflow-hidden relative transition-colors duration-300 ${
+        darkMode ? 'text-slate-100 bg-[#070e1b]' : 'text-slate-800 bg-[#f8fafc]'
+      }`}
       style={{ backgroundImage: "url('/coastal-bg.jpg')" }}
     >
       {/* Soft light tint overlay to match homepage */}
-      <div className="absolute inset-0 bg-[#f8fafc]/90 backdrop-blur-[1px] pointer-events-none -z-10" />
+      <div className={`absolute inset-0 transition-colors duration-300 pointer-events-none -z-10 ${
+        darkMode ? 'bg-slate-950/93 backdrop-blur-[2px]' : 'bg-[#f8fafc]/90 backdrop-blur-[1px]'
+      }`} />
       
       {/* HEADER SECTION (Height: 70px) */}
-      <header className="h-[70px] border-b border-slate-200/80 px-6 py-4 flex justify-between items-center bg-white/80 backdrop-blur-md shrink-0 shadow-sm">
+      <header className={`h-[70px] border-b px-6 py-4 flex justify-between items-center backdrop-blur-md shrink-0 shadow-sm transition-all duration-300 ${
+        darkMode ? 'bg-slate-950/90 border-slate-800/80 text-white' : 'bg-white/80 border-slate-200/80 text-slate-850'
+      }`}>
         <div className="flex items-center gap-3">
           <Link href="/dashboard" className="flex items-center gap-2">
             <img src="/logo-portal.png" className="w-9 h-9 object-contain rounded-full border border-slate-200/80 shadow-md bg-white flex-shrink-0" alt="Coastal Hazard Portal Logo" />
             <div>
-              <h1 className="text-sm md:text-base font-bold tracking-tight text-slate-900">COASTAL HAZARD PORTAL</h1>
-              <p className="text-[10px] text-cyan-600 font-bold tracking-wider uppercase">
+              <h1 className={`text-sm md:text-base font-bold tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>COASTAL HAZARD PORTAL</h1>
+              <p className={`text-[10px] font-bold tracking-wider uppercase ${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
                 Balochistan Coastline
               </p>
             </div>
@@ -174,14 +191,18 @@ export default function AnalysisPage() {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="hidden lg:flex items-center gap-2 bg-slate-50 border border-slate-200 px-3.5 py-1.5 rounded-xl shadow-sm text-[11px] text-slate-600">
+          <div className={`hidden lg:flex items-center gap-2 border px-3.5 py-1.5 rounded-xl shadow-sm text-[11px] transition-colors duration-300 ${
+            darkMode ? 'bg-slate-900 border-slate-800 text-slate-355' : 'bg-slate-50 border-slate-200 text-slate-600'
+          }`}>
             <Calendar className="w-3.5 h-3.5 text-cyan-600" />
             <span>Data Ingestion:</span>
-            <strong className="text-slate-950 font-bold">Live GEE API</strong>
+            <strong className={darkMode ? 'text-white font-bold' : 'text-slate-950 font-bold'}>Live GEE API</strong>
           </div>
 
           {/* District Selector Dropdown */}
-          <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3.5 py-1.5 rounded-xl shadow-sm text-[11px] text-slate-655">
+          <div className={`flex items-center gap-1.5 border px-3.5 py-1.5 rounded-xl shadow-sm text-[11px] transition-colors duration-300 ${
+            darkMode ? 'bg-slate-900 border-slate-800 text-slate-355' : 'bg-slate-50 border-slate-200 text-slate-655'
+          }`}>
             <MapPin className="w-3.5 h-3.5 text-cyan-600" />
             <span>District Focus:</span>
             <select
@@ -196,17 +217,30 @@ export default function AnalysisPage() {
                   if (match) setSelectedRegionId(match.id);
                 }
               }}
-              className="bg-transparent text-slate-900 font-extrabold outline-none cursor-pointer font-sans"
+              className={`bg-transparent font-extrabold outline-none cursor-pointer font-sans ${darkMode ? 'text-white' : 'text-slate-900'}`}
             >
-              <option value="All Coastal Districts" className="bg-white text-slate-900">All Coastal Districts</option>
-              <option value="Gwadar" className="bg-white text-slate-900">Gwadar</option>
-              <option value="Lasbela" className="bg-white text-slate-900">Lasbela</option>
+              <option value="All Coastal Districts" className={darkMode ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'}>All Coastal Districts</option>
+              <option value="Gwadar" className={darkMode ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'}>Gwadar</option>
+              <option value="Lasbela" className={darkMode ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'}>Lasbela</option>
             </select>
           </div>
 
+          {/* Theme Toggle */}
+          <button 
+            onClick={toggleDarkMode}
+            className={`w-9 h-9 rounded-xl border flex items-center justify-center transition ${
+              darkMode ? 'bg-slate-900 border-slate-800 hover:bg-slate-850' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+            }`}
+            aria-label="Toggle dark/light mode"
+          >
+            {darkMode ? <Sun className="w-4 h-4 text-amber-400 animate-pulse" /> : <Moon className="w-4 h-4 text-slate-600" />}
+          </button>
+
           <Link
             href="/dashboard"
-            className="px-4 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-extrabold text-slate-700 hover:text-slate-950 transition-all flex items-center gap-1.5 shadow-sm"
+            className={`px-4 py-1.5 rounded-xl border text-xs font-extrabold transition-all flex items-center gap-1.5 shadow-sm ${
+              darkMode ? 'bg-slate-900 border-slate-800 text-cyan-400 hover:bg-slate-850 hover:text-cyan-300' : 'bg-slate-50 border-slate-200 text-slate-700 hover:text-slate-950 hover:bg-slate-100'
+            }`}
           >
             Dashboard Overview
             <ArrowRight className="w-3.5 h-3.5" />
@@ -218,11 +252,15 @@ export default function AnalysisPage() {
       <div className="flex-1 flex flex-col md:flex-row relative overflow-hidden min-h-0">
         
         {/* COLUMN 1: LEFT NAV BAR (Width: 240px) */}
-        <aside className="w-[240px] shrink-0 border-r border-slate-200 p-4 bg-white/80 backdrop-blur-md flex flex-col justify-between hidden md:flex shadow-sm">
+        <aside className={`w-[240px] shrink-0 border-r p-4 backdrop-blur-md flex flex-col justify-between hidden md:flex shadow-sm transition-all duration-300 ${
+          darkMode ? 'bg-slate-950/90 border-slate-800 text-white' : 'bg-white/80 border-slate-200 text-slate-850'
+        }`}>
           <div className="space-y-4">
             <Link
               href="/dashboard"
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/80"
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border border-transparent transition-colors ${
+                darkMode ? 'text-slate-400 hover:text-white hover:bg-slate-900/80' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50/80'
+              }`}
             >
               <Activity className="w-4 h-4" />
               <span>Live Overview</span>
@@ -231,7 +269,9 @@ export default function AnalysisPage() {
             <div>
               <button
                 onClick={() => setHazardsMenuOpen(!hazardsMenuOpen)}
-                className="w-full flex justify-between items-center px-3 py-2.5 rounded-xl text-xs border border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/80"
+                className={`w-full flex justify-between items-center px-3 py-2.5 rounded-xl text-xs border border-transparent transition-colors ${
+                  darkMode ? 'text-slate-400 hover:text-white hover:bg-slate-900/80' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50/80'
+                }`}
               >
                 <div className="flex items-center gap-3">
                   <Layers className="w-4 h-4" />
@@ -245,7 +285,7 @@ export default function AnalysisPage() {
               </button>
 
               {hazardsMenuOpen && (
-                <div className="pl-6 pr-2 py-1 space-y-1.5 border-l border-slate-200 ml-5 mt-1">
+                <div className={`pl-6 pr-2 py-1 space-y-1.5 border-l ml-5 mt-1 ${darkMode ? 'border-slate-850' : 'border-slate-200'}`}>
                   {[
                     { key: 'flooding', label: 'Coastal Flooding', color: '#06b6d4' },
                     { key: 'storm-surge', label: 'Storm Surge', color: '#f59e0b' },
@@ -257,8 +297,8 @@ export default function AnalysisPage() {
                       onClick={() => handleHazardToggle(hazard.key)}
                       className={`w-full flex items-center justify-between text-left text-[11px] py-1.5 px-2 rounded-lg transition ${
                         selectedHazards.includes(hazard.key)
-                          ? 'text-cyan-600 font-bold bg-cyan-50'
-                          : 'text-slate-655 hover:text-slate-900 hover:bg-slate-50/85'
+                          ? (darkMode ? 'text-cyan-400 font-bold bg-slate-900' : 'text-cyan-600 font-bold bg-cyan-50')
+                          : (darkMode ? 'text-slate-400 hover:text-white hover:bg-slate-900/40' : 'text-slate-655 hover:text-slate-900 hover:bg-slate-50/85')
                       }`}
                     >
                       <span>{hazard.label}</span>
@@ -276,19 +316,25 @@ export default function AnalysisPage() {
 
             <Link
               href="/dashboard/analysis"
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs bg-slate-100 border border-slate-200 text-slate-900 font-extrabold shadow-sm"
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs border font-extrabold shadow-sm ${
+                darkMode ? 'bg-slate-900 border-slate-800 text-white' : 'bg-slate-100 border-slate-200 text-slate-900'
+              }`}
             >
-              <Sliders className="w-4 h-4 text-cyan-600" />
+              <Sliders className={`w-4 h-4 ${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`} />
               <span>GEE Live Analysis</span>
             </Link>
           </div>
         </aside>
 
         {/* COLUMN 2: MIDDLE CONTROL PANEL (Width: 380px) */}
-        <section className="w-full md:w-[380px] h-[320px] md:h-full shrink-0 border-b md:border-b-0 md:border-r border-slate-200 p-5 bg-white/80 backdrop-blur-md flex flex-col justify-between overflow-y-auto gap-4 scrollbar-thin shadow-sm relative z-10">
+        <section className={`w-full md:w-[380px] h-[320px] md:h-full shrink-0 border-b md:border-b-0 md:border-r p-5 backdrop-blur-md flex flex-col justify-between overflow-y-auto gap-4 scrollbar-thin shadow-sm relative z-10 transition-colors duration-300 ${
+          darkMode ? 'bg-slate-950/90 border-slate-800 text-white' : 'bg-white/80 border-slate-200 text-slate-850'
+        }`}>
           <div className="space-y-4">
-            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-200 pb-3 mb-2">
-              <Sliders className="w-4.5 h-4.5 text-cyan-650" />
+            <h2 className={`text-sm font-bold flex items-center gap-2 border-b pb-3 mb-2 ${
+              darkMode ? 'text-white border-slate-850' : 'text-slate-900 border-slate-200'
+            }`}>
+              <Sliders className="w-4.5 h-4.5 text-cyan-600" />
               <span>GEE Analysis Control Panel</span>
             </h2>
 

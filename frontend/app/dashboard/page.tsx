@@ -37,7 +37,9 @@ import {
   CheckCircle,
   FileText,
   Info,
-  Sliders
+  Sliders,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 import {
@@ -205,6 +207,14 @@ const DISTRICT_METRICS: Record<
 
 export default function DashboardPage() {
   const [mounted, setMounted] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+
+  const toggleDarkMode = () => {
+    const nextTheme = !darkMode;
+    setDarkMode(nextTheme);
+    localStorage.setItem('darkMode', String(nextTheme));
+  };
+
   const [regions, setRegions] = useState<Region[]>([]);
   const [selectedRegionId, setSelectedRegionId] = useState<number | null>(null);
 
@@ -493,6 +503,8 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setMounted(true);
+    const savedTheme = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(savedTheme);
     getRegions()
       .then((data) => {
         setRegions(data);
@@ -846,22 +858,28 @@ export default function DashboardPage() {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed text-slate-800 flex flex-col font-sans overflow-x-hidden selection:bg-cyan-500/20 relative"
+      className={`min-h-screen bg-cover bg-center bg-no-repeat bg-fixed flex flex-col font-sans overflow-x-hidden selection:bg-cyan-500/20 relative transition-colors duration-300 ${
+        darkMode ? 'text-slate-100 bg-[#070e1b]' : 'text-slate-800 bg-[#f8fafc]'
+      }`}
       style={{ backgroundImage: "url('/coastal-bg.jpg')" }}
     >
-      {/* Soft light tint overlay to match homepage */}
-      <div className="absolute inset-0 bg-[#f8fafc]/90 backdrop-blur-[1px] pointer-events-none -z-10" />
+      {/* Overlay mask */}
+      <div className={`absolute inset-0 transition-colors duration-300 pointer-events-none -z-10 ${
+        darkMode ? 'bg-slate-950/93 backdrop-blur-[2px]' : 'bg-[#f8fafc]/90 backdrop-blur-[1px]'
+      }`} />
 
       {/* Dynamic Ambient Background Glows */}
       <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-3xl pointer-events-none -z-10 animate-pulse" />
       <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
 
       {/* TOP HEADER BAR */}
-      <header className="flex justify-between items-center px-6 py-3 border-b border-slate-200/80 backdrop-blur-md sticky top-0 z-40 bg-white/80 shadow-sm">
+      <header className={`flex justify-between items-center px-6 py-3 border-b backdrop-blur-md sticky top-0 z-40 shadow-sm transition-all duration-300 ${
+        darkMode ? 'bg-slate-950/90 border-slate-800/80 text-white' : 'bg-white/80 border-slate-200/80 text-slate-850'
+      }`}>
         <div className="flex items-center gap-3">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden p-2 hover:bg-slate-100 rounded-xl transition text-slate-650"
+            className={`lg:hidden p-2 rounded-xl transition ${darkMode ? 'hover:bg-slate-900 text-slate-300' : 'hover:bg-slate-100 text-slate-650'}`}
             aria-label="Toggle navigation menu"
           >
             {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -869,8 +887,8 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2">
             <img src="/logo-portal.png" className="w-9 h-9 object-contain rounded-full border border-slate-200/80 shadow-md bg-white flex-shrink-0" alt="Coastal Hazard Portal Logo" />
             <div>
-              <h1 className="text-sm md:text-base font-bold tracking-tight text-slate-900">COASTAL HAZARD PORTAL</h1>
-              <p className="text-[10px] text-cyan-600 font-bold tracking-wider uppercase">
+              <h1 className={`text-sm md:text-base font-bold tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>COASTAL HAZARD PORTAL</h1>
+              <p className={`text-[10px] font-bold tracking-wider uppercase ${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
                 Balochistan Coastline
               </p>
             </div>
@@ -879,20 +897,26 @@ export default function DashboardPage() {
 
         {/* Top Header Indicators */}
         <div className="flex items-center gap-4">
-          <div className="hidden lg:flex items-center gap-2 bg-slate-50 border border-slate-200 px-3.5 py-1.5 rounded-xl shadow-sm text-[11px] text-slate-600">
+          <div className={`hidden lg:flex items-center gap-2 border px-3.5 py-1.5 rounded-xl shadow-sm text-[11px] transition-colors duration-300 ${
+            darkMode ? 'bg-slate-900 border-slate-800 text-slate-350' : 'bg-slate-50 border-slate-200 text-slate-600'
+          }`}>
             <Calendar className="w-3.5 h-3.5 text-cyan-600" />
             <span>Data Updated:</span>
-            <strong className="text-slate-950 font-bold">May 15, 2025 10:30 AM</strong>
+            <strong className={darkMode ? 'text-white font-bold' : 'text-slate-950 font-bold'}>May 15, 2025 10:30 AM</strong>
           </div>
 
-          <div className="hidden lg:flex items-center gap-2 bg-slate-50 border border-slate-200 px-3.5 py-1.5 rounded-xl shadow-sm text-[11px] text-slate-600">
+          <div className={`hidden lg:flex items-center gap-2 border px-3.5 py-1.5 rounded-xl shadow-sm text-[11px] transition-colors duration-300 ${
+            darkMode ? 'bg-slate-900 border-slate-800 text-slate-350' : 'bg-slate-50 border-slate-200 text-slate-600'
+          }`}>
             <Globe className="w-3.5 h-3.5 text-blue-600" />
             <span>Data Source:</span>
-            <strong className="text-slate-950 font-bold">Google Earth Engine</strong>
+            <strong className={darkMode ? 'text-white font-bold' : 'text-slate-950 font-bold'}>Google Earth Engine</strong>
           </div>
 
           {/* District Selector Dropdown */}
-          <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3.5 py-1.5 rounded-xl shadow-sm text-[11px] text-slate-600">
+          <div className={`flex items-center gap-1.5 border px-3.5 py-1.5 rounded-xl shadow-sm text-[11px] transition-colors duration-300 ${
+            darkMode ? 'bg-slate-900 border-slate-800 text-slate-350' : 'bg-slate-50 border-slate-200 text-slate-600'
+          }`}>
             <MapPin className="w-3.5 h-3.5 text-cyan-600" />
             <span>District:</span>
             <select
@@ -907,11 +931,11 @@ export default function DashboardPage() {
                   if (match) setSelectedRegionId(match.id);
                 }
               }}
-              className="bg-transparent text-slate-900 font-extrabold outline-none cursor-pointer font-sans"
+              className={`bg-transparent font-extrabold outline-none cursor-pointer font-sans ${darkMode ? 'text-white' : 'text-slate-900'}`}
             >
-              <option value="All Coastal Districts" className="bg-white text-slate-900">All Coastal Districts</option>
-              <option value="Gwadar" className="bg-white text-slate-900">Gwadar</option>
-              <option value="Lasbela" className="bg-white text-slate-900">Lasbela</option>
+              <option value="All Coastal Districts" className={darkMode ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'}>All Coastal Districts</option>
+              <option value="Gwadar" className={darkMode ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'}>Gwadar</option>
+              <option value="Lasbela" className={darkMode ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'}>Lasbela</option>
             </select>
           </div>
 
@@ -921,17 +945,32 @@ export default function DashboardPage() {
             <input
               type="text"
               placeholder="Search location, district..."
-              className="bg-slate-50 border border-slate-200 rounded-xl py-1.5 pl-9 pr-4 text-xs focus:border-cyan-500 focus:bg-white outline-none w-[200px] transition-all text-slate-800 placeholder-slate-400"
+              className={`border rounded-xl py-1.5 pl-9 pr-4 text-xs outline-none w-[200px] transition-all placeholder-slate-400 ${
+                darkMode ? 'bg-slate-900 border-slate-800 text-white focus:bg-slate-950 focus:border-cyan-500' : 'bg-slate-50 border-slate-200 text-slate-800 focus:bg-white focus:border-cyan-500'
+              }`}
             />
           </div>
+
+          {/* Theme Toggle */}
+          <button 
+            onClick={toggleDarkMode}
+            className={`w-9 h-9 rounded-xl border flex items-center justify-center transition ${
+              darkMode ? 'bg-slate-900 border-slate-800 hover:bg-slate-850' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+            }`}
+            aria-label="Toggle dark/light mode"
+          >
+            {darkMode ? <Sun className="w-4 h-4 text-amber-400 animate-pulse" /> : <Moon className="w-4 h-4 text-slate-600" />}
+          </button>
 
           {/* Notifications */}
           <button
             onClick={() => setActiveModal('alerts')}
-            className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center hover:bg-slate-100 transition relative"
+            className={`w-9 h-9 rounded-xl border flex items-center justify-center transition relative ${
+              darkMode ? 'bg-slate-900 border-slate-800 hover:bg-slate-850' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+            }`}
             aria-label="View Active Alerts"
           >
-            <Bell className="w-4.5 h-4.5 text-slate-600" />
+            <Bell className={`w-4.5 h-4.5 ${darkMode ? 'text-slate-355' : 'text-slate-600'}`} />
             <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center text-white shadow-lg">
               3
             </span>
@@ -940,15 +979,17 @@ export default function DashboardPage() {
           {/* Profile Dropdown */}
           <button
             onClick={() => setActiveModal('users')}
-            className="flex items-center gap-2.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-xl px-3 py-1 text-xs transition shadow-sm"
+            className={`flex items-center gap-2.5 border rounded-xl px-3 py-1 text-xs transition shadow-sm ${
+              darkMode ? 'bg-slate-900 border-slate-800 hover:bg-slate-850' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+            }`}
             aria-label="User Profile"
           >
-            <div className="w-7 h-7 rounded-full bg-cyan-50 flex items-center justify-center">
-              <User className="w-4 h-4 text-cyan-600" />
+            <div className={`w-7 h-7 rounded-full flex items-center justify-center ${darkMode ? 'bg-slate-800' : 'bg-cyan-50'}`}>
+              <User className={`w-4 h-4 ${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`} />
             </div>
             <div className="text-left hidden md:block">
-              <p className="font-extrabold text-slate-900">Analyst</p>
-              <p className="text-[9px] text-slate-500 font-medium">Level 2</p>
+              <p className={`font-extrabold ${darkMode ? 'text-white' : 'text-slate-900'}`}>Analyst</p>
+              <p className={`text-[9px] font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Level 2</p>
             </div>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden md:block" />
           </button>

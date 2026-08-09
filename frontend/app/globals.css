@@ -87,3 +87,70 @@ button:hover {
 .pulse-glow {
   animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* Dark Theme Custom Overrides */
+.dark-theme {
+  background-color: #070e1b !important;
+  color: #f8fafc !important;
+}
+
+.dark-theme .bg-white\/90,
+.dark-theme .bg-white\/95,
+.dark-theme .bg-white,
+.dark-theme .bg-white\/80 {
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  border-color: rgba(51, 65, 85, 0.4) !important;
+  color: #f1f5f9 !important;
+}
+
+.dark-theme .bg-slate-50,
+.dark-theme .bg-slate-100 {
+  background-color: rgba(30, 41, 59, 0.8) !important;
+  border-color: rgba(51, 65, 85, 0.5) !important;
+  color: #f1f5f9 !important;
+}
+
+.dark-theme .text-slate-900,
+.dark-theme .text-slate-800,
+.dark-theme .text-slate-700,
+.dark-theme .text-slate-655,
+.dark-theme .text-slate-600 {
+  color: #f1f5f9 !important;
+}
+
+.dark-theme .text-slate-500,
+.dark-theme .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+.dark-theme .border-slate-100,
+.dark-theme .border-slate-200,
+.dark-theme .border-slate-200\/80,
+.dark-theme .border-slate-200\/60 {
+  border-color: rgba(51, 65, 85, 0.4) !important;
+}
+
+.dark-theme .hover\:bg-slate-50:hover,
+.dark-theme .hover\:bg-slate-100:hover,
+.dark-theme .hover\:bg-slate-50\/80:hover {
+  background-color: rgba(30, 41, 59, 0.9) !important;
+}
+
+.dark-theme input,
+.dark-theme select,
+.dark-theme textarea {
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  color: #f1f5f9 !important;
+  border-color: rgba(51, 65, 85, 0.6) !important;
+}
+
+.dark-theme option {
+  background-color: #0f172a !important;
+  color: #f1f5f9 !important;
+}
+
+.dark-theme .leaflet-control {
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  border-color: rgba(51, 65, 85, 0.6) !important;
+  color: #f1f5f9 !important;
+}
