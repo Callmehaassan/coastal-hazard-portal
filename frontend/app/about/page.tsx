@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   Sun, 
@@ -16,6 +16,17 @@ import {
 export default function AboutPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(savedTheme);
+  }, []);
+
+  const toggleDarkMode = () => {
+    const nextTheme = !darkMode;
+    setDarkMode(nextTheme);
+    localStorage.setItem('darkMode', String(nextTheme));
+  };
 
   return (
     <div
@@ -62,7 +73,7 @@ export default function AboutPage() {
           {/* Right Header Section */}
           <div className="flex items-center gap-2 md:gap-4">
             <button 
-              onClick={() => setDarkMode(!darkMode)}
+              onClick={toggleDarkMode}
               className={`w-8 h-8 rounded-xl border flex items-center justify-center transition ${
                 darkMode ? 'bg-slate-900 border-slate-800 hover:bg-slate-850' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
               }`}
