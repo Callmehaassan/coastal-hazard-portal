@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     fetch("http://127.0.0.1:7777/event", { method: "POST", body: JSON.stringify({ sessionId: "export-download-failure", runId: "pre-fix", hypothesisId: "B", location: "frontend/app/api/reports/export/route.ts:POST:success", msg: "[DEBUG] proxy returning export response", data: { status: backendRes.status, contentType, contentDisposition, byteLength: arrayBuffer.byteLength }, ts: Date.now() }) }).catch(() => {});
     // #endregion
 
-    return new NextResponse(arrayBuffer, {
+    return new NextResponse(Buffer.from(arrayBuffer), {
       status: 200,
       headers: {
         "Content-Type": contentType,

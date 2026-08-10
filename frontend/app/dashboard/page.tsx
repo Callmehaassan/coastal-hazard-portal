@@ -741,6 +741,7 @@ export default function DashboardPage() {
 
       const apiFormat = exportFormat === 'report' ? 'pdf' : exportFormat;
       const blob = await exportReport(regionId, apiFormat, 2016, 2025, selectedAnalysis);
+      console.log("[DEBUG] Export response received:", blob.size, "bytes, type:", blob.type);
       const url = URL.createObjectURL(blob);
       
       const districtLabel = exportDistrict === 'both' ? 'all_districts' : exportDistrict;
