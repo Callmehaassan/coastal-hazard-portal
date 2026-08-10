@@ -53,8 +53,8 @@ def export_report(payload: ExportRequest, db: Session = Depends(get_db)):
         media_type = "application/pdf"
         filename = f"report_{payload.region_id or 'all'}_{payload.hazard_type or 'all'}{hotspot_slug}_{year_start}_{year_end}.pdf"
     elif payload.format == "geotiff":
-        # Mock GeoTIFF for now
-        buffer = BytesIO(bytes([0x49, 0x49, 0x2a, 0x00, 0x08, 0x00, 0x00, 0x00]))
+        from services.export_service import export_readings_geotiff
+        buffer = export_readings_geotiff(db, payload.region_id, mapped_hazard, year_start, year_end)
         media_type = "image/tiff"
         filename = f"report_{payload.region_id or 'all'}_{payload.hazard_type or 'all'}{hotspot_slug}_{year_start}_{year_end}.tif"
     else:

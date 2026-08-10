@@ -443,7 +443,8 @@ export default function DashboardPage() {
   const [exportModalVisible, setExportModalVisible] = useState(false);
   const [exportFormat, setExportFormat] = useState<'csv' | 'geotiff' | 'report'>('csv');
   const [exportProgress, setExportProgress] = useState(0);
-  const [exportStatus, setExportStatus] = useState<'preparing' | 'success' | 'error'>('preparing');
+  const [exportStatus, setExportStatus] = useState<'configure' | 'preparing' | 'success' | 'error'>('configure');
+  const [exportDistrict, setExportDistrict] = useState<'lasbela' | 'gwadar' | 'both'>('both');
   const [emailInput, setEmailInput] = useState('');
   const [emailSubmitted, setEmailSubmitted] = useState(false);
   const [exportDownloadUrl, setExportDownloadUrl] = useState<string | null>(null);
@@ -710,14 +711,18 @@ export default function DashboardPage() {
   };
 
   // Dynamic export task fetching records from GEE endpoints
-  const triggerExportFlow = async (format: 'csv' | 'geotiff' | 'report') => {
+  const triggerExportFlow = (format: 'csv' | 'geotiff' | 'report') => {
     setExportFormat(format);
+    setExportStatus('configure');
+    setExportModalVisible(true);
+    setExportDownloadUrl(null);
+  };
+
+  const startExportExecution = async () => {
     setExportProgress(0);
     setExportStatus('preparing');
     setEmailSubmitted(false);
     setEmailInput('');
-    setExportModalVisible(true);
-    setExportDownloadUrl(null);
 
     const interval = setInterval(() => {
       setExportProgress((prev) => {
@@ -730,12 +735,15 @@ export default function DashboardPage() {
     }, 150);
 
     try {
-      const regionId = selectedRegionId ?? 1;
-      const apiFormat = format === 'report' ? 'pdf' : format;
-      const blob = await exportReport(regionId, apiFormat, 2016, 2025);
+      let regionId: number | null = null;
+      if (exportDistrict === 'lasbela') regionId = 1;
+      else if (exportDistrict === 'gwadar') regionId = 2;
+
+      const apiFormat = exportFormat === 'report' ? 'pdf' : exportFormat;
+      const blob = await exportReport(regionId, apiFormat, 2016, 2025, selectedAnalysis);
       const url = URL.createObjectURL(blob);
       
-      const districtLabel = selectedDistrict === 'All Coastal Districts' ? 'all_districts' : selectedDistrict.toLowerCase();
+      const districtLabel = exportDistrict === 'both' ? 'all_districts' : exportDistrict;
       const filename = `${districtLabel}_hazard_data_2016_2025.${apiFormat === 'pdf' ? 'pdf' : apiFormat === 'geotiff' ? 'tif' : 'csv'}`;
       
       setExportDownloadUrl(url);
@@ -2043,6 +2051,69 @@ export default function DashboardPage() {
       {exportModalVisible && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white border border-slate-250 w-full max-w-md p-6 rounded-3xl shadow-2xl relative text-slate-800">
+            {exportStatus === 'configure' && (
+              <div className="space-y-4">
+                <div className="text-center">
+                  <h3 className={`text-sm md:text-base font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                    Configure Export Options
+                  </h3>
+                  <p className="text-[11px] text-slate-550 mt-1">
+                    Select the coastal districts you want to export.
+                  </p>
+                </div>
+
+                <div className="space-y-3 pt-2">
+                  <label className={`text-[10px] font-extrabold uppercase tracking-wider block ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                    Select District Focus
+                  </label>
+                  
+                  <div className="grid grid-cols-1 gap-2">
+                    {[
+                      { id: 'both', label: 'Both Districts (Lasbela & Gwadar)' },
+                      { id: 'lasbela', label: 'Lasbela District Only' },
+                      { id: 'gwadar', label: 'Gwadar District Only' }
+                    ].map((opt) => (
+                      <label
+                        key={opt.id}
+                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition ${
+                          exportDistrict === opt.id
+                            ? (darkMode ? 'bg-cyan-950/40 border-cyan-500/50 text-cyan-400 font-bold' : 'bg-cyan-50 border-cyan-500 text-cyan-900 font-bold')
+                            : (darkMode ? 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-850' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100')
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="exportDistrict"
+                          value={opt.id}
+                          checked={exportDistrict === opt.id}
+                          onChange={() => setExportDistrict(opt.id as any)}
+                          className="text-cyan-500 focus:ring-cyan-500"
+                        />
+                        <span className="text-xs">{opt.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <button
+                    onClick={() => startExportExecution()}
+                    className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:shadow-md text-white text-xs font-bold text-center block transition-all"
+                  >
+                    Generate Export
+                  </button>
+                  <button
+                    onClick={() => setExportModalVisible(false)}
+                    className={`px-4 py-2.5 rounded-xl border text-xs font-bold transition shadow-sm ${
+                      darkMode ? 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-850' : 'bg-slate-50 border-slate-200 text-slate-655 hover:bg-slate-100'
+                    }`}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
             {exportStatus === 'preparing' && (
               <div className="text-center py-4 space-y-4">
                 <RefreshCw className="w-10 h-10 text-cyan-600 animate-spin mx-auto" />
