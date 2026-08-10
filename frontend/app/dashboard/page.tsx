@@ -46,6 +46,7 @@ import {
   getRegions,
   getHazards,
   exportReport,
+  getActiveAlerts,
   type HazardReading,
 } from '@/lib/api';
 import type { Region } from '@/lib/types';
@@ -139,6 +140,7 @@ const recentAlerts = [
     district: 'Gwadar District',
     time: 'May 15, 2025 09:20 AM',
     severity: 'high',
+    rawHazard: 'storm_surge',
   },
   {
     id: 2,
@@ -146,6 +148,7 @@ const recentAlerts = [
     district: 'Lasbela District',
     time: 'May 15, 2025 08:45 AM',
     severity: 'medium',
+    rawHazard: 'flooding',
   },
   {
     id: 3,
@@ -153,6 +156,7 @@ const recentAlerts = [
     district: 'Ormara Coastline',
     time: 'May 14, 2025 11:15 PM',
     severity: 'low',
+    rawHazard: 'erosion',
   },
 ];
 
@@ -217,6 +221,7 @@ export default function DashboardPage() {
 
   const [regions, setRegions] = useState<Region[]>([]);
   const [selectedRegionId, setSelectedRegionId] = useState<number | null>(null);
+  const [dbAlerts, setDbAlerts] = useState<any[]>([]);
 
   const [selectedYear, setSelectedYear] = useState<number>(2025);
   const [selectedDistrict, setSelectedDistrict] = useState<string>(
@@ -516,6 +521,15 @@ export default function DashboardPage() {
       .catch((err) => {
         console.error('Failed to load regions:', err);
       });
+    
+    getActiveAlerts()
+      .then((alerts) => {
+        setDbAlerts(alerts);
+      })
+      .catch((err) => {
+        console.error('Failed to load alerts:', err);
+      });
+
     loadDashboardData();
   }, []);
 
@@ -701,6 +715,71 @@ export default function DashboardPage() {
   const loadHazardData = loadDashboardData;
   const loadTopMetricsData = loadDashboardData;
   const loadBottomChartsData = loadDashboardData;
+
+  const getDynamicAlerts = () => {
+    // If no dbAlerts are loaded, fallback to mock alerts
+    if (!dbAlerts || dbAlerts.length === 0) {
+      return recentAlerts;
+    }
+
+    return dbAlerts
+      .filter((alert) => {
+        // Filter by district
+        if (selectedDistrict !== 'All Coastal Districts') {
+          const targetRegionId = selectedDistrict.toLowerCase() === 'lasbela' ? 1 : 2;
+          if (alert.region_id !== targetRegionId) return false;
+        }
+
+        // Filter by hazard type
+        const alertHazardMapped = alert.hazard_type.replace('_', '-');
+        if (selectedAnalysis && alertHazardMapped !== selectedAnalysis) {
+          return false;
+        }
+
+        return true;
+      })
+      .map((alert) => {
+        const distName = alert.region_id === 1 ? 'Lasbela District' : 'Gwadar District';
+        
+        let title = 'Hazard Threat Alert';
+        let severity = 'medium';
+        if (alert.hazard_type === 'storm_surge') {
+          title = 'High Storm Surge Warning';
+          severity = 'high';
+        } else if (alert.hazard_type === 'flooding') {
+          title = 'Coastal Flood Watch';
+          severity = 'medium';
+        } else if (alert.hazard_type === 'erosion') {
+          title = 'Shoreline Erosion Alert';
+          severity = 'low';
+        } else if (alert.hazard_type === 'tsunami_risk') {
+          title = 'Tsunami Run-up Warning';
+          severity = 'high';
+        }
+
+        const dateStr = alert.last_triggered_at 
+          ? new Date(alert.last_triggered_at).toLocaleString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true
+            })
+          : 'Active Alert';
+
+        return {
+          id: alert.id,
+          title,
+          district: distName,
+          time: dateStr,
+          severity,
+          threshold: alert.threshold_value,
+          comparator: alert.comparator,
+          rawHazard: alert.hazard_type
+        };
+      });
+  };
 
   const handleGenerate = async () => {
     setGenerating(true);
@@ -980,9 +1059,11 @@ export default function DashboardPage() {
             aria-label="View Active Alerts"
           >
             <Bell className={`w-4.5 h-4.5 ${darkMode ? 'text-slate-355' : 'text-slate-600'}`} />
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center text-white shadow-lg">
-              3
-            </span>
+            {getDynamicAlerts().length > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center text-white shadow-lg">
+                {getDynamicAlerts().length}
+              </span>
+            )}
           </button>
 
           {/* Profile Dropdown */}
@@ -1570,28 +1651,34 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="space-y-3">
-                  {recentAlerts.map((alert) => (
-                    <div
-                      key={alert.id}
-                      className="p-3 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100/85 transition-all shadow-sm flex gap-3 items-start"
-                    >
+                  {getDynamicAlerts().length > 0 ? (
+                    getDynamicAlerts().map((alert) => (
                       <div
-                        className={`w-2.5 h-2.5 rounded-full shrink-0 mt-1 ${
-                          alert.severity === 'high'
-                            ? 'bg-red-500'
-                            : alert.severity === 'medium'
-                            ? 'bg-orange-500'
-                            : 'bg-yellow-500'
-                        }`}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <strong className="text-xs text-slate-900 block truncate font-extrabold">{alert.title}</strong>
-                        <span className="text-[10px] text-slate-500 block mt-0.5">
-                          {alert.district} &bull; {alert.time}
-                        </span>
+                        key={alert.id}
+                        className="p-3 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100/85 transition-all shadow-sm flex gap-3 items-start"
+                      >
+                        <div
+                          className={`w-2.5 h-2.5 rounded-full shrink-0 mt-1 ${
+                            alert.severity === 'high'
+                              ? 'bg-red-500'
+                              : alert.severity === 'medium'
+                              ? 'bg-orange-500'
+                              : 'bg-yellow-500'
+                          }`}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <strong className="text-xs text-slate-900 block truncate font-extrabold">{alert.title}</strong>
+                          <span className="text-[10px] text-slate-500 block mt-0.5">
+                            {alert.district} &bull; {alert.time}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  ) : (
+                    <p className="text-xs text-slate-500 text-center py-4 font-semibold">
+                      No active alerts for selected filters.
+                    </p>
+                  )}
                 </div>
               </section>
 
@@ -1910,31 +1997,45 @@ export default function DashboardPage() {
                   <span>District Active Alerts & Notifications</span>
                 </h3>
                 <div className="space-y-3">
-                  {recentAlerts.map((alert) => (
-                    <div
-                      key={alert.id}
-                      className="p-3.5 rounded-xl border border-slate-100 bg-slate-50 flex gap-3 items-start shadow-sm"
-                    >
+                  {getDynamicAlerts().length > 0 ? (
+                    getDynamicAlerts().map((alert) => (
                       <div
-                        className={`w-3 h-3 rounded-full shrink-0 mt-1 ${
-                          alert.severity === 'high'
-                            ? 'bg-red-500'
-                            : alert.severity === 'medium'
-                            ? 'bg-orange-500'
-                            : 'bg-yellow-500'
-                        }`}
-                      />
-                      <div>
-                        <strong className="text-xs text-slate-900 block font-extrabold">{alert.title}</strong>
-                        <p className="text-[10px] text-slate-500 mt-0.5">
-                          {alert.district} &bull; {alert.time}
-                        </p>
-                        <p className="text-xs text-slate-655 mt-1.5 leading-relaxed">
-                          Potential coastal threat detected via active SAR imagery. Authorities recommend precautionary measures.
-                        </p>
+                        key={alert.id}
+                        className="p-3.5 rounded-xl border border-slate-100 bg-slate-50 flex gap-3 items-start shadow-sm"
+                      >
+                        <div
+                          className={`w-3 h-3 rounded-full shrink-0 mt-1 ${
+                            alert.severity === 'high'
+                              ? 'bg-red-500'
+                              : alert.severity === 'medium'
+                              ? 'bg-orange-500'
+                              : 'bg-yellow-500'
+                          }`}
+                        />
+                        <div>
+                          <strong className="text-xs text-slate-900 block font-extrabold">{alert.title}</strong>
+                          <p className="text-[10px] text-slate-500 mt-0.5">
+                            {alert.district} &bull; {alert.time}
+                          </p>
+                          <p className="text-xs text-slate-655 mt-1.5 leading-relaxed">
+                            {alert.rawHazard === 'erosion'
+                              ? 'Shoreline erosion rate has exceeded threshold. Monitor local beach profiles and restrict heavy structures near the buffer zones.'
+                              : alert.rawHazard === 'storm_surge'
+                              ? 'Severe storm surge danger warning. Coastal inundation risks are high. Prepare emergency response plans.'
+                              : alert.rawHazard === 'flooding'
+                              ? 'Heavy flooding detected via Sentinel active imaging. Keep away from lowland zones and high-risk estuaries.'
+                              : alert.rawHazard === 'tsunami_risk'
+                              ? 'Elevated seismicity or oceanographic anomalies detected. Review shelter routes and evacuation guides immediately.'
+                              : 'Threshold limit exceeded for this hazard index. Authorities recommend monitoring updates.'}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  ) : (
+                    <p className="text-xs text-slate-500 text-center py-6 font-semibold">
+                      No active alerts found matching the current selections.
+                    </p>
+                  )}
                 </div>
               </div>
             )}

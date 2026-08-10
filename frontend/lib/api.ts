@@ -91,3 +91,9 @@ export async function runPipeline(): Promise<any> {
   }
   return response.json();
 }
+
+export async function getActiveAlerts(): Promise<any[]> {
+  const response = await fetch('/api/alerts', { cache: 'no-store' });
+  if (!response.ok) throw new Error('Failed to fetch active alerts');
+  return response.json();
+}
