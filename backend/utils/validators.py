@@ -23,11 +23,8 @@ def validate_district(district: str | None) -> str | None:
 
 
 def validate_hazard_type(hazard_type: str) -> str:
-    if hazard_type not in HAZARD_TYPES:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Unknown hazard_type '{hazard_type}'. Must be one of {HAZARD_TYPES}.",
-        )
+    if not hazard_type or hazard_type not in HAZARD_TYPES:
+        return "all"
     return hazard_type
 
 

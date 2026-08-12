@@ -373,10 +373,15 @@ export default function AnalysisPage() {
                         step="0.01"
                         value={val}
                         onChange={(e) => {
+                          const newVal = Number(e.target.value);
                           setCviWeights((prev) => ({
                             ...prev,
-                            [item.key]: Number(e.target.value)
+                            [item.key]: newVal
                           }));
+                          setAnalysisLogs((prev) => [
+                            ...prev.slice(-10),
+                            `[INFO] Weight adjusted: ${item.label} = ${newVal.toFixed(2)}`
+                          ]);
                         }}
                         className="flex-1 accent-cyan-600 bg-slate-200 h-1.5 rounded-lg appearance-none cursor-pointer"
                       />

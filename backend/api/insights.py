@@ -1,4 +1,4 @@
-﻿from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from database import get_db
@@ -14,7 +14,7 @@ def query_insight(payload: InsightPromptRequest, db: Session = Depends(get_db)):
     parsed = parse_prompt(payload.prompt)
     validated = validate_parsed_query(parsed)
     readings = run_query(db, validated)
-    summary = generate_summary(validated, readings)
+    summary = generate_summary(payload.prompt, validated, readings)
 
     return InsightPromptResponse(
         parsed_query=ParsedInsightQuery(**validated),

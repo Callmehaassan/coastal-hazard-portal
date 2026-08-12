@@ -267,6 +267,33 @@ export default function DashboardPage() {
   const [analysisStatus, setAnalysisStatus] = useState<'idle' | 'running' | 'success'>('idle');
   const [analysisLogs, setAnalysisLogs] = useState<string[]>([]);
 
+  // Real-time slider responsiveness: Recalculates CVI gauge and doughnut chart instantly when sliders move!
+  useEffect(() => {
+    const sum = Object.values(cviWeights).reduce((a, b) => a + b, 0) || 1;
+    const w = {
+      elevation: cviWeights.elevation / sum,
+      slope: cviWeights.slope / sum,
+      erosion: cviWeights.erosion / sum,
+      slr: cviWeights.slr / sum,
+      tsunami: cviWeights.tsunami / sum,
+      stormSurge: cviWeights.stormSurge / sum,
+      proximity: cviWeights.proximity / sum,
+      exposure: cviWeights.exposure / sum,
+    };
+
+    const gwadarFactors = { elevation: 3.1, slope: 1.8, erosion: 3.8, slr: 3.0, tsunami: 4.2, stormSurge: 4.0, proximity: 3.5, exposure: 2.2 };
+    const lasbelaFactors = { elevation: 2.5, slope: 1.6, erosion: 3.4, slr: 3.8, tsunami: 3.2, stormSurge: 3.1, proximity: 4.2, exposure: 3.8 };
+
+    const gwadarCvi = Object.entries(w).reduce((sum, [k, val]) => sum + val * (gwadarFactors[k as keyof typeof gwadarFactors] || 0), 0);
+    const lasbelaCvi = Object.entries(w).reduce((sum, [k, val]) => sum + val * (lasbelaFactors[k as keyof typeof lasbelaFactors] || 0), 0);
+
+    setOverallCvi((gwadarCvi + lasbelaCvi) / 20.0);
+    setCviExposureData([
+      { name: 'Gwadar', value: Math.round(gwadarCvi * 100) / 100, color: '#ef4444' },
+      { name: 'Lasbela', value: Math.round(lasbelaCvi * 100) / 100, color: '#f97316' }
+    ]);
+  }, [cviWeights]);
+
   const runGeeAnalysis = () => {
     setIsAnalysisActive(true);
     setAnalysisStatus('running');
