@@ -1438,15 +1438,55 @@ export default function DashboardPage() {
             </button>
           </section>
 
+          {/* REAL-TIME ACTIVE ALERT WARNING TICKER BANNER */}
+          {dbAlerts && dbAlerts.length > 0 && (
+            <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-2.5 rounded-2xl shadow-sm flex items-center justify-between gap-3 text-xs animate-in fade-in duration-300">
+              <div className="flex items-center gap-2 overflow-hidden">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping flex-shrink-0" />
+                <span className="font-extrabold uppercase text-[10px] tracking-wider bg-red-100 text-red-700 px-2 py-0.5 rounded-md flex-shrink-0">
+                  Live Emergency Alerts
+                </span>
+                <span className="truncate font-semibold text-red-900">
+                  {dbAlerts.map(a => `${a.title || a.message} (${a.district || 'Coastal Zone'})`).join('  •  ')}
+                </span>
+              </div>
+              <button
+                onClick={() => setActiveModal('alerts')}
+                className="text-[10px] font-extrabold text-red-700 hover:text-red-900 underline flex-shrink-0"
+              >
+                Manage Alerts →
+              </button>
+            </div>
+          )}
+
           {/* MIDDLE GRID: MAP + SIDEBAR WIDGETS */}
           <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             {/* LEFT SECTION (MAP CARD) */}
             <div className="lg:col-span-8 bg-white border border-slate-200/80 rounded-3xl p-5 flex flex-col relative min-h-[480px] shadow-sm hover:shadow-md transition-all">
               {/* Overlaid Map Filter Header */}
-              <div className="absolute top-8 left-8 right-8 z-10 flex flex-wrap gap-4 items-center justify-between pointer-events-none">
-                <div className="bg-white/95 border border-slate-200 px-4 py-2 rounded-xl backdrop-blur-md pointer-events-auto shadow-md">
-                  <h3 className="text-xs font-bold text-slate-900">Balochistan Coastline Overview</h3>
-                  <p className="text-[9px] text-slate-500 mt-0.5">Interactive spatial hazard metrics</p>
+              <div className="absolute top-8 left-8 right-8 z-10 flex flex-wrap gap-3 items-center justify-between pointer-events-none">
+                <div className="flex items-center gap-3 pointer-events-auto">
+                  <div className="bg-white/95 border border-slate-200 px-3.5 py-1.5 rounded-xl backdrop-blur-md shadow-md">
+                    <h3 className="text-xs font-bold text-slate-900">Balochistan Coastline Overview</h3>
+                    <p className="text-[9px] text-slate-500">Interactive spatial hazard metrics</p>
+                  </div>
+
+                  {/* Quick District Filter Pills */}
+                  <div className="hidden sm:flex gap-1 bg-white/95 border border-slate-200 p-1 rounded-xl backdrop-blur-md shadow-md">
+                    {['All Coastal Districts', 'Gwadar', 'Lasbela'].map((dist) => (
+                      <button
+                        key={dist}
+                        onClick={() => setSelectedDistrict(dist)}
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-extrabold transition active:scale-95 ${
+                          selectedDistrict === dist
+                            ? 'bg-cyan-500 text-white shadow-sm'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                        }`}
+                      >
+                        {dist === 'All Coastal Districts' ? 'All' : dist}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="flex gap-2.5 pointer-events-auto">

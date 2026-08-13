@@ -348,6 +348,33 @@ export default function AnalysisPage() {
               </p>
             </div>
 
+            {/* Preset Weight Profiles */}
+            <div className="space-y-1.5 pb-2 border-b border-slate-100">
+              <span className="text-[10px] text-slate-500 font-extrabold uppercase block tracking-wider">Quick Preset Profiles</span>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  { label: "Equal", weights: { elevation: 0.15, slope: 0.1, erosion: 0.15, slr: 0.15, tsunami: 0.15, stormSurge: 0.15, proximity: 0.1, exposure: 0.05 } },
+                  { label: "Storm Surge Focus", weights: { elevation: 0.1, slope: 0.1, erosion: 0.1, slr: 0.1, tsunami: 0.1, stormSurge: 0.4, proximity: 0.05, exposure: 0.05 } },
+                  { label: "Erosion Focus", weights: { elevation: 0.1, slope: 0.05, erosion: 0.45, slr: 0.15, tsunami: 0.05, stormSurge: 0.1, proximity: 0.05, exposure: 0.05 } },
+                  { label: "Tsunami Focus", weights: { elevation: 0.2, slope: 0.05, erosion: 0.05, slr: 0.05, tsunami: 0.45, stormSurge: 0.1, proximity: 0.05, exposure: 0.05 } }
+                ].map((preset) => (
+                  <button
+                    key={preset.label}
+                    onClick={() => {
+                      setCviWeights(preset.weights);
+                      setAnalysisLogs((prev) => [
+                        ...prev.slice(-10),
+                        `[INFO] Applied preset profile: ${preset.label}`
+                      ]);
+                    }}
+                    className="px-2 py-1 bg-slate-100 hover:bg-cyan-50 hover:text-cyan-700 border border-slate-200 text-[10px] font-bold rounded-lg text-slate-700 transition active:scale-95"
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Weights Sliders */}
             <div className="space-y-3.5">
               {[
