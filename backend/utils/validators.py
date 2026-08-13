@@ -12,7 +12,7 @@ from utils.constants import BALOCHISTAN_DISTRICTS, HAZARD_TYPES, MIN_YEAR, MAX_Y
 
 
 def validate_district(district: str | None) -> str | None:
-    if district is None:
+    if district is None or district.lower() in ["all", "all coastal districts"]:
         return None
     if district not in BALOCHISTAN_DISTRICTS:
         raise HTTPException(

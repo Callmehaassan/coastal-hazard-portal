@@ -240,7 +240,6 @@ export default function DashboardPage() {
   ]);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [hazardsMenuOpen, setHazardsMenuOpen] = useState<boolean>(true);
-  const [isLayersPanelOpen, setIsLayersPanelOpen] = useState<boolean>(false);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [generating, setGenerating] = useState<boolean>(false);
@@ -1556,96 +1555,76 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {/* Overlaid Layers Panel (Collapsible to keep map 100% open and clear) */}
-              <div className="absolute top-20 right-8 z-10 pointer-events-auto">
-                {!isLayersPanelOpen ? (
-                  <button
-                    onClick={() => setIsLayersPanelOpen(true)}
-                    className="bg-white/95 border border-slate-200 px-3 py-1.5 rounded-xl backdrop-blur-md text-xs font-bold text-slate-800 shadow-lg hover:bg-slate-50 transition flex items-center gap-1.5 active:scale-95"
-                  >
-                    <span>Layers & Basemap</span>
-                    <span className="text-[10px] text-cyan-600 font-extrabold">⚙️</span>
-                  </button>
-                ) : (
-                  <div className="bg-white/95 border border-slate-200 p-3.5 rounded-xl backdrop-blur-md text-[11px] w-[185px] shadow-xl text-slate-800 animate-in fade-in duration-200">
-                    <div className="flex justify-between items-center pb-1.5 border-b border-slate-200 mb-2">
-                      <span className="font-bold text-slate-900">Layers</span>
-                      <button
-                        onClick={() => setIsLayersPanelOpen(false)}
-                        className="text-slate-400 hover:text-slate-700 text-xs font-bold px-1"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                    <div className="space-y-2 text-slate-650">
-                      {[
-                        { key: 'Coastline', label: 'Coastline' },
-                        { key: 'District Boundary', label: 'District Boundary' },
-                        { key: 'Hazard Layer', label: 'Hazard Layer' },
-                        { key: 'Permanent Water', label: 'Permanent Water' },
-                        { key: 'Rainfall', label: 'Rainfall' },
-                        { key: 'Roads', label: 'Roads' },
-                        { key: 'Safe Zones', label: 'Safe Zones' }
-                      ].map((layer) => {
-                        const isChecked = visibleLayers.includes(layer.key);
-                        return (
-                          <label key={layer.key} className="flex items-center gap-2 cursor-pointer hover:text-slate-950 select-none">
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => {
-                                if (isChecked) {
-                                  setVisibleLayers(visibleLayers.filter((l) => l !== layer.key));
-                                } else {
-                                  setVisibleLayers([...visibleLayers, layer.key]);
-                                }
-                              }}
-                              className="sr-only"
-                            />
-                            <div className={`w-3.5 h-3.5 rounded flex items-center justify-center border transition ${
-                              isChecked 
-                                ? 'bg-cyan-500 border-cyan-500 text-white' 
-                                : 'border-slate-300 hover:border-slate-400 bg-white'
-                            }`}>
-                              {isChecked && (
-                                <svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 20 20">
-                                  <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
-                                </svg>
-                              )}
-                            </div>
-                            <span>{layer.label}</span>
-                          </label>
-                        );
-                      })}
-                    </div>
+              {/* Overlaid Layers Panel (Always Open and Visible) */}
+              <div className="absolute top-24 right-8 z-10 bg-white/95 border border-slate-200 p-4 rounded-2xl backdrop-blur-md text-[11px] w-[180px] pointer-events-auto shadow-xl text-slate-800">
+                <span className="font-bold text-slate-900 block mb-2 pb-1.5 border-b border-slate-200">Layers</span>
+                <div className="space-y-2 text-slate-650">
+                  {[
+                    { key: 'Coastline', label: 'Coastline' },
+                    { key: 'District Boundary', label: 'District Boundary' },
+                    { key: 'Hazard Layer', label: 'Hazard Layer' },
+                    { key: 'Permanent Water', label: 'Permanent Water' },
+                    { key: 'Rainfall', label: 'Rainfall' },
+                    { key: 'Roads', label: 'Roads' },
+                    { key: 'Safe Zones', label: 'Safe Zones' }
+                  ].map((layer) => {
+                    const isChecked = visibleLayers.includes(layer.key);
+                    return (
+                      <label key={layer.key} className="flex items-center gap-2 cursor-pointer hover:text-slate-950 select-none">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => {
+                            if (isChecked) {
+                              setVisibleLayers(visibleLayers.filter((l) => l !== layer.key));
+                            } else {
+                              setVisibleLayers([...visibleLayers, layer.key]);
+                            }
+                          }}
+                          className="sr-only"
+                        />
+                        <div className={`w-3.5 h-3.5 rounded flex items-center justify-center border transition ${
+                          isChecked 
+                            ? 'bg-cyan-500 border-cyan-500 text-white' 
+                            : 'border-slate-300 hover:border-slate-400 bg-white'
+                        }`}>
+                          {isChecked && (
+                            <svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 20 20">
+                              <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
+                            </svg>
+                          )}
+                        </div>
+                        <span>{layer.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
 
-                    <div className="pt-2.5 mt-2.5 border-t border-slate-200">
-                      <span className="font-bold text-slate-900 block mb-2">Basemap</span>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => setActiveBasemap('osm')}
-                          className={`flex-1 py-1 rounded text-center transition font-bold text-[10px] ${
-                            activeBasemap === 'osm'
-                              ? 'bg-cyan-500 text-white font-semibold shadow-sm'
-                              : 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800'
-                          }`}
-                        >
-                          Map
-                        </button>
-                        <button
-                          onClick={() => setActiveBasemap('satellite')}
-                          className={`flex-1 py-1 rounded text-center transition font-bold text-[10px] ${
-                            activeBasemap === 'satellite'
-                              ? 'bg-cyan-500 text-white font-semibold shadow-sm'
-                              : 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800'
-                          }`}
-                        >
-                          Satellite
-                        </button>
-                      </div>
-                    </div>
+                <div className="pt-2.5 mt-2.5 border-t border-slate-200">
+                  <span className="font-bold text-slate-900 block mb-2">Basemap</span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setActiveBasemap('osm')}
+                      className={`flex-1 py-1 rounded-lg text-center transition font-extrabold text-[10px] ${
+                        activeBasemap === 'osm'
+                          ? 'bg-cyan-500 text-white shadow-sm'
+                          : 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800'
+                      }`}
+                    >
+                      Map
+                    </button>
+                    <button
+                      onClick={() => setActiveBasemap('satellite')}
+                      className={`flex-1 py-1 rounded-lg text-center transition font-extrabold text-[10px] ${
+                        activeBasemap === 'satellite'
+                          ? 'bg-cyan-500 text-white shadow-sm'
+                          : 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800'
+                      }`}
+                    >
+                      Satellite
+                    </button>
                   </div>
-                )}
+                </div>
               </div>
 
               {/* Floating GEE Active Indicator */}

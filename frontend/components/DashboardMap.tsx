@@ -396,10 +396,10 @@ export default function DashboardMap({
     const isSelected = region.id === selectedRegionId;
     return {
       color: isSelected ? "#06b6d4" : "#0284c7", // Electric Cyan for selected, Ocean Blue for unselected
-      weight: isSelected ? 3.5 : 2.0,
+      weight: isSelected ? 4.0 : 3.0,
       fillColor: isSelected ? "#06b6d4" : "#0284c7",
-      fillOpacity: isSelected ? 0.12 : 0.04, // Clean translucent fill
-      dashArray: isSelected ? "" : "6, 4", // Sleek dashed outline for non-selected
+      fillOpacity: isSelected ? 0.25 : 0.15, // Bright visible translucent fill
+      dashArray: "", // Solid crisp outline
     };
   };
 

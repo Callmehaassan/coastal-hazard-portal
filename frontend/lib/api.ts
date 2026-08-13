@@ -14,7 +14,9 @@ export async function getHazards(
   yearEnd?: number
 ): Promise<HazardReading[]> {
   const params = new URLSearchParams();
-  if (district) params.append('district', district);
+  if (district && district.toLowerCase() !== 'all coastal districts' && district.toLowerCase() !== 'all') {
+    params.append('district', district);
+  }
   if (yearStart) params.append('year_start', yearStart.toString());
   if (yearEnd) params.append('year_end', yearEnd.toString());
   
