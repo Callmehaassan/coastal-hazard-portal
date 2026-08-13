@@ -1446,7 +1446,14 @@ export default function DashboardPage() {
                   Live Emergency Alerts
                 </span>
                 <span className="truncate font-semibold text-red-900">
-                  {dbAlerts.map(a => `${a.title || a.message} (${a.district || 'Coastal Zone'})`).join('  •  ')}
+                  {dbAlerts.map((a: any) => {
+                    const hazardName = a.hazard_type
+                      ? String(a.hazard_type).split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+                      : 'Coastal Hazard';
+                    const regionName = a.region_id === 1 ? 'Gwadar' : a.region_id === 2 ? 'Lasbela' : 'Coastal Zone';
+                    const compStr = a.comparator === 'gt' || a.comparator === 'GREATER_THAN' ? '>' : a.comparator === 'lt' || a.comparator === 'LESS_THAN' ? '<' : '>';
+                    return `${hazardName} Alert (${regionName}) ${compStr} ${a.threshold_value}`;
+                  }).join('  •  ')}
                 </span>
               </div>
               <button
