@@ -391,14 +391,24 @@ export default function DashboardMap({
     return reading ? (reading.unit === 'm' && selectedAnalysis === 'sea-level-rise' ? reading.value * 1000 : reading.value) : 0;
   };
 
+  const getHazardThemeColor = () => {
+    if (selectedAnalysis.includes("surge")) return "#f97316";
+    if (selectedAnalysis.includes("erosion")) return "#ef4444";
+    if (selectedAnalysis.includes("tsunami")) return "#a855f7";
+    if (selectedAnalysis.includes("sea-level")) return "#0284c7";
+    if (selectedAnalysis.includes("vulnerab")) return "#d97706";
+    return "#06b6d4"; // Flooding
+  };
+
   // Style helper for region polygons
   const getRegionStyle = (region: Region) => {
     const isSelected = region.id === selectedRegionId;
+    const themeColor = getHazardThemeColor();
     return {
-      color: isSelected ? "#06b6d4" : "#0284c7", // Electric Cyan for selected, Ocean Blue for unselected
+      color: isSelected ? themeColor : "#0284c7", // Dynamic theme stroke for selected, Ocean Blue for unselected
       weight: isSelected ? 4.0 : 3.0,
-      fillColor: isSelected ? "#06b6d4" : "#0284c7",
-      fillOpacity: isSelected ? 0.25 : 0.15, // Bright visible translucent fill
+      fillColor: themeColor,
+      fillOpacity: isSelected ? 0.22 : 0.12, // Vibrant translucent fill matching active hazard
       dashArray: "", // Solid crisp outline
     };
   };
@@ -658,19 +668,19 @@ function isPointInRegion(point: [number, number], geometry: any) {
         spots.forEach((spot, spotIdx) => {
           let color = "#ef4444";
           let label = "Erosion Hazard";
-          if (hazard === "flooding") {
+          if (hazard.includes("flooding")) {
             color = "#06b6d4";
             label = "Flood Inundation";
-          } else if (hazard === "storm-surge") {
+          } else if (hazard.includes("surge")) {
             color = "#f97316";
             label = "Storm Surge Hazard";
-          } else if (hazard === "tsunami-risk") {
+          } else if (hazard.includes("tsunami")) {
             color = "#a855f7";
             label = "Tsunami Risk";
-          } else if (hazard === "sea-level-rise") {
+          } else if (hazard.includes("sea-level")) {
             color = "#0284c7";
             label = "Sea Level Anomaly";
-          } else if (hazard === "vulnerability") {
+          } else if (hazard.includes("vulnerab")) {
             color = "#d97706";
             label = "CVI Risk";
           }

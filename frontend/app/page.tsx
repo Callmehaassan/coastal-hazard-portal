@@ -215,7 +215,7 @@ export default function LandingPage() {
         </div>
 
         {/* Hero Right Column (Balochistan Coastline Overview Card) */}
-        <div className={`border rounded-3xl p-6 shadow-xl transition-all ${
+        <div className={`lg:col-span-6 border rounded-3xl p-6 shadow-xl transition-all ${
           darkMode ? 'bg-slate-900/90 border-slate-800/90 shadow-slate-950/80 text-white backdrop-blur-xl' : 'bg-white border-slate-200/60 shadow-slate-100/50 text-slate-900'
         }`}>
           <div className={`flex justify-between items-center border-b pb-4 mb-4 ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>

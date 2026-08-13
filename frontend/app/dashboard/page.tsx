@@ -2198,22 +2198,28 @@ export default function DashboardPage() {
                   <BookOpen className="w-5 h-5 text-cyan-600" />
                   <span>GEE Ingestion Methodology</span>
                 </h3>
-                <div className="space-y-3 text-xs text-slate-655 leading-relaxed max-h-[300px] overflow-y-auto pr-1">
-                  <p>
-                    The Pakistan Coastal Hazard Portal computes spatial indicators using Google Earth Engine (GEE) script queries:
+                <div className="space-y-3 text-xs text-slate-600 leading-relaxed max-h-[340px] overflow-y-auto pr-1">
+                  <p className="font-semibold text-slate-800">
+                    The Coastal Hazard Portal executes automated satellite remote sensing and spatial multi-criteria evaluation pipelines via Google Earth Engine (GEE):
                   </p>
-                  <ul className="list-disc pl-5 space-y-1.5">
+                  <ul className="list-disc pl-5 space-y-2 text-slate-650">
                     <li>
-                      <strong>Coastal Inundation</strong>: Calculated from Sentinel-1 SAR GRD median backscattering composites using VH polarization threshold changes during the monsoon.
+                      <strong>Coastal Flood Inundation (Sentinel-1 SAR)</strong>: Processed from C-band synthetic aperture radar (SAR) GRD imagery. Applies Otsu thresholding on VH polarization backscattering (sigma_0 &le; -16 dB) to isolate open surface water during monsoon surge events.
                     </li>
                     <li>
-                      <strong>Storm Surge Risk</strong>: Event-driven Sentinel-1 SAR change detection calculated over specific cyclone event windows.
+                      <strong>Storm Surge Inundation (SAR Event Windows)</strong>: Event-driven Sentinel-1 SAR change detection calculated over cyclone event windows (e.g. Cyclone Biparjoy 2023, Kyarr 2019) mapped against baseline DEMs.
                     </li>
                     <li>
-                      <strong>Shoreline Change</strong>: Evaluated using Sentinel-2 MNDWI (Modified Normalized Difference Water Index) calculated against the 2016 baseline.
+                      <strong>Shoreline Erosion & Accretion (Sentinel-2 MNDWI & DSAS)</strong>: Evaluates Modified Normalized Difference Water Index (MNDWI = (Green - SWIR) / (Green + SWIR) &gt; 0) extracted at 10m spatial resolution. Transects placed at 50m intervals calculate Net Shoreline Movement (NSM) and End Point Rate (EPR).
                     </li>
                     <li>
-                      <strong>Sea Level Anomaly</strong>: Computed from multi-mission altimeter satellite anomaly grids mapped chronologically.
+                      <strong>Sea Level Anomaly (SSHA Altimetry)</strong>: Derived from Jason-3 and Sentinel-6 Michael Freilich altimetry grids tracking Sea Surface Height Anomalies (SSHA) relative to the 20-year mean.
+                    </li>
+                    <li>
+                      <strong>Coastal Vulnerability Index (MCE CVI Equation)</strong>: Integrates physical exposure parameters using Multi-Criteria Evaluation:
+                      <div className="p-2 bg-slate-100 rounded-lg text-slate-900 font-mono text-[11px] mt-1 font-bold">
+                        CVI = &radic;[ (W_elev &middot; E + W_slope &middot; S + W_ero &middot; ER + W_slr &middot; SLR + W_surge &middot; SS) / 5 ]
+                      </div>
                     </li>
                   </ul>
                 </div>
