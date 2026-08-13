@@ -751,36 +751,28 @@ export default function DashboardPage() {
 
     return dbAlerts
       .filter((alert) => {
-        // Filter by district
-        if (selectedDistrict !== 'All Coastal Districts') {
-          const targetRegionId = selectedDistrict.toLowerCase() === 'lasbela' ? 1 : 2;
+        // Filter by district (region_id 1 = Gwadar, region_id 2 = Lasbela)
+        if (selectedDistrict !== 'All Coastal Districts' && selectedDistrict !== 'All') {
+          const targetRegionId = selectedDistrict.toLowerCase() === 'gwadar' ? 1 : 2;
           if (alert.region_id !== targetRegionId) return false;
         }
-
-        // Filter by hazard type
-        const alertHazardMapped = alert.hazard_type.replace('_', '-');
-        if (selectedAnalysis && alertHazardMapped !== selectedAnalysis) {
-          return false;
-        }
-
         return true;
       })
       .map((alert) => {
-        const distName = alert.region_id === 1 ? 'Lasbela District' : 'Gwadar District';
+        const distName = alert.region_id === 1 ? 'Gwadar District' : 'Lasbela District';
+        const hazardClean = String(alert.hazard_type).replaceAll('_', ' ').replaceAll('-', ' ');
+        const hazardCapitalized = hazardClean.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
         
-        let title = 'Hazard Threat Alert';
+        let title = `${hazardCapitalized} Alert`;
         let severity = 'medium';
-        if (alert.hazard_type === 'storm_surge') {
-          title = 'High Storm Surge Warning';
+        if (alert.hazard_type.includes('surge') || alert.hazard_type.includes('tsunami')) {
+          title = `High ${hazardCapitalized} Warning`;
           severity = 'high';
-        } else if (alert.hazard_type === 'flooding') {
-          title = 'Coastal Flood Watch';
+        } else if (alert.hazard_type.includes('flood')) {
+          title = `Coastal Flood Watch`;
           severity = 'medium';
-        } else if (alert.hazard_type === 'erosion') {
-          title = 'Shoreline Erosion Alert';
-          severity = 'low';
-        } else if (alert.hazard_type === 'tsunami_risk') {
-          title = 'Tsunami Run-up Warning';
+        } else if (alert.hazard_type.includes('erosion')) {
+          title = `Shoreline Erosion Alert`;
           severity = 'high';
         }
 
@@ -803,6 +795,7 @@ export default function DashboardPage() {
           severity,
           threshold: alert.threshold_value,
           comparator: alert.comparator,
+          hazardType: alert.hazard_type,
           rawHazard: alert.hazard_type
         };
       });
@@ -1447,9 +1440,8 @@ export default function DashboardPage() {
                 </span>
                 <span className="truncate font-semibold text-red-900">
                   {dbAlerts.map((a: any) => {
-                    const hazardName = a.hazard_type
-                      ? String(a.hazard_type).split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
-                      : 'Coastal Hazard';
+                    const hazardClean = String(a.hazard_type || 'hazard').replaceAll('_', ' ').replaceAll('-', ' ');
+                    const hazardName = hazardClean.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
                     const regionName = a.region_id === 1 ? 'Gwadar' : a.region_id === 2 ? 'Lasbela' : 'Coastal Zone';
                     const compStr = a.comparator === 'gt' || a.comparator === 'GREATER_THAN' ? '>' : a.comparator === 'lt' || a.comparator === 'LESS_THAN' ? '<' : '>';
                     return `${hazardName} Alert (${regionName}) ${compStr} ${a.threshold_value}`;
