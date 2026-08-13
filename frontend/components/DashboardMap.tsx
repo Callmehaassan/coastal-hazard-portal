@@ -549,14 +549,20 @@ function isPointInRegion(point: [number, number], geometry: any) {
 
   const getActiveHazardsList = () => {
     if (selectedHazards && selectedHazards.length > 0) {
-      return selectedHazards;
+      return selectedHazards.map(h => {
+        if (h === 'erosion') return 'coastal-erosion';
+        if (h === 'surge') return 'storm-surge';
+        if (h === 'sea-level') return 'sea-level-rise';
+        if (h === 'vulnerability') return 'vulnerability-index';
+        return h;
+      });
     }
     const mapped = selectedAnalysis === "coastal-erosion" ? "coastal-erosion"
                  : selectedAnalysis === "storm-surge" ? "storm-surge"
                  : selectedAnalysis === "flooding" ? "flooding"
                  : selectedAnalysis === "tsunami-risk" ? "tsunami-risk"
                  : selectedAnalysis === "sea-level-rise" ? "sea-level-rise"
-                 : "vulnerability";
+                 : "vulnerability-index";
     return [mapped];
   };
 
@@ -582,7 +588,7 @@ function isPointInRegion(point: [number, number], geometry: any) {
     
     regions.forEach((region) => {
       const regionDist = region.district.toLowerCase();
-      if (activeDist !== 'all coastal districts' && regionDist !== activeDist) {
+      if (activeDist !== 'all coastal districts' && activeDist !== 'all' && regionDist !== activeDist) {
         return;
       }
       
@@ -592,11 +598,11 @@ function isPointInRegion(point: [number, number], geometry: any) {
         
         spots.forEach((spot, spotIdx) => {
           let baseColor = "#ef4444"; // Red for erosion
-          if (hazard === "flooding") baseColor = "#06b6d4"; // Cyan
-          else if (hazard === "storm-surge") baseColor = "#f97316"; // Radiant Orange/Red for surge
-          else if (hazard === "tsunami-risk") baseColor = "#a855f7"; // Vibrant Purple
-          else if (hazard === "sea-level-rise") baseColor = "#0284c7"; // Ocean Blue
-          else if (hazard === "vulnerability") baseColor = "#d97706"; // Amber
+          if (hazard.includes("flooding")) baseColor = "#06b6d4"; // Cyan
+          else if (hazard.includes("surge")) baseColor = "#f97316"; // Radiant Orange/Red for surge
+          else if (hazard.includes("tsunami")) baseColor = "#a855f7"; // Vibrant Purple
+          else if (hazard.includes("sea-level")) baseColor = "#0284c7"; // Ocean Blue
+          else if (hazard.includes("vulnerab")) baseColor = "#d97706"; // Amber
           
           // 4 concentric overlapping circles to create a rich, smooth radial blur heatmap blob!
           blurs.push({

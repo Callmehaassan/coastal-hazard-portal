@@ -173,20 +173,26 @@ export default function LandingPage() {
 
         {/* Hero Left Column (Info & Actions) */}
         <div className="lg:col-span-6 space-y-6">
-          <h1 className="text-4xl md:text-5.5xl font-black text-slate-900 tracking-tight leading-[1.1] font-sans">
+          <h1 className={`text-4xl md:text-5.5xl font-black tracking-tight leading-[1.1] font-sans ${
+            darkMode ? 'text-white' : 'text-slate-900'
+          }`}>
             Better Intelligence.
             <br />
-            <span className="text-[#132c25]">Safer Coastlines.</span>
+            <span className={darkMode ? 'text-cyan-400 font-black drop-shadow-sm' : 'text-[#132c25]'}>Safer Coastlines.</span>
           </h1>
 
-          <p className="text-sm md:text-base text-slate-600 leading-relaxed max-w-xl">
+          <p className={`text-sm md:text-base leading-relaxed max-w-xl ${
+            darkMode ? 'text-slate-300 font-medium' : 'text-slate-600'
+          }`}>
             Monitoring coastal flooding, storm surge, shoreline change and sea-level rise along Pakistan's Balochistan coastline using satellite data and AI-driven insights.
           </p>
 
           <div className="flex flex-wrap gap-4 pt-2">
             <Link 
               href="/dashboard"
-              className="px-6 py-3.5 bg-[#132c25] hover:bg-[#1a3a32] text-white rounded-xl text-xs font-bold flex items-center gap-2 transition shadow-lg shadow-[#132c25]/10 active:scale-95"
+              className={`px-6 py-3.5 rounded-xl text-xs font-black flex items-center gap-2 transition active:scale-95 shadow-lg ${
+                darkMode ? 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-cyan-500/20' : 'bg-[#132c25] hover:bg-[#1a3a32] text-white shadow-[#132c25]/10'
+              }`}
             >
               <span>Explore Dashboard</span>
               <ArrowRight className="w-4 h-4" />
@@ -198,41 +204,47 @@ export default function LandingPage() {
                 e.preventDefault();
                 alert("Playing Overview Video. For detailed live data updates, please click on Explore Dashboard.");
               }}
-              className="px-6 py-3.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-2 transition active:scale-95 shadow-sm"
+              className={`px-6 py-3.5 rounded-xl text-xs font-extrabold flex items-center gap-2 transition active:scale-95 border ${
+                darkMode ? 'bg-slate-900/80 border-slate-700 hover:bg-slate-800 text-white' : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700 shadow-sm'
+              }`}
             >
-              <Play className="w-3.5 h-3.5 text-slate-500 fill-slate-500" />
+              <Play className={`w-3.5 h-3.5 ${darkMode ? 'text-slate-300 fill-slate-300' : 'text-slate-500 fill-slate-500'}`} />
               <span>Watch Overview</span>
             </Link>
           </div>
         </div>
 
         {/* Hero Right Column (Balochistan Coastline Overview Card) */}
-        <div className="lg:col-span-6 bg-white border border-slate-200/60 rounded-3xl p-6 shadow-xl shadow-slate-100/50">
-          <div className="flex justify-between items-center border-b border-slate-100 pb-4 mb-4">
-            <h3 className="font-extrabold text-sm text-slate-900 font-sans uppercase tracking-tight">Balochistan Coastline Overview</h3>
+        <div className={`border rounded-3xl p-6 shadow-xl transition-all ${
+          darkMode ? 'bg-slate-900/90 border-slate-800/90 shadow-slate-950/80 text-white backdrop-blur-xl' : 'bg-white border-slate-200/60 shadow-slate-100/50 text-slate-900'
+        }`}>
+          <div className={`flex justify-between items-center border-b pb-4 mb-4 ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
+            <h3 className={`font-extrabold text-sm font-sans uppercase tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>Balochistan Coastline Overview</h3>
           </div>
 
           {/* Metric Stats Banner */}
-          <div className="grid grid-cols-5 gap-2 text-center bg-slate-50 border border-slate-100 rounded-2xl p-3 mb-4">
+          <div className={`grid grid-cols-5 gap-2 text-center rounded-2xl p-3 mb-4 border ${
+            darkMode ? 'bg-slate-950/90 border-slate-800/80 text-white' : 'bg-slate-50 border-slate-100 text-slate-900'
+          }`}>
             <div>
-              <span className="block text-xs font-black text-slate-900 font-sans">~700 km</span>
-              <span className="text-[8px] text-slate-500 font-semibold block leading-tight">Coastline Monitored</span>
+              <span className={`block text-xs font-black font-sans ${darkMode ? 'text-white' : 'text-slate-900'}`}>~700 km</span>
+              <span className={`text-[8px] font-semibold block leading-tight ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Coastline Monitored</span>
             </div>
             <div>
-              <span className="block text-xs font-black text-slate-900 font-sans">2</span>
-              <span className="text-[8px] text-slate-500 font-semibold block leading-tight">Districts Covered</span>
+              <span className={`block text-xs font-black font-sans ${darkMode ? 'text-white' : 'text-slate-900'}`}>2</span>
+              <span className={`text-[8px] font-semibold block leading-tight ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Districts Covered</span>
             </div>
             <div>
-              <span className="block text-xs font-black text-slate-900 font-sans">4</span>
-              <span className="text-[8px] text-slate-500 font-semibold block block leading-tight">Coastal Hazards</span>
+              <span className={`block text-xs font-black font-sans ${darkMode ? 'text-white' : 'text-slate-900'}`}>4</span>
+              <span className={`text-[8px] font-semibold block leading-tight ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Coastal Hazards</span>
             </div>
             <div>
-              <span className="block text-xs font-black text-slate-900 font-sans">10+</span>
-              <span className="text-[8px] text-slate-500 font-semibold block leading-tight">Satellite Datasets</span>
+              <span className={`block text-xs font-black font-sans ${darkMode ? 'text-white' : 'text-slate-900'}`}>10+</span>
+              <span className={`text-[8px] font-semibold block leading-tight ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Satellite Datasets</span>
             </div>
             <div>
-              <span className="block text-xs font-black text-slate-900 font-sans">2016-2025</span>
-              <span className="text-[8px] text-slate-500 font-semibold block leading-tight">Historical Analysis</span>
+              <span className={`block text-xs font-black font-sans ${darkMode ? 'text-white' : 'text-slate-900'}`}>2016-2025</span>
+              <span className={`text-[8px] font-semibold block leading-tight ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Historical Analysis</span>
             </div>
           </div>
 

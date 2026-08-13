@@ -161,12 +161,20 @@ export default function DistrictDetailPage({ params }: { params: { district: str
             const mappedHistory = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025].map((yr) => {
               const r = readings.find((item) => item.year === yr);
               const val = r ? r.value : 0;
+              const floodingVal = activeHazard === "flooding" ? val : 500 + (yr - 2016) * 200;
+              const surgeVal = activeHazard === "storm-surge" ? val : 0.4 + (yr - 2016) * 0.15;
+              const erosionVal = activeHazard === "coastal-erosion" ? Math.abs(val) : 0.8 + (yr - 2016) * 0.18;
+              const seaLevelVal = activeHazard === "sea-level-rise" ? val : 2.1 + (yr - 2016) * 0.2;
+
               return {
                 year: yr,
-                flooding: activeHazard === "flooding" ? val : 500 + (yr - 2016) * 200,
-                surge: activeHazard === "storm-surge" ? val : 0.4 + (yr - 2016) * 0.15,
-                erosion: activeHazard === "coastal-erosion" ? val : -0.8 - (yr - 2016) * 0.18,
-                seaLevel: activeHazard === "sea-level-rise" ? val : 2.1 + (yr - 2016) * 0.2,
+                flooding: floodingVal,
+                surge: surgeVal,
+                erosion: erosionVal,
+                seaLevel: seaLevelVal,
+                "coastal-erosion": erosionVal,
+                "sea-level-rise": seaLevelVal,
+                "storm-surge": surgeVal,
                 [activeHazard]: val,
               };
             });
@@ -463,13 +471,13 @@ export default function DistrictDetailPage({ params }: { params: { district: str
                       }} />
                       {isWetHazard ? (
                         <>
-                          <Bar dataKey="coastal-erosion" fill="#ef4444" name="Erosion Rate (m/yr)" fillOpacity={0.85} radius={[4, 4, 0, 0]} />
-                          <Bar dataKey="sea-level-rise" fill="#06b6d4" name="Sea Level (mm/yr)" fillOpacity={0.85} radius={[4, 4, 0, 0]} />
+                          <Bar dataKey="erosion" fill="#ef4444" name="Erosion Rate (m/yr)" fillOpacity={0.85} radius={[4, 4, 0, 0]} />
+                          <Bar dataKey="seaLevel" fill="#06b6d4" name="Sea Level (mm/yr)" fillOpacity={0.85} radius={[4, 4, 0, 0]} />
                         </>
                       ) : (
                         <>
                           <Bar dataKey="flooding" fill="#06b6d4" name="Flooding (km²)" fillOpacity={0.85} radius={[4, 4, 0, 0]} />
-                          <Bar dataKey="storm-surge" fill="#f59e0b" name="Storm Surge Area (km²)" fillOpacity={0.85} radius={[4, 4, 0, 0]} />
+                          <Bar dataKey="surge" fill="#f59e0b" name="Storm Surge (m)" fillOpacity={0.85} radius={[4, 4, 0, 0]} />
                         </>
                       )}
                     </BarChart>
