@@ -33,14 +33,11 @@ const nextConfig = {
       }
     ];
   },
-  webpack: (config, { dev }) => {
+  webpack: (config) => {
     config.externals.push({
       'utf-8-validate': 'commonjs utf-8-validate',
       'bufferutil': 'commonjs bufferutil',
     });
-    if (dev) {
-      config.cache = false;
-    }
     return config;
   },
 };

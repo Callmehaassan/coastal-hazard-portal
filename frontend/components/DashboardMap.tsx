@@ -395,11 +395,11 @@ export default function DashboardMap({
   const getRegionStyle = (region: Region) => {
     const isSelected = region.id === selectedRegionId;
     return {
-      color: isSelected ? "#ffffff" : "#2fb8c6", // Neon cyan boundary
-      weight: isSelected ? 2.5 : 1.5,
-      fillColor: "#2fb8c6",
-      fillOpacity: isSelected ? 0.08 : 0.02, // Clean translucent fill
-      dashArray: "",
+      color: isSelected ? "#06b6d4" : "#0284c7", // Electric Cyan for selected, Ocean Blue for unselected
+      weight: isSelected ? 3.5 : 2.0,
+      fillColor: isSelected ? "#06b6d4" : "#0284c7",
+      fillOpacity: isSelected ? 0.12 : 0.04, // Clean translucent fill
+      dashArray: isSelected ? "" : "6, 4", // Sleek dashed outline for non-selected
     };
   };
 
@@ -547,8 +547,20 @@ function isPointInRegion(point: [number, number], geometry: any) {
     return cells;
   };
 
+  const getActiveHazardsList = () => {
+    if (selectedHazards && selectedHazards.length > 0) {
+      return selectedHazards;
+    }
+    const mapped = selectedAnalysis === "coastal-erosion" ? "coastal-erosion"
+                 : selectedAnalysis === "storm-surge" ? "storm-surge"
+                 : selectedAnalysis === "flooding" ? "flooding"
+                 : selectedAnalysis === "tsunami-risk" ? "tsunami-risk"
+                 : selectedAnalysis === "sea-level-rise" ? "sea-level-rise"
+                 : "vulnerability";
+    return [mapped];
+  };
+
   const getRasterGrid = () => {
-    if (!isAnalysisActive) return [];
     const dist = selectedDistrict.toLowerCase();
 
     if (dist === "gwadar") {
@@ -564,10 +576,9 @@ function isPointInRegion(point: [number, number], geometry: any) {
   };
 
   const getHeatmapCircles = () => {
-    if (!isAnalysisActive) return [];
-    
     const blurs: any[] = [];
     const activeDist = selectedDistrict.toLowerCase();
+    const activeHazards = getActiveHazardsList();
     
     regions.forEach((region) => {
       const regionDist = region.district.toLowerCase();
@@ -575,37 +586,46 @@ function isPointInRegion(point: [number, number], geometry: any) {
         return;
       }
       
-      selectedHazards.forEach((hazard) => {
+      activeHazards.forEach((hazard) => {
         const hazardGroup = HAZARD_HOTSPOTS[hazard] || HAZARD_HOTSPOTS["vulnerability-index"] || {};
         const spots = hazardGroup[region.district] || [];
         
         spots.forEach((spot, spotIdx) => {
           let baseColor = "#ef4444"; // Red for erosion
           if (hazard === "flooding") baseColor = "#06b6d4"; // Cyan
-          else if (hazard === "storm-surge") baseColor = "#f97316"; // Orange
-          else if (hazard === "vulnerability") baseColor = "#a855f7"; // Purple for vulnerability
+          else if (hazard === "storm-surge") baseColor = "#f97316"; // Radiant Orange/Red for surge
+          else if (hazard === "tsunami-risk") baseColor = "#a855f7"; // Vibrant Purple
+          else if (hazard === "sea-level-rise") baseColor = "#0284c7"; // Ocean Blue
+          else if (hazard === "vulnerability") baseColor = "#d97706"; // Amber
           
-          // Triple overlapping transparent circles to make a smooth radial blur heatmap blob!
+          // 4 concentric overlapping circles to create a rich, smooth radial blur heatmap blob!
           blurs.push({
             id: `${region.id}-${hazard}-${spotIdx}-outer`,
             center: spot.coordinates,
-            radius: 22000, // 22km outer glow
+            radius: 26000, // 26km outer glow
             color: baseColor,
-            fillOpacity: 0.08
+            fillOpacity: 0.12
           });
           blurs.push({
-            id: `${region.id}-${hazard}-${spotIdx}-mid`,
+            id: `${region.id}-${hazard}-${spotIdx}-mid1`,
             center: spot.coordinates,
-            radius: 12000, // 12km mid blur
+            radius: 16000, // 16km mid glow
             color: baseColor,
-            fillOpacity: 0.22
+            fillOpacity: 0.28
           });
           blurs.push({
-            id: `${region.id}-${hazard}-${spotIdx}-inner`,
+            id: `${region.id}-${hazard}-${spotIdx}-mid2`,
             center: spot.coordinates,
-            radius: 6000, // 6km intense core
+            radius: 9000, // 9km inner glow
             color: baseColor,
-            fillOpacity: 0.45
+            fillOpacity: 0.50
+          });
+          blurs.push({
+            id: `${region.id}-${hazard}-${spotIdx}-core`,
+            center: spot.coordinates,
+            radius: 4000, // 4km intense core
+            color: "#ffffff",
+            fillOpacity: 0.75
           });
         });
       });
@@ -615,10 +635,9 @@ function isPointInRegion(point: [number, number], geometry: any) {
   };
 
   const getHeatmapBeacons = () => {
-    if (!isAnalysisActive) return [];
-    
     const beacons: any[] = [];
     const activeDist = selectedDistrict.toLowerCase();
+    const activeHazards = getActiveHazardsList();
     
     regions.forEach((region) => {
       const regionDist = region.district.toLowerCase();
@@ -626,22 +645,28 @@ function isPointInRegion(point: [number, number], geometry: any) {
         return;
       }
       
-      selectedHazards.forEach((hazard) => {
+      activeHazards.forEach((hazard) => {
         const hazardGroup = HAZARD_HOTSPOTS[hazard] || HAZARD_HOTSPOTS["vulnerability-index"] || {};
         const spots = hazardGroup[region.district] || [];
         
         spots.forEach((spot, spotIdx) => {
           let color = "#ef4444";
-          let label = "Erosion Alert";
+          let label = "Erosion Hazard";
           if (hazard === "flooding") {
             color = "#06b6d4";
-            label = "Flood Risk";
+            label = "Flood Inundation";
           } else if (hazard === "storm-surge") {
             color = "#f97316";
-            label = "Surge Alert";
-          } else if (hazard === "vulnerability") {
+            label = "Storm Surge Hazard";
+          } else if (hazard === "tsunami-risk") {
             color = "#a855f7";
-            label = "Vulnerability Risk";
+            label = "Tsunami Risk";
+          } else if (hazard === "sea-level-rise") {
+            color = "#0284c7";
+            label = "Sea Level Anomaly";
+          } else if (hazard === "vulnerability") {
+            color = "#d97706";
+            label = "CVI Risk";
           }
           
           beacons.push({
@@ -719,12 +744,18 @@ function isPointInRegion(point: [number, number], geometry: any) {
         <MapController center={activeCenter} zoom={activeZoom} />
         
         {activeBasemap === "satellite" ? (
-          <LeafletTileLayer attribution={satAttribution} url={satUrl} />
+          <>
+            <LeafletTileLayer attribution={satAttribution} url={satUrl} />
+            <LeafletTileLayer
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
+              opacity={0.85}
+            />
+          </>
         ) : (
           <LeafletTileLayer attribution={osmAttribution} url={osmUrl} />
         )}
 
-        {isAnalysisActive && (
+        {(showHazardLayer || isAnalysisActive) && (
           <LeafletGeoJSON
             key={`gee-analysis-active-${selectedAnalysis}-${isAnalysisActive}-${selectedDistrict}-${selectedHazards.join('-')}`}
             data={filteredAnalysisGeoJSON}
@@ -753,22 +784,8 @@ function isPointInRegion(point: [number, number], geometry: any) {
           />
         )}
 
-        {/* Shape-matched GEE Continuous Heatmap Layer */}
-        {isAnalysisActive && getRasterGrid().map((cell) => (
-          <LeafletPolygon
-            key={`raster-cell-${cell.id}-${selectedHazards.join('-')}-${selectedDistrict}`}
-            positions={cell.bounds}
-            pathOptions={{
-              fillColor: getRasterColor(cell.score),
-              fillOpacity: 0.45,
-              color: "transparent",
-              weight: 0
-            }}
-          />
-        ))}
-
-        {/* Real Dynamic Heatmap Blurs (Concentric Circles) */}
-        {isAnalysisActive && getHeatmapCircles().map((blur) => (
+        {/* Real Dynamic Heatmap Blurs (Concentric Radial Blur Heatmaps) */}
+        {(showHazardLayer || isAnalysisActive) && getHeatmapCircles().map((blur) => (
           <LeafletCircle
             key={`blur-${blur.id}-${selectedDistrict}`}
             center={blur.center}
@@ -782,8 +799,8 @@ function isPointInRegion(point: [number, number], geometry: any) {
           />
         ))}
 
-        {/* Highly Visible Pulsing Hazard Beacons with Permanent Labels */}
-        {isAnalysisActive && getHeatmapBeacons().map((beacon) => (
+        {/* Highly Visible Pulsing Hazard Beacons (Hover/Click Tooltips to Avoid Map Overlap Clutter) */}
+        {(showHazardLayer || isAnalysisActive) && getHeatmapBeacons().map((beacon) => (
           <LeafletCircleMarker
             key={`beacon-${beacon.id}-${selectedDistrict}`}
             center={beacon.center}
@@ -794,19 +811,9 @@ function isPointInRegion(point: [number, number], geometry: any) {
             weight={2.0}
           >
             <LeafletTooltip
-              permanent
-              direction={
-                beacon.hazard === "flooding" ? "top"
-                : beacon.hazard === "erosion" ? "bottom"
-                : beacon.hazard === "vulnerability" ? "left"
-                : "right"
-              }
-              offset={
-                beacon.hazard === "flooding" ? [0, -8]
-                : beacon.hazard === "erosion" ? [0, 8]
-                : beacon.hazard === "vulnerability" ? [-10, 0]
-                : [10, 0]
-              }
+              direction="top"
+              offset={[0, -8]}
+              opacity={0.95}
               className="custom-glowing-tooltip"
             >
               <div className="px-2 py-1 text-[9px] font-sans font-bold bg-[#070e1b]/95 text-white border border-white/10 rounded-lg shadow-xl flex items-center gap-1.5 leading-none select-none">
