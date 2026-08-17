@@ -4,6 +4,30 @@ A state-of-the-art decision support system and multi-hazard mapping application 
 
 ---
 
+## 📸 Application Screenshots & Visual Showcase
+
+### 1. 🌐 Landing Page & Overview
+![Coastal Hazard Portal Landing Page](docs/screenshots/landing_page.png)
+*Full-bleed ocean hero layout featuring real-time Balochistan coastline overview, multi-hazard exploration cards, and responsive navigation.*
+
+### 2. 🗺️ Core Interactive Monitoring Dashboard
+![Interactive GIS Monitoring Dashboard](docs/screenshots/dashboard_map.png)
+*Interactive Leaflet GIS mapping canvas displaying real-time top KPI metric cards, Gwadar & Lasbela district boundary strokes, multi-hazard heatmaps, layer controls, and live emergency alerts ticker.*
+
+### 3. 📈 Hotspot & District Deep-Dive Details
+![Gwadar Tombolo Neck Spit Details Page](docs/screenshots/details_page.png)
+*Localized environmental risk profile featuring Recharts AreaChart timelines (2016–2025), dual hazard comparative BarChart (Shoreline Erosion vs Sea Level Anomaly), site demographics, and PDF/CSV report exports.*
+
+### 4. 🤖 Ask Coastal AI Conversational Assistant
+![Ask Coastal AI Assistant](docs/screenshots/ask_coastal_ai.png)
+*LLM-powered decision support assistant providing natural language answers, real-time hazard insights, and quick-query prompt chips.*
+
+### 5. 👥 Project Initiative & Development Team
+![About Initiative Page](docs/screenshots/about_page.png)
+*Comprehensive overview of the GEE cloud compute architecture, multi-hazard weighting methodology, interactive GIS canvas, and core development team profiles (Ali Hassan & Laiba Rafi).*
+
+---
+
 ## 🛰️ Key Features
 
 - **Google Earth Engine (GEE) Live Pipeline**:
