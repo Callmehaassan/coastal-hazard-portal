@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
+import { useAuth } from '@/lib/AuthContext';
 import Link from 'next/link';
 import { 
   Waves, 
@@ -16,11 +17,64 @@ import {
   Sparkles, 
   ChevronDown,
   Menu,
-  X
+  X,
+  LogOut
 } from 'lucide-react';
 
 export default function LandingPage() {
+  const { user, loading, logout, login, signup, loginWithGoogle } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const [authEmail, setAuthEmail] = useState('');
+  const [authPassword, setAuthPassword] = useState('');
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [authSubmitting, setAuthSubmitting] = useState(false);
+
+  function formatFirebaseError(err: any): string {
+    const code = err?.code || "";
+    if (code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found") {
+      return "Invalid email or password. Please try again.";
+    }
+    if (code === "auth/email-already-in-use") {
+      return "An account with this email already exists. Please sign in.";
+    }
+    if (code === "auth/weak-password") {
+      return "Password should be at least 6 characters long.";
+    }
+    if (code === "auth/popup-closed-by-user") {
+      return "Sign in popup was closed before completing.";
+    }
+    return err?.message || "Authentication failed. Please check your credentials.";
+  }
+
+  async function handleAuthSubmit(e: FormEvent) {
+    e.preventDefault();
+    setAuthError(null);
+    setAuthSubmitting(true);
+    try {
+      if (authMode === 'signup') {
+        await signup(authEmail, authPassword);
+      } else {
+        await login(authEmail, authPassword);
+      }
+    } catch (err: any) {
+      setAuthError(formatFirebaseError(err));
+    } finally {
+      setAuthSubmitting(false);
+    }
+  }
+
+  async function handleGoogleAuth() {
+    setAuthError(null);
+    setAuthSubmitting(true);
+    try {
+      await loginWithGoogle();
+    } catch (err: any) {
+      setAuthError(formatFirebaseError(err));
+    } finally {
+      setAuthSubmitting(false);
+    }
+  }
   const [isHazardsOpen, setIsHazardsOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -36,6 +90,134 @@ export default function LandingPage() {
     setDarkMode(nextTheme);
     localStorage.setItem('darkMode', String(nextTheme));
   };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#070e1b] text-white">
+        <div className="flex flex-col items-center gap-4 p-8 rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-xl shadow-2xl">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-cyan-400 border-t-transparent"></div>
+          <div className="text-center">
+            <p className="text-sm font-bold tracking-wide text-white">Coastal Hazard Portal</p>
+            <p className="text-xs text-cyan-400/80 mt-1">Verifying authentication...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="relative min-h-screen flex flex-col items-center justify-center bg-[#070e1b] font-sans p-4 select-none">
+        {/* Full-Bleed Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-40 pointer-events-none"
+          style={{ backgroundImage: "url('/coastal-bg.jpg')" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#070e1b]/80 via-[#070e1b]/90 to-[#070e1b] pointer-events-none" />
+
+        {/* Glow Effects */}
+        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-blue-600/10 blur-3xl pointer-events-none" />
+
+        <div className="relative w-full max-w-md rounded-2xl border border-white/15 bg-slate-900/85 p-8 shadow-2xl backdrop-blur-2xl">
+          {/* Header */}
+          <div className="mb-6 text-center">
+            <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10">
+              <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400">Balochistan Coastline</span>
+            </div>
+            <h1 className="text-2xl font-black text-white tracking-tight">
+              COASTAL HAZARD PORTAL
+            </h1>
+            <p className="mt-1.5 text-xs text-slate-400">
+              {authMode === 'signup' 
+                ? "Create an account to access real-time hazard data & maps" 
+                : "Sign in to access satellite monitoring, live analysis & early warnings"}
+            </p>
+          </div>
+
+          {/* Google One-Click Auth */}
+          <button
+            type="button"
+            onClick={handleGoogleAuth}
+            disabled={authSubmitting}
+            className="mb-5 flex w-full items-center justify-center gap-3 rounded-xl border border-white/15 bg-white/5 py-2.5 px-4 text-xs font-semibold text-white transition hover:bg-white/10 hover:border-cyan-400/50 disabled:opacity-50"
+          >
+            <svg className="h-4 w-4" viewBox="0 0 24 24">
+              <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/>
+              <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"/>
+              <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.2s.7 5.5 1.9 7.9l3.7-2.9z"/>
+              <path fill="#34A853" d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16.5C3.7 20.2 7.5 23.5 12 23.5z"/>
+            </svg>
+            Continue with Google
+          </button>
+
+          <div className="relative mb-5 flex items-center justify-center">
+            <div className="w-full border-t border-white/10" />
+            <span className="absolute bg-slate-900 px-3 text-[11px] text-slate-500 uppercase tracking-wider">or with email</span>
+          </div>
+
+          {/* Email / Password Form */}
+          <form onSubmit={handleAuthSubmit} className="space-y-4">
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-slate-300">Email Address</label>
+              <input
+                type="email"
+                required
+                placeholder="analyst@coastalhazard.pk"
+                value={authEmail}
+                onChange={(e) => setAuthEmail(e.target.value)}
+                className="w-full rounded-xl border border-white/15 bg-white/5 px-3.5 py-2.5 text-xs text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-400 focus:bg-white/10"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-slate-300">Password</label>
+              <input
+                type="password"
+                required
+                placeholder="••••••••"
+                value={authPassword}
+                onChange={(e) => setAuthPassword(e.target.value)}
+                className="w-full rounded-xl border border-white/15 bg-white/5 px-3.5 py-2.5 text-xs text-white placeholder:text-slate-500 outline-none transition focus:border-cyan-400 focus:bg-white/10"
+              />
+            </div>
+
+            {authError && (
+              <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-300">
+                {authError}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={authSubmitting}
+              className="w-full rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 py-2.5 text-xs font-bold text-slate-950 shadow-lg shadow-cyan-500/20 transition hover:opacity-95 disabled:opacity-50"
+            >
+              {authSubmitting 
+                ? (authMode === 'signup' ? "Creating account..." : "Signing in...") 
+                : (authMode === 'signup' ? "Create Account & Access Portal" : "Sign In to Portal")}
+            </button>
+          </form>
+
+          {/* Toggle between Sign In & Sign Up */}
+          <div className="mt-6 text-center text-xs text-slate-400">
+            {authMode === 'signup' ? "Already have an account? " : "New to the portal? "}
+            <button
+              type="button"
+              onClick={() => {
+                setAuthMode(authMode === 'signup' ? 'signin' : 'signup');
+                setAuthError(null);
+              }}
+              className="font-bold text-cyan-400 hover:underline"
+            >
+              {authMode === 'signup' ? "Sign In" : "Sign Up"}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen transition-colors duration-300 flex flex-col font-sans selection:bg-cyan-500/20 relative ${
@@ -116,16 +298,34 @@ export default function LandingPage() {
               {darkMode ? <Sun className="w-4 h-4 text-amber-400 animate-pulse" /> : <Moon className="w-4 h-4 text-slate-600" />}
             </button>
 
-            {/* Login Button */}
-            <Link 
-              href="/login"
-              className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm ${
-                darkMode ? 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-cyan-600/10' : 'bg-slate-900 hover:bg-slate-800 text-white shadow-slate-900/10'
-              }`}
-            >
-              <User className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Login</span>
-            </Link>
+            {/* User State & Logout Button */}
+            {user ? (
+              <div className="flex items-center gap-2">
+                <span className={`hidden sm:inline text-xs font-medium px-2.5 py-1 rounded-lg border ${
+                  darkMode ? 'bg-slate-900 border-slate-800 text-cyan-400' : 'bg-slate-100 border-slate-200 text-slate-700'
+                }`}>
+                  {user.email?.split('@')[0] || "Analyst"}
+                </span>
+                <button
+                  onClick={() => logout()}
+                  title="Log out of portal"
+                  className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Logout</span>
+                </button>
+              </div>
+            ) : (
+              <Link 
+                href="/login"
+                className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm ${
+                  darkMode ? 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-cyan-600/10' : 'bg-slate-900 hover:bg-slate-800 text-white shadow-slate-900/10'
+                }`}
+              >
+                <User className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Sign In</span>
+              </Link>
+            )}
 
             {/* Mobile Menu Toggle Button */}
             <button

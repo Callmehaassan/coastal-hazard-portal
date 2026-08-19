@@ -1,4 +1,7 @@
-"use client";
+'use client';
+
+import { AuthGuard } from '@/components/AuthGuard';
+
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -250,7 +253,8 @@ export default function DistrictDetailPage({ params }: { params: { district: str
   const hotspotMeta = hotspotName ? getHotspotMeta(hotspotName, matchedRegion?.district || districtName, activeHazard) : null;
 
   return (
-    <div className={`min-h-screen flex flex-col font-sans transition-colors duration-200 ${
+        <AuthGuard>
+      <div className={`min-h-screen flex flex-col font-sans transition-colors duration-200 ${
       darkMode ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'
     }`}>
 
@@ -557,5 +561,6 @@ export default function DistrictDetailPage({ params }: { params: { district: str
         </section>
       </main>
     </div>
+    </AuthGuard>
   );
 }

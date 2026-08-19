@@ -1,5 +1,8 @@
 'use client';
 
+import { AuthGuard } from '@/components/AuthGuard';
+
+
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
@@ -29,7 +32,8 @@ export default function AboutPage() {
   };
 
   return (
-    <div
+        <AuthGuard>
+      <div
       className={`min-h-screen bg-cover bg-center bg-no-repeat bg-fixed flex flex-col font-sans overflow-x-hidden relative selection:bg-cyan-500/20 transition-colors duration-300 ${
         darkMode ? 'text-slate-100 bg-[#070e1b] dark-theme' : 'text-slate-800 bg-[#f8fafc]'
       }`}
@@ -344,5 +348,6 @@ export default function AboutPage() {
       </footer>
 
     </div>
+    </AuthGuard>
   );
 }

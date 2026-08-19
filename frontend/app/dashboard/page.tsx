@@ -1,5 +1,9 @@
 'use client';
 
+import { AuthGuard } from '@/components/AuthGuard';
+import { useAuth } from '@/lib/AuthContext';
+
+
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
@@ -210,6 +214,7 @@ const DISTRICT_METRICS: Record<
 };
 
 export default function DashboardPage() {
+  const { user: authUser, logout: authLogout } = useAuth();
   const [mounted, setMounted] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
@@ -965,7 +970,8 @@ export default function DashboardPage() {
   if (!mounted) return null;
 
   return (
-    <div
+        <AuthGuard>
+      <div
       className={`min-h-screen bg-cover bg-center bg-no-repeat bg-fixed flex flex-col font-sans overflow-x-hidden selection:bg-cyan-500/20 relative transition-colors duration-300 ${
         darkMode ? 'text-slate-100 bg-[#070e1b] dark-theme' : 'text-slate-800 bg-[#f8fafc]'
       }`}
@@ -1086,23 +1092,35 @@ export default function DashboardPage() {
             )}
           </button>
 
-          {/* Profile Dropdown */}
-          <button
-            onClick={() => setActiveModal('users')}
-            className={`flex items-center gap-2.5 border rounded-xl px-3 py-1 text-xs transition shadow-sm ${
-              darkMode ? 'bg-slate-900 border-slate-800 hover:bg-slate-850' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
-            }`}
-            aria-label="User Profile"
-          >
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center ${darkMode ? 'bg-slate-800' : 'bg-cyan-50'}`}>
-              <User className={`w-4 h-4 ${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`} />
-            </div>
-            <div className="text-left hidden md:block">
-              <p className={`font-extrabold ${darkMode ? 'text-white' : 'text-slate-900'}`}>Analyst</p>
-              <p className={`text-[9px] font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Level 2</p>
-            </div>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden md:block" />
-          </button>
+          {/* Profile Dropdown & Logout */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setActiveModal('users')}
+              className={`flex items-center gap-2.5 border rounded-xl px-3 py-1 text-xs transition shadow-sm ${
+                darkMode ? 'bg-slate-900 border-slate-800 hover:bg-slate-850' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+              }`}
+              aria-label="User Profile"
+            >
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center ${darkMode ? 'bg-slate-800' : 'bg-cyan-50'}`}>
+                <User className={`w-4 h-4 ${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`} />
+              </div>
+              <div className="text-left hidden md:block max-w-[130px] truncate">
+                <p className={`font-extrabold truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                  {authUser?.email?.split('@')[0] || "Analyst"}
+                </p>
+                <p className={`text-[9px] font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Authenticated</p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => authLogout()}
+              title="Sign out of portal"
+              className="p-2 rounded-xl text-xs font-bold border transition bg-red-500/10 hover:bg-red-500/20 text-red-400 border-red-500/20"
+            >
+              <span className="hidden sm:inline">Logout</span>
+              <span className="sm:hidden">⏻</span>
+            </button>
+          </div>
         </div>
       </header>
 
@@ -2389,5 +2407,6 @@ export default function DashboardPage() {
         </div>
       )}
     </div>
+    </AuthGuard>
   );
 }

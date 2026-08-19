@@ -1,5 +1,8 @@
 'use client';
 
+import { AuthGuard } from '@/components/AuthGuard';
+
+
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
@@ -163,7 +166,8 @@ export default function AnalysisPage() {
   };
 
   return (
-    <div
+        <AuthGuard>
+      <div
       className={`h-screen bg-cover bg-center bg-no-repeat bg-fixed text-slate-800 flex flex-col font-sans overflow-hidden relative transition-colors duration-300 ${
         darkMode ? 'text-slate-100 bg-[#070e1b] dark-theme' : 'text-slate-800 bg-[#f8fafc]'
       }`}
@@ -647,5 +651,6 @@ export default function AnalysisPage() {
 
       </div>
     </div>
+    </AuthGuard>
   );
 }
