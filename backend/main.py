@@ -75,6 +75,7 @@ app.include_router(insights.router)
 app.include_router(tsunami_zones.router)
 
 
+@app.get("/health")
 @app.get("/api/health")
 def health_check():
     return {"status": "ok", "environment": settings.environment}

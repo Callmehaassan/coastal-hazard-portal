@@ -1,24 +1,15 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getCurrentUser, logout, type CurrentUser } from "@/lib/api";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function Navbar() {
   const router = useRouter();
-  const [user, setUser] = useState<CurrentUser | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    getCurrentUser()
-      .then(setUser)
-      .finally(() => setLoading(false));
-  }, []);
+  const { user, loading, logout } = useAuth();
 
   async function handleLogout() {
     await logout();
-    setUser(null);
     router.refresh();
   }
 
@@ -36,9 +27,9 @@ export default function Navbar() {
         {loading ? null : user ? (
           <>
             <span className="text-slate-300">
-              {user.email} <span className="text-coastal-accent">({user.role})</span>
+              {user.email || user.displayName || "Analyst"} <span className="text-coastal-accent">(Authenticated)</span>
             </span>
-            <button onClick={handleLogout} className="hover:text-coastal-accent">
+            <button onClick={handleLogout} className="hover:text-coastal-accent text-red-400">
               Logout
             </button>
           </>

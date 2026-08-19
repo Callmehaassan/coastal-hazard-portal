@@ -6,6 +6,7 @@ __pycache__/
 # C extensions
 *.so
 *.tsbuildinfo
+*.db
 
 # Distribution / packaging
 .Python

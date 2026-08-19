@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { Providers } from '@/components/Providers';
 
 export const metadata: Metadata = {
   title: 'Pakistan Coastal Hazard Monitoring Portal',
@@ -17,9 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
-        <div className="min-h-screen">
-          {children}
-        </div>
+        <Providers>
+          <div className="min-h-screen">
+            {children}
+          </div>
+        </Providers>
       </body>
     </html>
   );

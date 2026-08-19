@@ -58,6 +58,7 @@ def get_storm_surge(
 
 
 @router.get("/erosion", response_model=list[HazardReadingOut])
+@router.get("/coastal-erosion", response_model=list[HazardReadingOut])
 def get_erosion(
     district: str | None = Query(default=None),
     year_start: int = Query(default=MIN_YEAR, ge=MIN_YEAR, le=MAX_YEAR),
@@ -69,6 +70,7 @@ def get_erosion(
 
 
 @router.get("/sea-level", response_model=list[HazardReadingOut])
+@router.get("/sea-level-rise", response_model=list[HazardReadingOut])
 def get_sea_level(
     district: str | None = Query(default=None),
     year_start: int = Query(default=MIN_YEAR, ge=MIN_YEAR, le=MAX_YEAR),

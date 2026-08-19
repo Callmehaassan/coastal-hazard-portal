@@ -18,7 +18,7 @@ class Region(Base):
     province: Mapped[str] = mapped_column(String(100), default="Balochistan", nullable=False)
 
     # Polygon/MultiPolygon boundary in WGS84 (SRID 4326)
-    geometry: Mapped[str] = mapped_column(Geometry(geometry_type="MULTIPOLYGON", srid=4326), nullable=False)
+    geometry: Mapped[str] = mapped_column(Geometry(geometry_type="MULTIPOLYGON", srid=4326, spatial_index=False), nullable=False)
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
