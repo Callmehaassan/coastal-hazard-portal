@@ -6,23 +6,27 @@ A state-of-the-art decision support system and multi-hazard mapping application 
 
 ## 📸 Application Screenshots & Visual Showcase
 
-### 1. 🌐 Landing Page & Overview
+### 1. 🔐 Portal Access & Authentication Gate
+![Portal Access & Authentication Gate](docs/screenshots/auth_gate.png)
+*Secure authentication gate powered by Firebase Auth. Unauthenticated visitors are required to sign in with Email/Password or one-click Google OAuth before accessing portal dashboards and satellite intelligence.*
+
+### 2. 🌐 Interactive Landing Page & Overview
 ![Coastal Hazard Portal Landing Page](docs/screenshots/landing_page.png)
 *Full-bleed ocean hero layout featuring real-time Balochistan coastline overview, multi-hazard exploration cards, and responsive navigation.*
 
-### 2. 🗺️ Core Interactive Monitoring Dashboard
+### 3. 🗺️ Core Interactive Monitoring Dashboard
 ![Interactive GIS Monitoring Dashboard](docs/screenshots/dashboard_map.png)
 *Interactive Leaflet GIS mapping canvas displaying real-time top KPI metric cards, Gwadar & Lasbela district boundary strokes, multi-hazard heatmaps, layer controls, and live emergency alerts ticker.*
 
-### 3. 📈 Hotspot & District Deep-Dive Details
+### 4. 📈 Hotspot & District Deep-Dive Details
 ![Gwadar Tombolo Neck Spit Details Page](docs/screenshots/details_page.png)
 *Localized environmental risk profile featuring Recharts AreaChart timelines (2016–2025), dual hazard comparative BarChart (Shoreline Erosion vs Sea Level Anomaly), site demographics, and PDF/CSV report exports.*
 
-### 4. 🤖 Ask Coastal AI Conversational Assistant
+### 5. 🤖 Ask Coastal AI Conversational Assistant
 ![Ask Coastal AI Assistant](docs/screenshots/ask_coastal_ai.png)
 *LLM-powered decision support assistant providing natural language answers, real-time hazard insights, and quick-query prompt chips.*
 
-### 5. 👥 Project Initiative & Development Team
+### 6. 👥 Project Initiative & Development Team
 ![About Initiative Page](docs/screenshots/about_page.png)
 *Comprehensive overview of the GEE cloud compute architecture, multi-hazard weighting methodology, interactive GIS canvas, and core development team profiles (Ali Hassan & Laiba Rafi).*
 
@@ -30,6 +34,9 @@ A state-of-the-art decision support system and multi-hazard mapping application 
 
 ## 🛰️ Key Features
 
+- **Firebase Authentication & Route Guarding**:
+  - Secure Email/Password registration and one-click Google OAuth.
+  - Global `<AuthGuard>` route protection preventing unauthorized access to all dashboard analytical views.
 - **Google Earth Engine (GEE) Live Pipeline**:
   - Run live Sentinel-2 cloud-masked MNDWI (Modified Normalized Difference Water Index) calculations to analyze coastal erosion rates against the 2016 baseline.
   - Compute dynamic flood inundation extents using SAR-based Otsu backscatter thresholding.
@@ -52,6 +59,9 @@ A state-of-the-art decision support system and multi-hazard mapping application 
 
 We recently introduced several core UI, accessibility, and backend security upgrades:
 
+- **Firebase Authentication Gate**:
+  - Protected root and sub-routes requiring user authentication before accessing monitoring data.
+  - User session display and instant one-click logout.
 - **Branding & Light-Theme Styling**:
   - Integrated the circular Urdu-English **Coastal Hazard Portal logo** across all header navigation bars.
   - Converted the entire dashboard page layout, sidebars, charts (Recharts config), AI chatbot log, mapping controls/legends, modals, and the **GEE Live Analysis** page to a beautiful, clean white glassmorphic Light-Theme matching the homepage styling.
@@ -72,6 +82,7 @@ We recently introduced several core UI, accessibility, and backend security upgr
 
 - **Frontend**:
   - Next.js 14 (App Router)
+  - Firebase SDK (Authentication & Cloud Firestore)
   - React 18, TypeScript
   - Leaflet / React-Leaflet
   - TailwindCSS & Custom Glassmorphism Theme
