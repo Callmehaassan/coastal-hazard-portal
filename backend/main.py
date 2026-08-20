@@ -83,10 +83,28 @@ def health_check():
 
 @app.get("/redoc", include_in_schema=False)
 async def redoc_html():
-    from fastapi.openapi.docs import get_redoc_html
-    return get_redoc_html(
-        openapi_url="/openapi.json",
-        title=app.title + " - ReDoc",
-        redoc_js_url="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js",
-        with_google_fonts=True
-    )
+    from fastapi.responses import HTMLResponse
+    html_content = """<!DOCTYPE html>
+<html>
+  <head>
+    <title>Coastal Hazard Portal API - ReDoc</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+    <style>
+      body { margin: 0; padding: 0; background: #fafafa; font-family: 'Roboto', sans-serif; }
+    </style>
+  </head>
+  <body>
+    <redoc spec-url="/openapi.json"></redoc>
+    <script src="https://cdn.jsdelivr.net/npm/redoc@2.1.5/bundles/redoc.standalone.js"></script>
+    <script>
+      if (!window.Redoc) {
+        var s = document.createElement('script');
+        s.src = 'https://unpkg.com/redoc@2.1.5/bundles/redoc.standalone.js';
+        document.body.appendChild(s);
+      }
+    </script>
+  </body>
+</html>"""
+    return HTMLResponse(content=html_content)
