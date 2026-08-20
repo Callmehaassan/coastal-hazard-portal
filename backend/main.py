@@ -79,3 +79,14 @@ app.include_router(tsunami_zones.router)
 @app.get("/api/health")
 def health_check():
     return {"status": "ok", "environment": settings.environment}
+
+
+@app.get("/redoc", include_in_schema=False)
+async def redoc_html():
+    from fastapi.openapi.docs import get_redoc_html
+    return get_redoc_html(
+        openapi_url="/openapi.json",
+        title=app.title + " - ReDoc",
+        redoc_js_url="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js",
+        with_google_fonts=True
+    )
